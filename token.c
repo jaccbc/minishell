@@ -1,6 +1,8 @@
 #include "includes/minishell.h"
 #include "libft/libft.h"
 
+
+// limpar o array proveniente do split
 void	free_array(char **arr)
 {
 	int		i;
@@ -14,6 +16,7 @@ void	free_array(char **arr)
 	free(arr);
 }
 
+//avalia baseado no conteúdo do token, de que tipo se trata
 int token_recognition(char *s)
 {
 	int	i;
@@ -41,7 +44,7 @@ int token_recognition(char *s)
     return TOKEN_COMMAND;
 }
 
-
+//cria um token novo no formato node, outros atributos serão colocados conforme vamos precisando
 token_list	*ft_new_token(char *s, int type)
 {
 	token_list	*new_node;
@@ -56,6 +59,7 @@ token_list	*ft_new_token(char *s, int type)
 	return (new_node);
 }
 
+//adiciona o node ao fim da lista de tokens
 void	ft_lstadd_token(token_list **lst, token_list *new)
 {
 	token_list	*current;
@@ -76,6 +80,7 @@ void	ft_lstadd_token(token_list **lst, token_list *new)
 		*lst = new;
 }
 
+//só para sair o tipo e não o int que representa o tipo
 char	*get_type(int type)
 {
 	char	*s_type;
@@ -91,6 +96,7 @@ char	*get_type(int type)
 	return (s_type);
 }
 
+//auxiliar para imprimir a lista
 void	print_list(token_list *lst)
 {
 	token_list	*current;
@@ -105,6 +111,7 @@ void	print_list(token_list *lst)
 	}
 }
 
+//limpa a lista
 int		free_lst(token_list **lst)
 {
 	token_list	*current;
@@ -121,8 +128,8 @@ int		free_lst(token_list **lst)
 	return (0);
 }
 
-
-int		token_array(char *s)
+//convergência
+int		tokenization(char *s)
 {
 	char	**arr;
 	int		i;
@@ -142,10 +149,10 @@ int		token_array(char *s)
 	return (0);
 }
 
-int	main(int argc, char **argv)
+/* int	main(int argc, char **argv)
 {
 	if (argc == 2)
 	{
-		token_array(argv[1]);
+		tokenization(argv[1]);
 	}
-}
+} */

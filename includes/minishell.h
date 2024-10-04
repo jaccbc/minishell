@@ -35,4 +35,12 @@ typedef enum {
     TOKEN_UNKNOWN
 } token_type;
 
+// Function prototypes
+int		tokenization(char *s);
+token_list	*ft_new_token(char *s, int type);
+void		ft_lstadd_token(token_list **lst, token_list *new);
+int			free_lst(token_list **lst);
+void		print_list(token_list *lst);
+int			token_array(char *s);
+
 #endif
