@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/05 21:24:03 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/05 21:31:26 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ t_token	*tokenizer(char *s)
 	free(arr);
 	return (lst);
 }
-/*
+
 // DEBUG PART WITH MAIN
 //auxiliar para imprimir a lista
 //só para sair o tipo e não o int que representa o tipo
@@ -177,4 +177,4 @@ int	main(void)
 	print_list(shell.lst);
 	free_tokens(&shell.lst);
 	return (0);
-}*/
+}
