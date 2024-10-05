@@ -1,46 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
+/*   Updated: 2024/10/05 21:02:55 by joandre-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include "../libft/libft.h"
 
-#include "../libft/libft.h"
+# define PROMPT "MINISHELL>"
 
-#  define PROMPT "MINISHELL>"
-
-typedef struct	s_token_list
+typedef enum token_type
 {
-	char	*str;
-	int	type;
-	struct s_token_list	*next;
-	struct s_token_list	*prev;
-}	token_list;
+	INVALID,
+	COMMAND,
+	FLAG,
+	ARG,
+	VAR,
+	RED_IN,
+	RED_OUT,
+	PIPE,
+	APPEND,
+	HEREDOC
+}	t_type;
 
-typedef	struct	s_data
+typedef struct s_token
 {
-	token_list	*token;
+	char			*str;
+	int				type;
+	struct s_token	*prev;
+	struct s_token	*next;
+}	t_token;
+
+typedef struct s_data
+{
+	t_token	*lst;
 	char	**token_arr;
-
-}		mini_data;
-
-typedef enum {
-    TOKEN_COMMAND = 1,
-    TOKEN_FLAG,
-    TOKEN_PIPE,
-    TOKEN_REDIRECTION_OUT,
-    TOKEN_REDIRECTION_IN,
-    TOKEN_APPEND_OUT,
-    TOKEN_UNKNOWN
-} token_type;
+}	t_data;
 
 // Function prototypes
-int		tokenization(char *s);
-token_list	*ft_new_token(char *s, int type);
-void		ft_lstadd_token(token_list **lst, token_list *new);
-int			free_lst(token_list **lst);
-void		print_list(token_list *lst);
-int			token_array(char *s);
+t_token	*tokenize(char *s);
 
 #endif

@@ -1,68 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
+/*   Updated: 2024/10/05 21:24:03 by joandre-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes/minishell.h"
-#include "libft/libft.h"
-
-
-// limpar o array proveniente do split
-void	free_array(char **arr)
-{
-	int		i;
-
-	i = 0;
-	while(arr[i])
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-}
-
-//avalia baseado no conteúdo do token, de que tipo se trata
-int token_recognition(char *s)
-{
-	int	i;
-
-	i = 0;
-    if (!s || !*s)
-        return TOKEN_UNKNOWN;
-    if (ft_strncmp(s, "|", ft_strlen(s)) == 0)
-        return TOKEN_PIPE;
-    if (ft_strncmp(s, ">", ft_strlen(s)) == 0)
-        return TOKEN_REDIRECTION_OUT;
-    if (ft_strncmp(s, "<", ft_strlen(s)) == 0)
-        return TOKEN_REDIRECTION_IN;
-    if (ft_strncmp(s, ">>", ft_strlen(s)) == 0)
-        return TOKEN_APPEND_OUT;
-    if (s[0] == '-' && ft_strlen(s) > 1) 
-	{
-        while(s[++i])
-		{
-            if (!ft_isalnum(s[i]))
-                return TOKEN_UNKNOWN;
-        }
-        return TOKEN_FLAG;
-    }
-    return TOKEN_COMMAND;
-}
-
-//cria um token novo no formato node, outros atributos serão colocados conforme vamos precisando
-token_list	*ft_new_token(char *s, int type)
-{
-	token_list	*new_node;
-
-	new_node = malloc(sizeof(token_list));
-	if (!new_node)
-		return (NULL);
-	new_node->str = s;
-	new_node->type = type;
-	new_node->next = NULL;
-	new_node->prev = NULL;
-	return (new_node);
-}
 
 //adiciona o node ao fim da lista de tokens
-void	ft_lstadd_token(token_list **lst, token_list *new)
+static void	lstadd_token(t_token **lst, t_token *new)
 {
-	token_list	*current;
+	t_token	*current;
 
 	if (!lst || !new)
 		return ;
@@ -70,9 +23,7 @@ void	ft_lstadd_token(token_list **lst, token_list *new)
 	if (current)
 	{
 		while (current->next != NULL)
-		{
 			current = current->next;
-		}
 		current->next = new;
 		new->prev = current;
 	}
@@ -80,79 +31,150 @@ void	ft_lstadd_token(token_list **lst, token_list *new)
 		*lst = new;
 }
 
-//só para sair o tipo e não o int que representa o tipo
-char	*get_type(int type)
+// get_type() retorna o token_type
+// baseando-se na string e no último token da lista
+static int	arg_or_cmd(char *s, t_token *last)
 {
-	char	*s_type;
+	int	i;
 
-	if (type == 1)
-		s_type = "Command";
-	else if (type == 2)
-		s_type = "Flag";
-	else if (type == 3)
-		s_type = "Pipe";
-	else if (type == 4)
-		s_type = "Redirection out";
-	return (s_type);
+	if (!last)
+		return (COMMAND);
+	i = 0;
+	while (ft_isprint(s[i++]))
+		if (s[i] == '\0' && last->type != PIPE)
+			return (ARG);
+	return (COMMAND);
 }
 
-//auxiliar para imprimir a lista
-void	print_list(token_list *lst)
+static int	get_type(char *s, t_token *last)
 {
-	token_list	*current;
-	int	i;
+	if (!s || !*s)
+		return (INVALID);
+	if (ft_strncmp(s, "-", 1) == 0)
+		return (FLAG);
+	if (ft_strncmp(s, "$", 1) == 0)
+		return (VAR);
+	if (ft_strncmp(s, ">>", 2) == 0)
+		return (APPEND);
+	if (ft_strncmp(s, "<<", 2) == 0)
+		return (HEREDOC);
+	if (ft_strncmp(s, "<", 1) == 0)
+		return (RED_IN);
+	if (ft_strncmp(s, ">", 1) == 0)
+		return (RED_OUT);
+	if (ft_strncmp(s, "|", 1) == 0)
+		return (PIPE);
+	return (arg_or_cmd(s, last));
+}
+
+//cria um token novo
+static t_token	*create_token(char *s, t_token *last)
+{
+	t_token	*node;
+
+	node = malloc(sizeof(t_token));
+	if (!node)
+		return (NULL);
+	node->str = s;
+	node->type = get_type(s, last);
+	node->next = NULL;
+	node->prev = NULL;
+	return (node);
+}
+
+t_token	*last_token(t_token *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+//convergência
+t_token	*tokenizer(char *s)
+{
+	t_token	*lst;
+	char	**arr;
+	int		i;
+
+	if (!s)
+		return (NULL);
+	lst = NULL;
+	arr = ft_split(s, ' ');
+	i = -1;
+	while (arr[++i] != NULL)
+		lstadd_token(&lst, create_token(arr[i], last_token(lst)));
+	free(arr);
+	return (lst);
+}
+/*
+// DEBUG PART WITH MAIN
+//auxiliar para imprimir a lista
+//só para sair o tipo e não o int que representa o tipo
+char	*token_name(int type)
+{
+	if (type == 1)
+		return ("COMMAND");
+	if (type == 2)
+		return ("FLAG");
+	if (type == 3)
+		return ("ARG");
+	if (type == 4)
+		return ("VAR");
+	if (type == 5)
+		 return ("RED_IN");
+	if (type == 6)
+		return ("RED_OUT");
+	if (type == 7)
+		return ("PIPE");
+	if (type == 8)
+		 return ("APPEND");
+	if (type == 9)
+		return ("HEREDOC");
+	return ("INVALID");
+}
+
+void	print_list(t_token *lst)
+{
+	t_token	*current;
+	int		i;
 
 	current = lst;
 	i = 0;
 	while (current != NULL)
 	{
-		printf("arg nº%d: %s	tipo: %s\n", ++i, current->str, get_type(current->type));
+		printf("TOKEN Nº%d\n[%p]\nstr=[%s]\ntype[%s]\nprev=[%p]\nnext=[%p]\n\n",
+			++i, current, current->str, token_name(current->type),
+			current->prev, current->next);
 		current = current->next;
 	}
 }
 
 //limpa a lista
-int		free_lst(token_list **lst)
+void	free_tokens(t_token **lst)
 {
-	token_list	*current;
-	token_list	*temp;
+	t_token	*current;
+	t_token	*temp;
 
 	current = *lst;
-	while(current != NULL)
+	while (current != NULL)
 	{
 		temp = current;
 		current = current->next;
-		free (temp);
+		free(temp->str);
+		free(temp);
 	}
 	*lst = NULL;
-	return (0);
 }
 
-//convergência
-int		tokenization(char *s)
+int	main(void)
 {
-	char	**arr;
-	int		i;
-	mini_data	data = {0};
-	token_list	*token;
+	t_data	shell;
+	char	*prompt = "echo $HOME >> /path/to/file";
 
-	arr = ft_split(s, ' ');
-	i = -1;
-	while(arr[++i] != NULL)
-	{
-		token = ft_new_token(arr[i], token_recognition(arr[i]));
-		ft_lstadd_token(&data.token, token);
-	}
-	print_list(data.token);
-	free_lst(&data.token);
-	free_array(arr);
+	shell.lst = tokenizer(prompt);
+	print_list(shell.lst);
+	free_tokens(&shell.lst);
 	return (0);
-}
-
-/* int	main(int argc, char **argv)
-{
-	if (argc == 2)
-	{
-		tokenization(argv[1]);
-	}
-} */
+}*/
