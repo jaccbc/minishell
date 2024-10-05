@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/05 21:02:55 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/05 23:49:03 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 
 # include <stdio.h>
 # include <stdlib.h>
-# include "../libft/libft.h"
+# include <readline/history.h>
+# include <readline/readline.h>
+# include "libft/libft.h"
 
 # define PROMPT "MINISHELL>"
 
@@ -44,10 +46,15 @@ typedef struct s_token
 typedef struct s_data
 {
 	t_token	*lst;
-	char	**token_arr;
 }	t_data;
 
 // Function prototypes
 t_token	*tokenize(char *s);
+t_token	*last_token(t_token *lst);
+void	free_tokens(t_token **lst);
+
+//DEBUGGING
+void	print_list(t_token *lst);
+char	*token_name(int type);
 
 #endif
