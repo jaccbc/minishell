@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 16:53:29 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/06 16:54:15 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/10/06 17:48:41 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,17 +66,14 @@ void	handle_quote(char **s, t_split_state *state, char *buf)
 	(*s)++;
 }
 
-void	handle_delimiter(char **s, char ***arr, char *buf, t_split_state *state)
+void	handle_pipe(char ***arr, t_split_state *state)
 {
-	if (state->j > 0)
-	{
-		buf[state->j] = '\0';
-		*arr = add_to_array(*arr, buf, state);
-		state->j = 0;
-	}
-	if (**s == '|')
-		*arr = add_to_array(*arr, "|", state);
-	else if (**s == '>')
+	*arr = add_to_array(*arr, "|", state);
+}
+
+void	handle_redirect(char **s, char ***arr, t_split_state *state)
+{
+	if (**s == '>')
 	{
 		if (*(*s + 1) == '>')
 		{
@@ -87,13 +84,35 @@ void	handle_delimiter(char **s, char ***arr, char *buf, t_split_state *state)
 			*arr = add_to_array(*arr, ">", state);
 	}
 	else if (**s == '<')
-		*arr = add_to_array(*arr, "<", state);
+	{
+		if (*(*s + 1) == '<')
+		{
+			*arr = add_to_array(*arr, "<<", state);
+			(*s)++;
+		}
+		else
+			*arr = add_to_array(*arr, "<", state);
+	}
+}
+
+void	handle_delimiter(char **s, char ***arr, char *buf, t_split_state *state)
+{
+	if (state->j > 0)
+	{
+		buf[state->j] = '\0';
+		*arr = add_to_array(*arr, buf, state);
+		state->j = 0;
+	}
+	if (**s == '|')
+		handle_pipe(arr, state);
+	else
+		handle_redirect(s, arr, state);
 	(*s)++;
 }
 
 char	**split_args(char *s)
 {
-	char			buf[10000];
+	char			buf[2097152];
 	char			**arr;
 	t_split_state	state;
 
