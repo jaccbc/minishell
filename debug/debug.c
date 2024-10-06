@@ -6,11 +6,11 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/05 22:45:28 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/06 02:46:52 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 //imprime a lista de tokens
 void	print_list(t_token *lst)
@@ -20,35 +20,38 @@ void	print_list(t_token *lst)
 
 	current = lst;
 	i = 0;
+	printf("*** DEBUG PRINT_LIST ***\n");
 	while (current != NULL)
 	{
-		printf("TOKEN Nº%d\n[%p]\nstr=[%s]\ntype[%s]\nprev=[%p]\nnext=[%p]\n\n",
-			++i, current, current->str, token_name(current->type),
+		printf("TOKEN Nº%d\n[%p]\n", +i, current);
+		printf("str=[%s]\ntype=[%s]\nprev=[%p]\nnext=[%p]\n\n",
+			current->str, token_name(current->type),
 			current->prev, current->next);
 		current = current->next;
 	}
+	printf("*** DEBUG PRINT_LIST END***\n");
 }
 
 //retorna o nome do token_type
 char	*token_name(int type)
 {
-	if (type == 1)
+	if (type == COMMAND)
 		return ("COMMAND");
-	if (type == 2)
+	if (type == FLAG)
 		return ("FLAG");
-	if (type == 3)
+	if (type == ARG)
 		return ("ARG");
-	if (type == 4)
+	if (type == VAR)
 		return ("VAR");
-	if (type == 5)
+	if (type == RED_IN)
 		return ("RED_IN");
-	if (type == 6)
+	if (type == RED_OUT)
 		return ("RED_OUT");
-	if (type == 7)
+	if (type == PIPE)
 		return ("PIPE");
-	if (type == 8)
+	if (type == APPEND)
 		return ("APPEND");
-	if (type == 9)
+	if (type == HEREDOC)
 		return ("HEREDOC");
 	return ("INVALID");
 }

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/05 22:25:49 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/06 02:22:15 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,15 @@ t_token	*last_token(t_token *lst)
 	return (lst);
 }
 
-void	free_tokens(t_token **lst)
+void	free_tokens(t_token *lst)
 {
-	t_token	*current;
 	t_token	*temp;
 
-	current = *lst;
-	while (current != NULL)
+	while (lst != NULL)
 	{
-		temp = current;
-		current = current->next;
+		temp = lst;
+		lst = lst->next;
 		free(temp->str);
 		free(temp);
 	}
-	*lst = NULL;
 }

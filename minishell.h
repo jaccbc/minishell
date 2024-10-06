@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/05 23:49:03 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/06 02:16:06 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct s_data
 // Function prototypes
 t_token	*tokenize(char *s);
 t_token	*last_token(t_token *lst);
-void	free_tokens(t_token **lst);
+void	free_tokens(t_token *lst);
 
 //DEBUGGING
 void	print_list(t_token *lst);
