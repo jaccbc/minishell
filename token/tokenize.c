@@ -91,7 +91,7 @@ t_token	*tokenize(char *s)
 	if (!s)
 		return (NULL);
 	lst = NULL;
-	arr = ft_split(s, ' ');
+	arr = split_args(s);
 	i = -1;
 	while (arr[++i] != NULL)
 		lstadd_token(&lst, create_token(arr[i], last_token(lst)));

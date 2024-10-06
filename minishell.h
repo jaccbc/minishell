@@ -15,6 +15,8 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <stdbool.h>
+# include <string.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include "libft/libft.h"
@@ -35,6 +37,15 @@ typedef enum token_type
 	HEREDOC
 }	t_type;
 
+typedef struct	s_split_state
+{
+	int		j;
+	int		k;
+	int		array_size;
+	bool	in_quotes;
+	char	quote_char;
+}				t_split_state;
+
 typedef struct s_token
 {
 	char			*str;
@@ -52,6 +63,10 @@ typedef struct s_data
 t_token	*tokenize(char *s);
 t_token	*last_token(t_token *lst);
 void	free_tokens(t_token *lst);
+void handle_quote(char **s, t_split_state *state, char *buf);
+void handle_delimiter(char **s, char ***arr, char *buf, t_split_state *state);
+char **add_to_array(char **arr, char *buf, t_split_state *state);
+char **split_args(char *s);
 
 //DEBUGGING
 void	print_list(t_token *lst);

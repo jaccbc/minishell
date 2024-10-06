@@ -17,7 +17,7 @@ int	main(void)
 {
 	t_data	shell;
 
-	shell.lst = tokenize("echo $HOME >> /path/to/file");
+	shell.lst = tokenize("ls -la |grep \" 1\" | wc -l >>  ola outfile");
 	if (!shell.lst)
 		return (1);
 	print_list(shell.lst);

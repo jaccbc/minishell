@@ -23,7 +23,7 @@ void	print_list(t_token *lst)
 	printf("*** DEBUG PRINT_LIST ***\n");
 	while (current != NULL)
 	{
-		printf("TOKEN Nº%d\n[%p]\n", +i, current);
+		printf("TOKEN Nº%d\n[%p]\n", ++i, current);
 		printf("str=[%s]\ntype=[%s]\nprev=[%p]\nnext=[%p]\n\n",
 			current->str, token_name(current->type),
 			current->prev, current->next);
