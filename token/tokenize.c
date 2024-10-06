@@ -6,11 +6,11 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/05 23:24:43 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/06 04:12:42 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 //adiciona o node ao fim da lista de tokens
 static void	lstadd_token(t_token **lst, t_token *new)
