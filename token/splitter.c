@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 16:53:29 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/07 02:54:21 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/07 04:06:19 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ static bool	is_delimit(char c)
 	return (c == ' ' || c == '|' || c == '>' || c == '<');
 }
 
-//adiciona o split ao fim da lista
-static int	add_token(char *s, unsigned int len, t_list **token)
+//adiciona o split (str) ao fim da lista (tokens)
+static int	add_token(char *s, size_t len, t_list **token)
 {
 	char	*str;
 	t_list	*new;
@@ -33,7 +33,7 @@ static int	add_token(char *s, unsigned int len, t_list **token)
 }
 
 //mete as strings num array e limpa a lista
-//retorna um array of char pointers (tokens)
+//retorna um array of strings (tokens)
 static char	**array(t_list *token)
 {
 	t_list	*clean;
@@ -57,7 +57,8 @@ static char	**array(t_list *token)
 	return (arr);
 }
 
-//faz o split conforme o tipo (QUOTE|UNQUOTE|DELIMIT)
+//cria uma string conforme o tipo de split(QUOTE|UNQUOTE|DELIMIT)
+//usa pointer arithmetic para calcular o numero de chars a copiar
 //retorna o numero the chars copiados
 static int	handle(int split, char *s, t_list **token)
 {
@@ -88,7 +89,7 @@ static int	handle(int split, char *s, t_list **token)
 	return (0);
 }
 
-// retorna os splits num array of pointers
+//retorna as strings (splits) num array of pointers
 char	**splitter(char *s)
 {
 	t_list	*token;
