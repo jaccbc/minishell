@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 16:53:29 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/07 04:06:19 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:38:53 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ char	**splitter(char *s)
 	{
 		if (*s == ' ')
 			++s;
-		if (*s == '\'' || *s == '\"')
+		else if (*s == '\'' || *s == '\"')
 			s += handle(QUOTE, s, &token);
 		else if (*s == '|' || *s == '>' || *s == '<')
 			s += handle(DELIMIT, s, &token);
