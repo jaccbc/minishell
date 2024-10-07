@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 16:53:29 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/07 02:29:00 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/07 02:41:34 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static char	**array(t_list *token)
 
 //faz o split conforme o tipo (QUOTE|UNQUOTE|DELIMIT)
 //retorna o numero the chars copiados
-int	handle_split(char *s, t_list **token, int split)
+static int	handle_split(char *s, t_list **token, int split)
 {
 	char	*str;
 
@@ -107,23 +107,3 @@ char	**splitter(char *s)
 	}
 	return (array(token));
 }
-
-/* int	main(void)
-{
-	char	**tokens;
-	int		i;
-	char	*command;
-
-	command = "ls -la|grep \"ola\" | wc -l";
-	tokens = split_args(command);
-	i = 0;
-	while (tokens[i])
-	{
-		printf("Token[%d]: %s\n", i, tokens[i]);
-		free(tokens[i]);
-		i++;
-	}
-	free(tokens);
-	return (0);
-}
- */
