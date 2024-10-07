@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token.c                                            :+:      :+:    :+:   */
+/*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/06 04:12:42 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/07 01:41:59 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ static int	get_type(char *s, t_token *last)
 {
 	if (!s || !*s)
 		return (INVALID);
+	if (!last)
+		return (COMMAND);
 	if (ft_strncmp(s, "-", 1) == 0)
 		return (FLAG);
 	if (ft_strncmp(s, "$", 1) == 0)
@@ -91,7 +93,7 @@ t_token	*tokenize(char *s)
 	if (!s)
 		return (NULL);
 	lst = NULL;
-	arr = split_args(s);
+	arr = splitter(s);
 	i = -1;
 	while (arr[++i] != NULL)
 		lstadd_token(&lst, create_token(arr[i], last_token(lst)));
