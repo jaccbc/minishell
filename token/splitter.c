@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 16:53:29 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/07 02:48:06 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/07 02:54:21 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ static int	handle(int split, char *s, t_list **token)
 		else if ((*s == '>') || (*s == '<') || (*s == '|'))
 			return (add_token(s, 1, token));
 	}
-	return (-1);
+	return (0);
 }
 
 // retorna os splits num array of pointers

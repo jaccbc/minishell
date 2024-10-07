@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/07 01:41:59 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/07 02:52:09 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ t_token	*tokenize(char *s)
 		return (NULL);
 	lst = NULL;
 	arr = splitter(s);
+	if (!arr)
+		return (NULL);
 	i = -1;
 	while (arr[++i] != NULL)
 		lstadd_token(&lst, create_token(arr[i], last_token(lst)));
