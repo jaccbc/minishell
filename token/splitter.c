@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 16:53:29 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/07 02:41:34 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/07 02:48:06 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static char	**array(t_list *token)
 
 //faz o split conforme o tipo (QUOTE|UNQUOTE|DELIMIT)
 //retorna o numero the chars copiados
-static int	handle_split(char *s, t_list **token, int split)
+static int	handle(int split, char *s, t_list **token)
 {
 	char	*str;
 
@@ -99,11 +99,11 @@ char	**splitter(char *s)
 		if (*s == ' ')
 			++s;
 		if (*s == '\'' || *s == '\"')
-			s += handle_split(s, &token, QUOTE);
+			s += handle(QUOTE, s, &token);
 		else if (*s == '|' || *s == '>' || *s == '<')
-			s += handle_split(s, &token, DELIMIT);
+			s += handle(DELIMIT, s, &token);
 		else
-			s += handle_split(s, &token, UNQUOTE);
+			s += handle(UNQUOTE, s, &token);
 	}
 	return (array(token));
 }
