@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/07 02:52:09 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/07 09:59:05 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ static int	arg_or_cmd(char *s, t_token *last)
 {
 	int	i;
 
-	if (!last)
-		return (COMMAND);
 	i = 0;
 	while (ft_isprint(s[i++]))
 		if (s[i] == '\0' && last->type != PIPE)
