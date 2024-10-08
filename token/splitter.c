@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 16:53:29 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/07 15:38:53 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/08 01:31:52 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ static bool	is_delimit(char c)
 	return (c == ' ' || c == '|' || c == '>' || c == '<');
 }
 
-//adiciona o split (str) ao fim da lista (tokens)
-static int	add_token(char *s, size_t len, t_list **token)
+//adiciona o split (str) ao fim da lista
+static int	add_split(char *s, size_t len, t_list **lst)
 {
 	char	*str;
 	t_list	*new;
@@ -28,83 +28,58 @@ static int	add_token(char *s, size_t len, t_list **token)
 		return (0);
 	new = ft_lstnew(str);
 	if (new)
-		ft_lstadd_back(token, new);
+		ft_lstadd_back(lst, new);
 	return (ft_strlen(str));
-}
-
-//mete as strings num array e limpa a lista
-//retorna um array of strings (tokens)
-static char	**array(t_list *token)
-{
-	t_list	*clean;
-	char	**arr;
-	int		i;
-
-	if (!token)
-		return (NULL);
-	arr = malloc((ft_lstsize(token) + 1) * sizeof(char *));
-	if (!arr)
-		return (ft_lstdelone(token, free), NULL);
-	i = 0;
-	while (token)
-	{
-		arr[i++] = token->content;
-		clean = token;
-		token = token->next;
-		free(clean);
-	}
-	arr[i] = NULL;
-	return (arr);
 }
 
 //cria uma string conforme o tipo de split(QUOTE|UNQUOTE|DELIMIT)
 //usa pointer arithmetic para calcular o numero de chars a copiar
 //retorna o numero the chars copiados
-static int	handle(int split, char *s, t_list **token)
+static int	split(int type, char *s, t_list **lst)
 {
 	char	*str;
 
 	str = s;
-	if (split == QUOTE)
+	if (type == QUOTE)
 	{
 		++str;
 		while (*str && *str != *s)
 			++str;
-		return (add_token(s, ++str - s, token));
+		return (add_split(s, ++str - s, lst));
 	}
-	else if (split == UNQUOTE)
+	else if (type == UNQUOTE)
 	{
 		while (*str)
 			if (is_delimit(*(++str)))
 				break ;
-		return (add_token(s, str - s, token));
+		return (add_split(s, str - s, lst));
 	}
-	else if (split == DELIMIT)
+	else if (type == DELIMIT)
 	{
 		if ((*s == '>' && *(s + 1) == '>') || (*s == '<' && *(s + 1) == '<'))
-			return (add_token(s, 2, token));
+			return (add_split(s, 2, lst));
 		else if ((*s == '>') || (*s == '<') || (*s == '|'))
-			return (add_token(s, 1, token));
+			return (add_split(s, 1, lst));
 	}
 	return (0);
 }
 
 //retorna as strings (splits) num array of pointers
-char	**splitter(char *s)
+t_list	*splitter(char *s)
 {
-	t_list	*token;
+	t_list	*lst;
 
-	token = NULL;
+	lst = NULL;
 	while (*s)
 	{
 		if (*s == ' ')
 			++s;
 		else if (*s == '\'' || *s == '\"')
-			s += handle(QUOTE, s, &token);
+			s += split(QUOTE, s, &lst);
 		else if (*s == '|' || *s == '>' || *s == '<')
-			s += handle(DELIMIT, s, &token);
+			s += split(DELIMIT, s, &lst);
 		else
-			s += handle(UNQUOTE, s, &token);
+			s += split(UNQUOTE, s, &lst);
 	}
-	return (array(token));
+	return (lst);
 }

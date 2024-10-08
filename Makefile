@@ -6,7 +6,7 @@
 #    By: joandre- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2024/10/06 05:47:49 by joandre-         ###   ########.fr        #
+#    Updated: 2024/10/08 02:29:33 by joandre-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ $(LIBFT):
 	make clean -s -C libft
 
 debug: $(LIBFT) $(OBJ)
-	$(CC) $(CFLAGS) dmain.c $(OBJ) $(LIBFT) -o $(NAME)
+	$(CC) $(CFLAGS) dmain.c -l readline $(OBJ) $(LIBFT) -o $(NAME)
 
 norm:
 	norminette $(SRC) *.c *.h
