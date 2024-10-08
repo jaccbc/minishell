@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/08 04:02:10 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/08 19:24:37 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ typedef struct s_data
 t_token	*tokenize(char *s);
 t_token	*last_token(t_token *lst);
 void	free_token(t_token *lst);
-bool	is_delimit(int type, int c);
+bool	is_type(int type, int c);
 
 //DEBUGGING
 void	print_list(t_token *lst);

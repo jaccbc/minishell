@@ -6,16 +6,18 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/08 04:01:23 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/08 15:23:07 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-bool	is_delimit(int type, int c)
+bool	is_type(int type, int c)
 {
 	if (type == UNQUOTE)
 		return (c == ' ' || c == '|' || c == '<' || c == '>');
+	if (type == DELIMIT)
+		return (c == '>' || c == '<' || c == '|');
 	return (false);
 }
 

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/08 04:09:15 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/08 19:27:55 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static int	get_type(char *s, t_token *last)
 	return (COMMAND);
 }
 
-//cira um token (split + token type)
+//cria um token (split + token type)
 //returna o numero de bytes do split
 static int	add_split(char *s, size_t len, t_token **lst)
 {
@@ -83,7 +83,7 @@ static int	add_split(char *s, size_t len, t_token **lst)
 //returna o numero de bytes copiados
 static int	split(int type, char *s, t_token **lst)
 {
-	char	*str;
+	char	*str;	
 
 	str = s;
 	if (type == QUOTE)
@@ -95,15 +95,15 @@ static int	split(int type, char *s, t_token **lst)
 	}
 	else if (type == UNQUOTE)
 	{
-		while (*str && !is_delimit(UNQUOTE, *str))
+		while (*str && !is_type(UNQUOTE, *str))
 			++str;
 		return (add_split(s, str - s, lst));
 	}
 	else if (type == DELIMIT)
 	{
-		if ((*s == '>' && *(s + 1) == '>') || (*s == '<' && *(s + 1) == '<'))
+		if (ft_strncmp(s, ">>", 2) == 0 || ft_strncmp(s, "<<", 2) == 0)
 			return (add_split(s, 2, lst));
-		else if ((*s == '>') || (*s == '<') || (*s == '|'))
+		else if (is_type(DELIMIT, *s))
 			return (add_split(s, 1, lst));
 	}
 	return (0);
