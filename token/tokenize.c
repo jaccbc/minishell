@@ -6,13 +6,13 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/08 02:16:52 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/08 04:09:15 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-//adiciona o node ao fim da lista de tokens
+//adiciona um token na lista
 static void	lstadd_token(t_token **lst, t_token *new)
 {
 	t_token	*current;
@@ -31,7 +31,7 @@ static void	lstadd_token(t_token **lst, t_token *new)
 		*lst = new;
 }
 
-//get_type() retorna o token_type
+//returna o token type
 static int	get_type(char *s, t_token *last)
 {
 	if (!s || !*s)
@@ -58,43 +58,75 @@ static int	get_type(char *s, t_token *last)
 	return (COMMAND);
 }
 
-static t_token	*create_token(t_list *split, t_token *last)
+//cira um token (split + token type)
+//returna o numero de bytes do split
+static int	add_split(char *s, size_t len, t_token **lst)
 {
-	t_token	*node;
+	t_token	*new;
+	char	*split;
 
-	node = malloc(sizeof(t_token));
-	if (!node)
-		return (NULL);
-	node->str = split->content;
-	node->type = get_type(node->str, last);
-	node->next = NULL;
-	node->prev = NULL;
-	return (node);
+	split = ft_substr(s, 0, len);
+	if (!split)
+		return (0);
+	new = malloc(sizeof(t_token));
+	if (!new)
+		return (0);
+	new->str = split;
+	new->type = get_type(split, last_token(*lst));
+	new->next = NULL;
+	new->prev = NULL;
+	lstadd_token(lst, new);
+	return (ft_strlen(new->str));
 }
 
-//convergência
+//calcula os bytes a copiar com pointer arithmetic
+//returna o numero de bytes copiados
+static int	split(int type, char *s, t_token **lst)
+{
+	char	*str;
+
+	str = s;
+	if (type == QUOTE)
+	{
+		++str;
+		while (*str && *str != *s)
+			++str;
+		return (add_split(s, ++str - s, lst));
+	}
+	else if (type == UNQUOTE)
+	{
+		while (*str && !is_delimit(UNQUOTE, *str))
+			++str;
+		return (add_split(s, str - s, lst));
+	}
+	else if (type == DELIMIT)
+	{
+		if ((*s == '>' && *(s + 1) == '>') || (*s == '<' && *(s + 1) == '<'))
+			return (add_split(s, 2, lst));
+		else if ((*s == '>') || (*s == '<') || (*s == '|'))
+			return (add_split(s, 1, lst));
+	}
+	return (0);
+}
+
+//cria uma lista de tokens
 t_token	*tokenize(char *s)
 {
 	t_token	*lst;
-	t_token	*new;
-	t_list	*split;
-	t_list	*clean;
 
 	if (!s)
 		return (NULL);
-	split = splitter(s);
-	if (!split)
-		return (NULL);
 	lst = NULL;
-	while (split)
+	while (*s)
 	{
-		new = create_token(split, last_token(lst));
-		if (!new)
-			return (ft_lstdelone(split, free), free_token(lst), NULL);
-		lstadd_token(&lst, new);
-		clean = split;
-		split = split->next;
-		free(clean);
+		if (*s == ' ')
+			++s;
+		else if (*s == '\'' || *s == '\"')
+			s += split(QUOTE, s, &lst);
+		else if (*s == '|' || *s == '>' || *s == '<')
+			s += split(DELIMIT, s, &lst);
+		else
+			s += split(UNQUOTE, s, &lst);
 	}
 	return (lst);
 }
