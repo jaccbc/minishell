@@ -6,7 +6,7 @@
 #    By: joandre- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2024/10/08 02:29:33 by joandre-         ###   ########.fr        #
+#    Updated: 2024/10/09 01:38:02 by joandre-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ LIBFT = libft/libft.a
 NAME = minishell
 DBUG = $(shell find debug | grep .c)
 TOKN = $(shell find token | grep .c)
+BULT = $(shell find builtin | grep .c)
 SRC = $(TOKN) $(DBUG)
 OBJ = $(SRC:.c=.o)
 

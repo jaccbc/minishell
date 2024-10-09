@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/08 19:27:55 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/09 02:48:44 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	lstadd_token(t_token **lst, t_token *new)
 	current = *lst;
 	if (current)
 	{
-		while (current->next != NULL)
+		while (current->next)
 			current = current->next;
 		current->next = new;
 		new->prev = current;
@@ -52,7 +52,7 @@ static int	get_type(char *s, t_token *last)
 		return (COMMAND);
 	if (ft_strncmp(s, "-", 1) == 0)
 		return (FLAG);
-	while (ft_isprint(*s++))
+	while (ft_isascii(*s++))
 		if (*s == '\0' && last->type != PIPE)
 			return (ARG);
 	return (COMMAND);
@@ -72,7 +72,7 @@ static int	add_split(char *s, size_t len, t_token **lst)
 	if (!new)
 		return (0);
 	new->str = split;
-	new->type = get_type(split, last_token(*lst));
+	new->type = get_type(split, lstiter_token(*lst, DOWN, 0));
 	new->next = NULL;
 	new->prev = NULL;
 	lstadd_token(lst, new);
@@ -83,7 +83,7 @@ static int	add_split(char *s, size_t len, t_token **lst)
 //returna o numero de bytes copiados
 static int	split(int type, char *s, t_token **lst)
 {
-	char	*str;	
+	char	*str;
 
 	str = s;
 	if (type == QUOTE)
@@ -113,12 +113,14 @@ static int	split(int type, char *s, t_token **lst)
 t_token	*tokenize(char *s)
 {
 	t_token	*lst;
+	char	*i;
 
 	if (!s)
 		return (NULL);
 	lst = NULL;
 	while (*s)
 	{
+		i = s;
 		if (*s == ' ')
 			++s;
 		else if (*s == '\'' || *s == '\"')
@@ -127,6 +129,8 @@ t_token	*tokenize(char *s)
 			s += split(DELIMIT, s, &lst);
 		else
 			s += split(UNQUOTE, s, &lst);
+		if (i == s)
+			return (free_token(lst), NULL);
 	}
 	return (lst);
 }

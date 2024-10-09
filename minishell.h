@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/08 19:24:37 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/09 02:29:02 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,20 @@
 # include <stdlib.h>
 # include <stdbool.h>
 # include <string.h>
+# include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include "libft/libft.h"
 
 # define PROMPT "MINISHELL>"
 
-typedef enum token_split
+typedef enum token_utils
 {
 	QUOTE,
 	UNQUOTE,
-	DELIMIT
+	DELIMIT,
+	UP,
+	DOWN
 }	t_split;
 
 typedef enum token_type
@@ -59,7 +62,7 @@ typedef struct s_data
 
 // Function prototypes
 t_token	*tokenize(char *s);
-t_token	*last_token(t_token *lst);
+t_token	*lstiter_token(t_token *lst, int type, size_t i);
 void	free_token(t_token *lst);
 bool	is_type(int type, int c);
 

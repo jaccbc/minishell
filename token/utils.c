@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/08 15:23:07 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/09 02:36:53 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,25 @@ bool	is_type(int type, int c)
 	return (false);
 }
 
-t_token	*last_token(t_token *lst)
+
+//retorna o token numero i da lst
+//DOWN 0 == last_token | UP 0 == first_token
+t_token	*lstiter_token(t_token *lst, int type, size_t i)
 {
 	if (!lst)
 		return (NULL);
-	while (lst->next)
-		lst = lst->next;
+	if (i == 0)
+		i = ULLONG_MAX;
+	if (type == DOWN)
+	{
+		while (lst->next && i--)
+			lst = lst->next;
+	}
+	else if (type == DOWN)
+	{
+		if (lst->prev && i--)
+			lst = lst->prev;
+	}
 	return (lst);
 }
 
