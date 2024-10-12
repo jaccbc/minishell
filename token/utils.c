@@ -74,3 +74,76 @@ bool	is_type(int type, char *s)
 	}
 	return (false);
 }
+
+bool	err_msg(char *msg, char *detail, bool in_quotes)
+{
+	char	*err_msg;
+
+	err_msg = ft_strjoin("minishell: ", msg);
+	if (in_quotes)
+		err_msg = ft_strjoin(err_msg, "`");
+	err_msg = ft_strjoin(err_msg, detail);
+	if (in_quotes)
+		err_msg = ft_strjoin(err_msg, "'");
+	ft_putendl_fd(err_msg, STDERR_FILENO);
+	free (err_msg);
+	return (false);
+}
+
+bool	consecutive_sep(t_token *lst)
+{
+	t_token	*current;
+
+	current = lst;
+	while(current)
+	{
+		if (current->prev && current->prev->type > PIPE && current->type >= PIPE)
+			return (err_msg("syntax error near unexpected token ", current->str, true));
+		else if (current->type > PIPE && !current->next)
+			return (err_msg("syntax error near unexpected token ", "newline", true));
+		current = current->next;
+	}
+	return (false);
+}
+
+bool quotes_n_var(t_token *lst)
+{
+    t_token *current;
+    bool s_quotes = false;
+    bool d_quotes = false;
+
+    current = lst;
+    while (current)
+    {
+        int i = 0;
+        while (current->str[i])
+        {
+            if (current->str[i] == '\"' && !s_quotes)
+                d_quotes = !d_quotes;
+            else if (current->str[i] == '\'' && !d_quotes)
+                s_quotes = !s_quotes;
+            if (current->str[i] == '$' && d_quotes)
+                current->var_in_quotes = true;
+            i++;
+        }
+        current = current->next;
+    }
+    return (s_quotes || d_quotes);
+}
+
+
+bool check_syntax(t_token *lst)
+{
+	t_token	*current;
+
+	current = lst;
+	if (current->type == HEREDOC && current->next)
+		return (true);
+	if (current->type == PIPE)
+		return(err_msg("syntax error near unexpected token ", current->str, true));
+	if (consecutive_sep(current))
+		return(false);
+	//if(quotes_n_var)
+		//replicar comportamento quando não se fecha aspas
+	return (true);
+}

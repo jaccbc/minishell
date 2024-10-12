@@ -17,8 +17,8 @@ static int	get_type(char *s, t_token *last)
 {
 	if (!s || !*s)
 		return (INVALID);
-	if (!last)
-		return (COMMAND);
+	if (ft_strncmp(s, "|", 1) == 0)
+		return (PIPE);
 	if (ft_strncmp(s, "$", 1) == 0)
 		return (VAR);
 	if (ft_strncmp(s, ">>", 2) == 0)
@@ -29,8 +29,8 @@ static int	get_type(char *s, t_token *last)
 		return (RED_IN);
 	if (ft_strncmp(s, ">", 1) == 0)
 		return (RED_OUT);
-	if (ft_strncmp(s, "|", 1) == 0)
-		return (PIPE);
+	if (!last)
+		return (COMMAND);
 	if (ft_strncmp(s, "-", 1) == 0)
 		return (FLAG);
 	while (*s)

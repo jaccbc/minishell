@@ -37,6 +37,7 @@ int	main(int argc, char **argv)
 		shell.lst = tokenize(user_input);
 		if (!shell.lst)
 			return (1);
+		check_syntax(shell.lst);
 		add_history(user_input);
 		free(user_input);
 		print_list(shell.lst);
