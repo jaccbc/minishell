@@ -1,25 +1,6 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/09 15:12:07 by joandre-         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../minishell.h"
-
-bool	is_type(int type, int c)
-{
-	if (type == UNQUOTE)
-		return (c == ' ' || c == '|' || c == '<' || c == '>');
-	if (type == DELIMIT)
-		return (c == '>' || c == '<' || c == '|');
-	return (false);
-}
 
 //retorna o token numero i da lst
 //DOWN 0 == last_token | UP 0 == first_token
@@ -36,10 +17,29 @@ t_token	*lstiter_token(t_token *lst, int type, size_t i)
 	}
 	else if (type == UP)
 	{
-		if (lst->prev && i--)
+		while (lst->prev && i--)
 			lst = lst->prev;
 	}
 	return (lst);
+}
+
+//adiciona um token na lista
+void	lstadd_token(t_token **lst, t_token *new)
+{
+	t_token	*current;
+
+	if (!lst || !new)
+		return ;
+	current = *lst;
+	if (current)
+	{
+		while (current->next)
+			current = current->next;
+		current->next = new;
+		new->prev = current;
+	}
+	else
+		*lst = new;
 }
 
 void	free_token(t_token *lst)
@@ -53,4 +53,24 @@ void	free_token(t_token *lst)
 		free(temp->str);
 		free(temp);
 	}
+}
+
+bool	is_type(int type, char *s)
+{
+	char	*str;
+
+	if (!s)
+		return (false);
+	if (type == UNQUOTE)
+		return (*s == ' ' || *s == '|' || *s == '<' || *s == '>');
+	if (type == DELIMIT)
+		return (*s == '>' || *s == '<' || *s == '|');
+	if (type == QUOTE)
+	{
+		str = s + 1;
+		while (*str)
+			if (*str++ == *s)
+				return (true);
+	}
+	return (false);
 }
