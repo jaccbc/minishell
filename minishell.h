@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/12 00:50:12 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/14 19:38:15 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <readline/readline.h>
 # include "libft/libft.h"
 
-# define PROMPT "MINISHELL>	"
+# define PROMPT "MINISHELL$"
 
 typedef enum token_utils
 {
@@ -33,7 +33,7 @@ typedef enum token_utils
 	DOWN
 }	t_split;
 
-typedef enum token_type
+typedef enum token_types
 {
 	INVALID,
 	COMMAND,
@@ -63,13 +63,15 @@ typedef struct s_data
 
 //builtin
 int		echo(t_token *lst);
-//token
+//lexer
 t_token	*tokenize(char *s);
 t_token	*lstiter_token(t_token *lst, int type, size_t i);
 void	lstadd_token(t_token **lst, t_token *new);
 void	free_token(t_token *lst);
 bool	is_type(int type, char *s);
-bool check_syntax(t_token *lst);
+void	err_msg(char *msg, char *detail, bool in_quotes);
+bool	syntax_error(t_token *lst);
+bool	check_syntax(t_token *lst);
 //debug
 void	print_list(t_token *lst);
 char	*token_name(int type);

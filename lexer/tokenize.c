@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/12 00:45:28 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/14 11:42:02 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,9 @@ static int	add_split(char *s, size_t len, t_token **lst)
 {
 	t_token	*new;
 
-	new = malloc(sizeof(t_token));
+	new = ft_calloc(1, sizeof(t_token));
 	if (!new)
 		return (0);
-	ft_bzero(new, sizeof(t_token));
 	new->str = ft_substr(s, 0, len);
 	if (!new->str)
 		return (free(new), 0);
@@ -60,16 +59,23 @@ static int	add_split(char *s, size_t len, t_token **lst)
 	return (ft_strlen(new->str));
 }
 
-int	quote_len(char *s, char *str, t_token **lst)
+static int	split_quote(char *s, char *quote, t_token **lst)
 {
-	if (!s || !str)
+	char	*split;
+
+	if (!s || !quote)
 		return (0);
-	++str;
-	while (*str && *str != *s)
-		++str;
-	while (*str && *str != ' ')
-		++str;
-	return (add_split(s, ++str - s, lst));
+	split = quote;
+	while (*split++)
+		if (*split == *quote)
+			break ;
+	while (*split)
+	{
+		if (is_type(UNQUOTE, split))
+			break ;
+		++split;
+	}
+	return (add_split(s, split - s, lst));
 }
 
 //calcula os bytes a copiar com pointer arithmetic
@@ -80,15 +86,15 @@ static int	split(int type, char *s, t_token **lst)
 
 	str = s;
 	if (type == QUOTE)
-		return (quote_len(s, str, lst));
-	else if (type == UNQUOTE)
+		return (split_quote(s, str, lst));
+	if (type == UNQUOTE)
 	{
 		while (*str && !is_type(UNQUOTE, str))
 		{
-			++str;
 			if (*str == '\'' || *str == '\"')
 				if (is_type(QUOTE, str))
-					return (quote_len(s, ++str, lst));
+					return (split_quote(s, str, lst));
+			++str;
 		}
 		return (add_split(s, str - s, lst));
 	}

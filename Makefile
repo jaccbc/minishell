@@ -6,7 +6,7 @@
 #    By: joandre- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2024/10/10 23:19:30 by joandre-         ###   ########.fr        #
+#    Updated: 2024/10/13 01:15:36 by joandre-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,10 +15,10 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
 NAME = minishell
-DBUG = $(shell find debug -name "*.c")
-TOKN = $(shell find token -name "*.c")
-BULT = $(shell find builtin -name "*.c")
-SRC = $(BULT) $(TOKN) $(DBUG)
+DBG = $(shell find debug -name "*.c")
+LEX = $(shell find lexer -name "*.c")
+BLT = $(shell find builtin -name "*.c")
+SRC = $(BLT) $(LEX) $(DBG)
 OBJ = $(SRC:.c=.o)
 
 
