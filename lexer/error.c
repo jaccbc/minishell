@@ -23,49 +23,95 @@ void	err_msg(char *msg, char *detail, bool in_quotes)
 	if (in_quotes)
 		err_msg = ft_strjoin(err_msg, "'");
 	ft_putendl_fd(err_msg, STDERR_FILENO);
-	free (err_msg);
+	free(err_msg);
 }
 
-bool	syntax_error(t_token *lst)
+//verifica se o caracter que vem a seguir a '$' é algo que torne
+//o conjunto numa variável real ou se será considerado como comando
+bool	is_var_compliant(char c)
 {
-	if (!lst)
+	if (ft_isalnum(c) == 0 && c != '_')
+		return (false);
+	else
 		return (true);
-	if (lst->type == PIPE)
-		return (err_msg("syntax error near unexpected token ", lst->str, true), true);
-	if (lst->type == HEREDOC || lst->type == RED_IN || lst->type == RED_OUT || lst->type == APPEND)
-		return (err_msg("syntax error near unexpected token ", "newline", true), true);
-	while (lst)
+}
+
+//verifica se existem separadores seguidos
+bool	consecutive_sep(t_token *lst)
+{
+	t_token	*current;
+
+	current = lst;
+	while (current)
 	{
-		if (lst->prev && lst->prev->type > PIPE && lst->type >= PIPE)
-			return (err_msg("syntax error near unexpected token ", lst->str, true), true);
-		else if (lst->type > PIPE && !lst->next)
-			return (err_msg("syntax error near unexpected token ", "newline", true), true);
-		lst = lst->next;
+		if (current->prev && current->prev->type > PIPE
+			&& current->type >= PIPE)
+			return (err_msg("syntax error near unexpected token ", current->str,
+					true), true);
+		else if (current->type > PIPE && !current->next)
+			return (err_msg("syntax error near unexpected token ", "newline",
+					true), true);
+		current = current->next;
 	}
 	return (false);
 }
-/*
-bool quotes_n_var(t_token *lst)
-{
-    t_token *current;
-    bool s_quotes = false;
-    bool d_quotes = false;
 
-    current = lst;
-    while (current)
-    {
-        int i = 0;
-        while (current->str[i])
-        {
-            if (current->str[i] == '\"' && !s_quotes)
-                d_quotes = !d_quotes;
-            else if (current->str[i] == '\'' && !d_quotes)
-                s_quotes = !s_quotes;
-            if (current->str[i] == '$' && d_quotes)
-                current->var_in_quotes = true;
-            i++;
-        }
-        current = current->next;
-    }
-    return (s_quotes || d_quotes);
-}*/
+//verifica se existem quotes que foram deixados abertos, e recategoriza
+//determinado token que esteja em double quotes e que contenha uma variável
+//real lá dentro.
+bool	quotes_n_var(t_token *current)
+{
+	bool	s_quotes;
+	bool	d_quotes;
+	char	*str;
+
+	s_quotes = false;
+	d_quotes = false;
+	while (current)
+	{
+		str = current->str;
+		while (*str)
+		{
+			if (*str == '\"' && !s_quotes)
+				d_quotes = !d_quotes;
+			else if (*str == '\'' && !d_quotes)
+				s_quotes = !s_quotes;
+			if (*str == '$' && is_var_compliant(*(str + 1)) && d_quotes)
+				current->type = VAR;
+			str++;
+		}
+		current->s_quotes = s_quotes;
+		current->d_quotes = d_quotes;
+		current = current->next;
+	}
+	return (s_quotes || d_quotes);
+}
+
+//lança o erro correspondente para unclosed quotes
+bool	unclosed_quotes(t_token *current)
+{
+	if (current->s_quotes)
+		err_msg("unexpected EOF while looking for matching ", "\'", true);
+	else if (current->d_quotes)
+		err_msg("unexpected EOF while looking for matching ", "\"", true);
+	err_msg("syntax error: unexpected end of file", "", false);
+	return (false);
+}
+
+//analisa alguns erros de sintaxe e recorre
+bool	syntax_error(t_token *lst)
+{
+	t_token	*current;
+
+	current = lst;
+	if (current->type == HEREDOC && current->next)
+		return (true);
+	if (current->type == PIPE)
+		return (err_msg("syntax error near unexpected token ", current->str,
+				true), false);
+	if (consecutive_sep(current))
+		return (false);
+	if (quotes_n_var(current))
+		return (unclosed_quotes(current));	
+	return (true);
+}

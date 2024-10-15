@@ -22,7 +22,7 @@
 # include <readline/readline.h>
 # include "libft/libft.h"
 
-# define PROMPT "MINISHELL$"
+# define PROMPT "MINISHELL$ "
 
 typedef enum token_utils
 {
@@ -39,8 +39,8 @@ typedef enum token_types
 	COMMAND,
 	FLAG,
 	ARG,
-	PIPE,
 	VAR,
+	PIPE,
 	RED_IN,
 	RED_OUT,
 	APPEND,
@@ -51,7 +51,9 @@ typedef struct s_token
 {
 	char			*str;
 	int				type;
-	bool			var_in_quotes;
+	bool			var_in_d_quotes;
+	bool			s_quotes;
+	bool			d_quotes;
 	struct s_token	*prev;
 	struct s_token	*next;
 }	t_token;
@@ -72,6 +74,7 @@ bool	is_type(int type, char *s);
 void	err_msg(char *msg, char *detail, bool in_quotes);
 bool	syntax_error(t_token *lst);
 bool	check_syntax(t_token *lst);
+bool	is_var_compliant(char c);
 //debug
 void	print_list(t_token *lst);
 char	*token_name(int type);

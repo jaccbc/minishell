@@ -46,7 +46,7 @@ bool	check_syntax(t_token *lst)
 {
 	int		i;
 
-	if (syntax_error(lst))
+	if (!syntax_error(lst))
 		return (free_token(lst), false);
 	while (lst)
 	{
