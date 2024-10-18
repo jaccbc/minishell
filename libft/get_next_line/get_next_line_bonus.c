@@ -6,17 +6,17 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 21:54:14 by vamachad          #+#    #+#             */
-/*   Updated: 2024/06/25 21:54:15 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/10/18 02:50:47 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	line_length(gnl_list *lst)
+int	line_length(t_gnl_list *lst)
 {
-	int		len;
-	gnl_list	*current;
-	int		i;
+	int			len;
+	t_gnl_list	*current;
+	int			i;
 
 	current = lst;
 	len = 0;
@@ -38,13 +38,13 @@ int	line_length(gnl_list *lst)
 	return (len);
 }
 
-void	node_buf(gnl_list **lst, char *buf, int size)
+void	node_buf(t_gnl_list **lst, char *buf, int size)
 {
-	gnl_list	*new_node;
-	int		i;
-	gnl_list	*current;
+	t_gnl_list	*new_node;
+	int			i;
+	t_gnl_list	*current;
 
-	new_node = (gnl_list *)malloc(sizeof(gnl_list));
+	new_node = (t_gnl_list *)malloc(sizeof(t_gnl_list));
 	if (!new_node)
 		return ;
 	i = 0;
@@ -67,7 +67,7 @@ void	node_buf(gnl_list **lst, char *buf, int size)
 	current = *lst;
 }
 
-char	*get_line(gnl_list *lst, char *line)
+char	*get_line(t_gnl_list *lst, char *line)
 {
 	int	i;
 	int	j;
@@ -119,7 +119,7 @@ void	sort_buf(char *buf)
 char	*get_next_line(int fd)
 {
 	static char	buf[FOPEN_MAX][BUFFER_SIZE + 1];
-	gnl_list		*lst;
+	t_gnl_list	*lst;
 	char		*line;
 
 	lst = NULL;

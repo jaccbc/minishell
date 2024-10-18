@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   syntax.c                                           :+:      :+:    :+:   */
+/*   check_syntax.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:34:20 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/14 19:41:07 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/18 02:52:53 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-//função recebe uma string e cria um novo buffer
-//copia a string toda menos os 2 quote characters
-//retorna a nova string e dá free na recebida
+// Função recebe uma string e cria um novo buffer
+// Copia a string toda menos os 2 quote characters
+// Retorna a nova string e dá free na recebida
 static char	*get_unquote(char *s)
 {
 	char	*str;
@@ -41,26 +41,30 @@ static char	*get_unquote(char *s)
 	return (free(s), str);
 }
 
-//função inicia syntax analysis
-bool	check_syntax(t_token *lst)
+// Função inicia syntax analysis
+bool	check_syntax(t_data *shell)
 {
 	int		i;
+	t_token	*current;
 
-	if (!syntax_error(lst))
-		return (free_token(lst), false);
-	while (lst)
+	current = shell->lst;
+	if (!syntax_error(shell->lst))
+		return (free_token(shell->lst), false);
+	var_expander(shell);
+	while (current)
 	{
 		i = -1;
-		while (lst->str[++i])
+		while (current->str[++i])
 		{
-			if ((lst->str[i] == '\'' || lst->str[i] == '\"')
-				&& is_type(QUOTE, &lst->str[i]))
+			if ((current->str[i] == '\'' || current->str[i] == '\"')
+				&& is_type(QUOTE, &current->str[i]))
 			{
-				lst->str = get_unquote(lst->str);
+				current->str = get_unquote(current->str);
 				break ;
 			}
 		}
-		lst = lst->next;
+		current = current->next;
 	}
+	current = shell->lst;
 	return (true);
 }

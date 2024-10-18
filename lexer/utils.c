@@ -6,14 +6,14 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/14 11:34:07 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/18 02:51:52 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-//retorna o token numero i da lst
-//DOWN 0 == last_token | UP 0 == first_token
+// retorna o token numero i da lst
+// DOWN 0 == last_token | UP 0 == first_token
 t_token	*lstiter_token(t_token *lst, int type, size_t i)
 {
 	if (!lst)
@@ -33,7 +33,7 @@ t_token	*lstiter_token(t_token *lst, int type, size_t i)
 	return (lst);
 }
 
-//adiciona um token na lista
+// adiciona um token na lista
 void	lstadd_token(t_token **lst, t_token *new)
 {
 	t_token	*current;
@@ -83,4 +83,13 @@ bool	is_type(int type, char *s)
 				return (true);
 	}
 	return (false);
+}
+
+void	free_ptr(void *ptr)
+{
+	if (ptr != NULL)
+	{
+		free(ptr);
+		ptr = NULL;
+	}
 }

@@ -19,7 +19,7 @@ static int	get_type(char *s, t_token *last)
 		return (INVALID);
 	if (ft_strncmp(s, "|", 1) == 0)
 		return (PIPE);
-	if (ft_strncmp(s, "$", 1) == 0 && is_var_compliant(*(s + 1)))
+	if (ft_strncmp(s, "$", 1) == 0)
 		return (VAR);
 	if (ft_strncmp(s, ">>", 2) == 0)
 		return (APPEND);

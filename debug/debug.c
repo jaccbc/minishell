@@ -6,13 +6,13 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/06 02:46:52 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/18 02:53:52 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-//imprime a lista de tokens
+// imprime a lista de tokens
 void	print_list(t_token *lst)
 {
 	t_token	*current;
@@ -24,15 +24,25 @@ void	print_list(t_token *lst)
 	while (current != NULL)
 	{
 		printf("TOKEN Nº%d\n[%p]\n", ++i, current);
-		printf("str=[%s]\ntype=[%s]\nprev=[%p]\nnext=[%p]\n\n",
-			current->str, token_name(current->type),
-			current->prev, current->next);
+		printf("str=[%s]\ntype=[%s]\nprev=[%p]\nnext=[%p]\n\n", current->str,
+			token_name(current->type), current->prev, current->next);
 		current = current->next;
 	}
 	printf("*** DEBUG PRINT_LIST END***\n");
 }
 
-//retorna o nome do token_type
+void	print_array(char **arr)
+{
+	int	i;
+
+	i = -1;
+	while (arr[++i])
+	{
+		printf("%s\n", arr[i]);
+	}
+}
+
+// retorna o nome do token_type
 char	*token_name(int type)
 {
 	if (type == COMMAND)

@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-char	*buff_incomplete(int fd, char *buf, gnl_list **lst)
+char	*buff_incomplete(int fd, char *buf, t_gnl_list **lst)
 {
 	int		bytes;
 	char	*line;
@@ -35,7 +35,7 @@ char	*buff_incomplete(int fd, char *buf, gnl_list **lst)
 	return (line);
 }
 
-char	*buff_exists(char *buf, gnl_list **lst)
+char	*buff_exists(char *buf, t_gnl_list **lst)
 {
 	char	*line;
 	int		i;
@@ -85,9 +85,9 @@ int	ft_strchr_gnl(char *str, char c)
 	return (0);
 }
 
-char	*free_list(gnl_list **lst)
+char	*free_list(t_gnl_list **lst)
 {
-	gnl_list	*temp;
+	t_gnl_list	*temp;
 
 	while (*lst)
 	{

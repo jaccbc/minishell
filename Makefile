@@ -18,7 +18,8 @@ NAME = minishell
 DBG = $(shell find debug -name "*.c")
 LEX = $(shell find lexer -name "*.c")
 BLT = $(shell find builtin -name "*.c")
-SRC = $(BLT) $(LEX) $(DBG)
+VAR = $(shell find var -name "*.c")
+SRC = $(BLT) $(LEX) $(DBG) $(VAR)
 OBJ = $(SRC:.c=.o)
 
 
