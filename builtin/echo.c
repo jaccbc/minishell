@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/12 01:12:47 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:03:21 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static bool	valid_print(t_token *lst)
 
 static bool	verify_cmd(t_token **lst, bool *nl)
 {
-	if (!lst || *lst == NULL)
+	if (!lst || *lst == NULL || !(*(*lst)->str))
 		return (false);
 	if ((*lst)->type != COMMAND)
 		return (false);

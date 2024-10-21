@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/21 03:51:18 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/21 17:30:25 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static size_t	get_varlen(const char *s)
 	size_t	len;
 
 	len = 0;
-	while (ft_isalnum(s[len]))
+	while (ft_isalnum(s[len]) || s[len] == '_')
 		++len;
 	return (len);
 }
@@ -32,9 +32,12 @@ static char	*get_value(char **env, const char *s)
 	var = ft_calloc(get_varlen(s) + 2, sizeof(char));
 	if (!var)
 		return (NULL);
-	i = -1;
-	while (ft_isalnum(s[++i]))
+	i = 0;
+	while (ft_isalnum(s[i]) || s[i] == '_')
+	{
 		var[i] = s[i];
+		++i;
+	}
 	var[i] = '=';
 	i = 0;
 	while (env[i] && ft_strncmp(var, env[i], ft_strlen(var)))

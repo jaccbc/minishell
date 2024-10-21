@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/21 01:51:04 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:10:58 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ typedef enum token_types
 	COMMAND,
 	FLAG,
 	ARG,
-	PIPE,
 	VAR,
+	PIPE,
 	RED_IN,
 	RED_OUT,
 	APPEND,
