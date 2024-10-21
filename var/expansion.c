@@ -6,76 +6,116 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/18 03:02:39 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/10/21 03:51:18 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+static size_t	get_varlen(const char *s)
+{
+	size_t	len;
+
+	len = 0;
+	while (ft_isalnum(s[len]))
+		++len;
+	return (len);
+}
+
 // Procura em env a variável e retorna o valor
-char	*get_value(t_data *shell, char *s)
+// a funcao "ft_strchr(env[i], '=') + 1" retorna tudo que está apos = na **env
+static char	*get_value(char **env, const char *s)
 {
 	int		i;
 	char	*var;
-	char	*value;
-	int		len;
 
-	var = extract_var_name(s);
+	var = ft_calloc(get_varlen(s) + 2, sizeof(char));
 	if (!var)
 		return (NULL);
 	i = -1;
-	while (shell->env[++i])
-		if (ft_strncmp(var, shell->env[i], ft_strlen(var)) == 0)
-			break ;
-	if (shell->env[i] == NULL)
-		return (NULL);
-	len = ft_strlen(var);
+	while (ft_isalnum(s[++i]))
+		var[i] = s[i];
+	var[i] = '=';
+	i = 0;
+	while (env[i] && ft_strncmp(var, env[i], ft_strlen(var)))
+		++i;
 	free(var);
-	value = ft_strdup(shell->env[i] + len);
-	return (value);
+	if (env[i] == NULL)
+		return (NULL);
+	return (ft_strchr(env[i], '=') + 1);
 }
 
-// Decide se se elimina a variável, no caso desta não existir em env,
-// ou se se substitui pelo seu valor
-void	sub_var(t_token *lst, int index, char *value)
+//mede o length das strings e alloca memoria para a nova string expandida
+static void	*create_buffer(char *str, char **env, char *var, char **expand)
 {
-	if (value == NULL)
-	{
-		erase_var(lst, index);
-	}
-	else
-	{
-		erase_and_replace_var(lst, index, value);
-		free_ptr(value);
-	}
+	size_t	len;
+
+	len = 1;
+	*expand = get_value(env, var);
+	if (*expand)
+		len += ft_strlen(*expand);
+	len += ft_strlen(str) - get_varlen(var);
+	return (ft_calloc(len, sizeof(char)));
+}
+
+//funcao interna responsável pela var expansion
+//1º while loop copia tudo ate encontrar o $ da variavel
+//2º while loop copia a expansao se existir
+//3º while loop copia o resto da string
+static void	expander(char **s, char **env, char *var)
+{
+	char	*str;
+	char	*expand;
+	char	*new;
+	int		i;
+	int		k;
+
+	str = *s;
+	expand = NULL;
+	new = create_buffer(str, env, var, &expand);
+	if (new == NULL)
+		return ;
+	i = -1;
+	while (&str[++i] != var - 1)
+		new[i] = str[i];
+	k = i;
+	if (expand)
+		while (*expand)
+			new[i++] = *expand++;
+	k += get_varlen(var) + 1;
+	while (str[k])
+		new[i++] = str[k++];
+	free(str);
+	*s = new;
 }
 
 // Expande as variáveis em shell->lst
+// encontra is_type(VAR), expande e recomeça o check com a string atualizada
 void	var_expander(t_data *shell)
 {
-	t_token	*current;
 	int		i;
-	bool	s_quotes;
-	char	*value;
+	t_token	*t;
 
-	current = shell->lst;
-	while (current)
+	t = shell->lst;
+	while (t)
 	{
-		s_quotes = false;
-		if (there_is_dollar(current->str))
+		i = 0;
+		while (t->str[i] && ft_strchr(&t->str[i], '$'))
 		{
-			i = -1;
-			while (current->str[++i])
+			if (t->str[i] == '\'' && is_type(QUOTE, &t->str[i]))
+				while (t->str[++i])
+					if (t->str[i] == '\'')
+						break ;
+			if (t->str[i] == '\"' && is_type(QUOTE, &t->str[i]))
+				while (t->str[i++])
+					if (t->str[i] == '\"' || is_type(VAR, &t->str[i]))
+						break ;
+			if (is_type(VAR, &t->str[i++]))
 			{
-				s_quotes = is_in_s_quotes(&current->str[i], s_quotes);
-				if (current->str[i] == '$' && !nxt_ch_sep(current->str[i + 1])
-					&& !s_quotes && !var_in_quotes(&current->str[i]))
-				{
-					value = get_value(shell, &current->str[i]);
-					sub_var(current, i, value);
-				}
+				expander(&t->str, shell->env, &t->str[i]);
+				continue ;
 			}
 		}
-		current = current->next;
+		t = t->next;
 	}
 }

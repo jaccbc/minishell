@@ -6,14 +6,14 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/14 11:42:02 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/18 16:59:42 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 //returna o token type
-static int	get_type(char *s, t_token *last)
+static int	get_type(const char *s, t_token *last)
 {
 	if (!s || !*s)
 		return (INVALID);
@@ -44,7 +44,7 @@ static int	get_type(char *s, t_token *last)
 
 //cria um token (split + token type)
 //returna o numero de bytes do split
-static int	add_split(char *s, size_t len, t_token **lst)
+static int	add_split(const char *s, size_t len, t_token **lst)
 {
 	t_token	*new;
 
@@ -59,41 +59,46 @@ static int	add_split(char *s, size_t len, t_token **lst)
 	return (ft_strlen(new->str));
 }
 
-static int	split_quote(char *s, char *quote, t_token **lst)
+static int	split_quote(const char *s, char *quote, t_token **lst)
 {
 	char	*split;
 
 	if (!s || !quote)
 		return (0);
 	split = quote;
-	while (*split++)
-		if (*split == *quote)
+	while (*split)
+		if (*(++split) == *quote)
 			break ;
 	while (*split)
 	{
-		if (is_type(UNQUOTE, split))
+		if (is_type(UNQUOTE, ++split))
 			break ;
-		++split;
+		else if (is_type(QUOTE, split))
+		{
+			quote = split;
+			while (*split)
+				if (*(++split) == *quote)
+					break ;
+		}
 	}
 	return (add_split(s, split - s, lst));
 }
 
 //calcula os bytes a copiar com pointer arithmetic
 //returna o numero de bytes copiados
-static int	split(int type, char *s, t_token **lst)
+static int	split(int type, const char *s, t_token **lst)
 {
 	char	*str;
 
-	str = s;
+	str = (char *)s;
 	if (type == QUOTE)
 		return (split_quote(s, str, lst));
 	if (type == UNQUOTE)
 	{
 		while (*str && !is_type(UNQUOTE, str))
 		{
-			if (*str == '\'' || *str == '\"')
-				if (is_type(QUOTE, str))
-					return (split_quote(s, str, lst));
+			if (is_type(QUOTE, str))
+				return (split_quote(s, str, lst));
 			++str;
 		}
 		return (add_split(s, str - s, lst));
@@ -129,7 +134,7 @@ t_token	*tokenize(char *s)
 		else
 			s += split(UNQUOTE, s, &lst);
 		if (i == s)
-			return (free_token(lst), NULL);
+			return (lstdel_token(lst), NULL);
 	}
 	return (lst);
 }

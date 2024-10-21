@@ -6,14 +6,14 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/18 02:51:52 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/10/21 03:36:25 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-// retorna o token numero i da lst
-// DOWN 0 == last_token | UP 0 == first_token
+//retorna o token numero i da lst
+//DOWN 0 == last_token | UP 0 == first_token
 t_token	*lstiter_token(t_token *lst, int type, size_t i)
 {
 	if (!lst)
@@ -33,7 +33,7 @@ t_token	*lstiter_token(t_token *lst, int type, size_t i)
 	return (lst);
 }
 
-// adiciona um token na lista
+//adiciona um token na lista
 void	lstadd_token(t_token **lst, t_token *new)
 {
 	t_token	*current;
@@ -52,7 +52,7 @@ void	lstadd_token(t_token **lst, t_token *new)
 		*lst = new;
 }
 
-void	free_token(t_token *lst)
+void	lstdel_token(t_token *lst)
 {
 	t_token	*temp;
 
@@ -65,9 +65,9 @@ void	free_token(t_token *lst)
 	}
 }
 
-bool	is_type(int type, char *s)
+bool	is_type(int type, const char *s)
 {
-	char	*str;
+	const char	*str;
 
 	if (!s || !*s)
 		return (false);
@@ -75,21 +75,14 @@ bool	is_type(int type, char *s)
 		return (*s == ' ' || *s == '|' || *s == '<' || *s == '>');
 	if (type == DELIMIT)
 		return (*s == '|' || *s == '<' || *s == '>');
-	if (type == QUOTE)
+	if (type == QUOTE && (*s == '\'' || *s == '\"'))
 	{
 		str = s + 1;
 		while (*str)
 			if (*str++ == *s)
 				return (true);
 	}
+	if (type == VAR)
+		return (*s == '$' && ft_isalnum(*(s + 1)));
 	return (false);
-}
-
-void	free_ptr(void *ptr)
-{
-	if (ptr != NULL)
-	{
-		free(ptr);
-		ptr = NULL;
-	}
 }
