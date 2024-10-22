@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/21 18:03:21 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/22 03:26:56 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,20 @@ static bool	valid_print(t_token *lst)
 	return (lst->type == ARG || lst->type == VAR || lst->type == FLAG);
 }
 
-static bool	verify_cmd(t_token **lst, bool *nl)
+static bool	verify_cmd(t_token *lst, bool *nl)
 {
-	if (!lst || *lst == NULL || !(*(*lst)->str))
+	if (!lst || !(*lst->str))
 		return (false);
-	if ((*lst)->type != COMMAND)
+	if (lst->type != COMMAND)
 		return (false);
-	if (ft_strncmp((*lst)->str, "echo", ft_strlen((*lst)->str)))
+	if (ft_strncmp(lst->str, "echo", ft_strlen(lst->str)))
 		return (false);
-	*lst = (*lst)->next;
-	if (*lst == NULL)
-		return (true);
-	if ((*lst)->type == FLAG
-		&& !ft_strncmp((*lst)->str, "-n", ft_strlen((*lst)->str)))
-	{
+	lst = lst->next;
+	if (!lst)
+		return (false);
+	if (lst->type == FLAG
+		&& !ft_strncmp(lst->str, "-n", ft_strlen(lst->str)))
 		*nl = false;
-		*lst = (*lst)->next;
-	}
 	return (true);
 }
 
@@ -46,8 +43,9 @@ int	echo(t_token *lst)
 	if (!lst)
 		return (1);
 	nl = true;
-	if (!verify_cmd(&lst, &nl))
+	if (!verify_cmd(lst, &nl))
 		return (1);
+	lst = lst->next;
 	if (valid_print(lst))
 		ft_putstr_fd(lst->str, STDOUT_FILENO);
 	lst = lst->next;

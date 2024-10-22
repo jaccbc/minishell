@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/21 18:10:58 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/22 02:03:55 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ bool	is_type(int type, const char *s);
 void	err_msg(char *msg, char *detail, bool in_quotes);
 bool	syntax_error(t_token *lst);
 bool	del_quote(t_token *lst);
+void	del_dollar(t_token *lst);
 void	var_expander(t_data *shell);
 bool	check_syntax(t_data *shell);
 //debug

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/21 03:36:25 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/22 00:20:53 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,6 @@ bool	is_type(int type, const char *s)
 				return (true);
 	}
 	if (type == VAR)
-		return (*s == '$' && ft_isalnum(*(s + 1)));
+		return (*s == '$' && (ft_isalnum(*(s + 1)) || *(s + 1) == '_'));
 	return (false);
 }

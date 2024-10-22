@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/21 17:30:25 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/22 02:42:02 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ static void	expander(char **s, char **env, char *var)
 }
 
 // Expande as variáveis em shell->lst
-// encontra is_type(VAR), expande e recomeça o check com a string atualizada
+// varifica is_type(VAR), expande e recomeça o check com a string atualizada
 void	var_expander(t_data *shell)
 {
 	int		i;
