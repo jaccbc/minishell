@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:26:37 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/22 03:27:37 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/22 03:32:21 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ static bool	init_shell(t_data *shell, char *user_input, char **env)
 	if (check_syntax(shell) == false)
 		return (lstdel_token(shell->lst), false);
 	print_list(shell->lst);
+	echo(shell->lst);
 	lstdel_token(shell->lst);
 	return (true);
 }
