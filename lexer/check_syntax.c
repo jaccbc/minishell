@@ -21,7 +21,9 @@ bool	check_syntax(t_data *shell)
 		return (false);
 	var_expander(shell);
 	del_dollar(shell->lst);
-	if (del_quote(shell->lst) == false)
+	if (!del_quote(shell->lst))
+		return (false);
+	if (!validate_redirections(shell))
 		return (false);
 	return (true);
 }

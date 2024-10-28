@@ -44,7 +44,9 @@ static bool	init_shell(t_data *shell, char *user_input, char **env)
 	free(user_input);
 	if (check_syntax(shell) == false)
 		return (lstdel_token(shell->lst), false);
-	print_list(shell->lst);
+	if (!final_parse(shell))
+		return (lstdel_token(shell->lst), false); //na verdade limpar lista de comandos
+	print_command_list(shell->command);
 	echo(shell->lst);
 	lstdel_token(shell->lst);
 	return (true);

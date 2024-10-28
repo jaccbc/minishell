@@ -6,14 +6,14 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/22 00:20:53 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/28 16:03:59 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-//retorna o token numero i da lst
-//DOWN 0 == last_token | UP 0 == first_token
+// retorna o token numero i da lst
+// DOWN 0 == last_token | UP 0 == first_token
 t_token	*lstiter_token(t_token *lst, int type, size_t i)
 {
 	if (!lst)
@@ -33,7 +33,7 @@ t_token	*lstiter_token(t_token *lst, int type, size_t i)
 	return (lst);
 }
 
-//adiciona um token na lista
+// adiciona um token na lista
 void	lstadd_token(t_token **lst, t_token *new)
 {
 	t_token	*current;
@@ -85,4 +85,23 @@ bool	is_type(int type, const char *s)
 	if (type == VAR)
 		return (*s == '$' && (ft_isalnum(*(s + 1)) || *(s + 1) == '_'));
 	return (false);
+}
+
+char	**ft_realloc(char **array, size_t new_size)
+{
+	char	**new_array;
+	size_t	i;
+
+	new_array = malloc(sizeof(char *) * new_size);
+	if (!new_array)
+		return (NULL);
+	i = 0;
+	while (array && array[i] && i < new_size - 1)
+	{
+		new_array[i] = array[i];
+		i++;
+	}
+	new_array[i] = NULL;
+	free(array);
+	return (new_array);
 }

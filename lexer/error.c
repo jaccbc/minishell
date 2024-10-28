@@ -6,24 +6,25 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 17:42:30 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/21 01:08:10 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/28 16:03:42 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+// Function to print error messages with optional quotes around the detail
 void	err_msg(char *msg, char *detail, bool in_quotes)
 {
-	char	*err_msg;
-
-	err_msg = ft_strjoin("minishell: ", msg);
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	ft_putstr_fd(msg, STDERR_FILENO);
 	if (in_quotes)
-		err_msg = ft_strjoin(err_msg, "`");
-	err_msg = ft_strjoin(err_msg, detail);
+		ft_putstr_fd(" `", STDERR_FILENO);
+	else
+		ft_putstr_fd(" ", STDERR_FILENO);
+	ft_putstr_fd(detail, STDERR_FILENO);
 	if (in_quotes)
-		err_msg = ft_strjoin(err_msg, "'");
-	ft_putendl_fd(err_msg, STDERR_FILENO);
-	free(err_msg);
+		ft_putstr_fd("'", STDERR_FILENO);
+	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
 // verifica se existem separadores seguidos
@@ -34,9 +35,9 @@ bool	consecutive_sep(t_token *lst)
 	current = lst;
 	while (current)
 	{
-		if (current->prev && ((current->prev->type > PIPE
-					&& current->type >= PIPE) || (current->prev->type == VAR
-					&& current->type == PIPE)))
+		if ((current->prev && ((current->prev->type > PIPE
+						&& current->type >= PIPE))) || (!current->next
+				&& current->type == PIPE))
 			return (err_msg("syntax error near unexpected token ", current->str,
 					true), true);
 		else if (current->type > PIPE && !current->next)

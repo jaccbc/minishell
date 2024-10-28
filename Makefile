@@ -19,7 +19,8 @@ DBG = $(shell find debug -name "*.c")
 LEX = $(shell find lexer -name "*.c")
 BLT = $(shell find builtin -name "*.c")
 VAR = $(shell find var -name "*.c")
-SRC = $(BLT) $(LEX) $(DBG) $(VAR)
+CMD = $(shell find cmd -name "*.c")
+SRC = $(BLT) $(LEX) $(DBG) $(VAR) $(CMD)
 OBJ = $(SRC:.c=.o)
 
 
