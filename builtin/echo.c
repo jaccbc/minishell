@@ -6,56 +6,42 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/22 03:26:56 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/31 23:05:07 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static bool	valid_print(t_token *lst)
+static bool	verify_command(t_command *cmd, bool *nl)
 {
-	if (!lst)
+	if (!cmd || !cmd->command || !cmd->args)
 		return (false);
-	return (lst->type == ARG || lst->type == VAR || lst->type == FLAG);
-}
-
-static bool	verify_cmd(t_token *lst, bool *nl)
-{
-	if (!lst || !(*lst->str))
+	if (ft_strncmp(cmd->command, "echo", ft_strlen(cmd->command)))
 		return (false);
-	if (lst->type != COMMAND)
-		return (false);
-	if (ft_strncmp(lst->str, "echo", ft_strlen(lst->str)))
-		return (false);
-	lst = lst->next;
-	if (!lst)
-		return (false);
-	if (lst->type == FLAG
-		&& !ft_strncmp(lst->str, "-n", ft_strlen(lst->str)))
-		*nl = false;
+	if (cmd->args[0] && cmd->args[1])
+		if (ft_strncmp(cmd->args[1], "-n", ft_strlen(cmd->args[1])))
+			*nl = false;
 	return (true);
 }
 
-int	echo(t_token *lst)
+int	echo(t_command *cmd)
 {
 	bool	nl;
+	int		i;
 
-	if (!lst)
-		return (1);
 	nl = true;
-	if (!verify_cmd(lst, &nl))
-		return (1);
-	lst = lst->next;
-	if (valid_print(lst))
-		ft_putstr_fd(lst->str, STDOUT_FILENO);
-	lst = lst->next;
-	while (valid_print(lst))
+	if (verify_command(cmd, &nl) == false)
+		return (EXIT_FAILURE);
+	i = 1;
+	if (nl)
+		++i;
+	while (cmd)
 	{
-		ft_putstr_fd(" ", STDOUT_FILENO);
-		ft_putstr_fd(lst->str, STDOUT_FILENO);
-		lst = lst->next;
+		ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
+		if (cmd->args[++i])
+			ft_putstr_fd(" ", STDOUT_FILENO);
 	}
 	if (nl)
 		write(STDOUT_FILENO, "\n", 1);
-	return (0);
+	return (EXIT_SUCCESS);
 }

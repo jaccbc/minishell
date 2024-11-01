@@ -6,72 +6,85 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/28 20:09:46 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/11/01 01:25:28 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 // Create and initialize an empty command node
-static t_command	*create_empty_command(void)
+static t_command	*create_command(void)
 {
-	t_command	*cmd;
+	t_command	*new;
 
-	cmd = malloc(sizeof(t_command));
-	if (!cmd)
+	new = ft_calloc(1, sizeof(t_command));
+	if (new == NULL)
 		return (NULL);
-	ft_memset(cmd, 0, sizeof(t_command));
-	cmd->pipe_fd[0] = -1;
-	cmd->pipe_fd[1] = -1;
-	cmd->has_pipe_output = false;
-	cmd->rdio = malloc(sizeof(t_redirect));
-	if (!cmd->rdio)
-		return (free(cmd), NULL);
-	cmd->rdio->infile = NULL;
-	cmd->rdio->outfile = NULL;
-	cmd->rdio->fd_in = -1;
-	cmd->rdio->fd_out = -1;
-	return (cmd);
+	new->command = NULL;
+	new->args = NULL;
+	new->path = NULL;
+	new->pipe_fd[0] = -1;
+	new->pipe_fd[1] = -1;
+	new->rdio = NULL;
+	new->next = NULL;
+	new->prev = NULL;
+	return (new);
+}
+
+static t_redirect	*create_redirect(void)
+{
+	t_redirect	*new;
+
+	new = malloc(sizeof(t_redirect));
+	if (new == NULL)
+		return (NULL);
+	new->infile = NULL;
+	new->outfile = NULL;
+	new->fd_in = -1;
+	new->fd_out = -1;
+	return (new);
 }
 
 // Set redirection target based on token type, storing only the last entries
-void	handle_redirection(t_redirect *rdio, t_token *token)
+static bool	handle_redirection(t_redirect *rdio, t_token *token)
 {
+	char	*filename;
+
+	if (!rdio || !token || !token->next)
+		return (false);
+	filename = ft_strdup(token->next->str);
+	if (filename == NULL)
+		return (false);
 	if (token->type == RED_IN)
 	{
 		if (rdio->infile)
 			free(rdio->infile);
-		rdio->infile = ft_strdup(token->next->str);
+		rdio->infile = filename;
 	}
-	else if (token->type == RED_OUT)
-	{
+	if (token->type == RED_OUT || token->type == APPEND)
 		if (rdio->outfile)
 			free(rdio->outfile);
-		rdio->outfile = ft_strdup(token->next->str);
-		rdio->trn_or_app = REDIR_OUT_TRUNC;
-	}
+	if (token->type == RED_OUT)
+		rdio->outfile = filename;
 	else if (token->type == APPEND)
-	{
-		if (rdio->outfile)
-			free(rdio->outfile);
-		rdio->outfile = ft_strdup(token->next->str);
-		rdio->trn_or_app = REDIR_OUT_APPEND;
-	}
+		rdio->outfile = filename;
+	return (true);
 }
 
 // Process token data
 static bool	process_token_data(t_token *token, t_command *cmd, t_data *shell)
 {
 	if (token->type == COMMAND || (token->type == ARG && !cmd->command))
-	{
-		if (!get_cmd(cmd, token, shell))
-			return (false);
-	}
+		return (fill_command(cmd, token, shell));
 	else if (token->type == ARG)
-		get_arg(cmd, token);
-	else if (is_redirection(token))
-		handle_redirection(cmd->rdio, token);
-	return (true);
+		return (fill_args(cmd, token));
+	else if (token->type >= RED_IN)
+	{
+		if (cmd->rdio == NULL)
+			cmd->rdio = create_redirect();
+		return (handle_redirection(cmd->rdio, token));
+	}
+	return (false);
 }
 
 // Add a command node to the back of the command list
@@ -99,7 +112,9 @@ bool	final_parse(t_data *shell)
 	t_command	*cmd;
 	t_token		*token;
 
-	shell->command = create_empty_command();
+	shell->command = create_command();
+	if (shell->command == NULL)
+		return (false);
 	cmd = shell->command;
 	token = shell->lst;
 	while (token)
@@ -107,18 +122,20 @@ bool	final_parse(t_data *shell)
 		if (token->type == PIPE)
 		{
 			cmd->has_pipe_output = true;
-			add_command_back(&shell->command, create_empty_command());
+			add_command_back(&shell->command, create_command());
 			cmd = cmd->next;
+			if (cmd == NULL)
+				return (false);
 		}
 		else
 		{
 			if (!process_token_data(token, cmd, shell))
 				return (false);
-			if (is_redirection(token))
+			if (token->type >= RED_IN)
 				token = token->next;
 		}
 		if (token)
 			token = token->next;
 	}
-	return (true);
+	return (lstdel_token(shell->lst), true);
 }

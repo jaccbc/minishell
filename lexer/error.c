@@ -6,14 +6,14 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 17:42:30 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/28 16:03:42 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/11/01 01:57:51 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 // Function to print error messages with optional quotes around the detail
-void	err_msg(char *msg, char *detail, bool in_quotes)
+static void	err_msg(char *msg, char *detail, bool in_quotes)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	ft_putstr_fd(msg, STDERR_FILENO);
@@ -28,22 +28,22 @@ void	err_msg(char *msg, char *detail, bool in_quotes)
 }
 
 // verifica se existem separadores seguidos
-bool	consecutive_sep(t_token *lst)
+static bool	consecutive_sep(t_token *lst)
 {
-	t_token	*current;
-
-	current = lst;
-	while (current)
+	while (lst)
 	{
-		if ((current->prev && ((current->prev->type > PIPE
-						&& current->type >= PIPE))) || (!current->next
-				&& current->type == PIPE))
-			return (err_msg("syntax error near unexpected token ", current->str,
-					true), true);
-		else if (current->type > PIPE && !current->next)
-			return (err_msg("syntax error near unexpected token ", "newline",
-					true), true);
-		current = current->next;
+		if ((lst->prev && ((lst->prev->type > PIPE && lst->type >= PIPE)))
+			|| (!lst->next && lst->type == PIPE))
+		{
+			err_msg("syntax error near unexpected token ", lst->str, true);
+			return (true);
+		}
+		else if (lst->type > PIPE && !lst->next)
+		{
+			err_msg("syntax error near unexpected token ", "newline", true);
+			return (true);
+		}
+		lst = lst->next;
 	}
 	return (false);
 }
@@ -51,7 +51,7 @@ bool	consecutive_sep(t_token *lst)
 // verifica se existem quotes que foram deixados abertos, e recategoriza
 // determinado token que esteja em double quotes e que contenha uma variável
 // real lá dentro.
-bool	quotes_verify(t_token *current)
+static bool	quotes_verify(t_token *current)
 {
 	bool	s_quotes;
 	bool	d_quotes;
@@ -78,7 +78,7 @@ bool	quotes_verify(t_token *current)
 }
 
 // lança o erro correspondente para unclosed quotes
-bool	unclosed_quotes(t_token *current)
+static bool	unclosed_quotes(t_token *current)
 {
 	if (current->s_quotes)
 		err_msg("unexpected EOF while looking for matching ", "\'", true);
@@ -91,15 +91,14 @@ bool	unclosed_quotes(t_token *current)
 // analisa alguns erros de sintaxe e recorre
 bool	syntax_error(t_token *lst)
 {
-	t_token	*current;
-
-	current = lst;
-	if (current->type == PIPE)
-		return (err_msg("syntax error near unexpected token ", current->str,
-				true), false);
-	if (consecutive_sep(current))
+	if (lst->type == PIPE)
+	{
+		err_msg("syntax error near unexpected token ", lst->str, true);
 		return (false);
-	if (quotes_verify(current))
-		return (unclosed_quotes(current));
+	}
+	if (consecutive_sep(lst))
+		return (false);
+	if (quotes_verify(lst))
+		return (unclosed_quotes(lst));
 	return (true);
 }

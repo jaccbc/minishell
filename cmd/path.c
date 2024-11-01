@@ -6,33 +6,33 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:01:33 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/28 20:09:33 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/10/31 15:46:57 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 // Get the PATH variable from the environment
-void	free_array(char **arr)
+static void	free_splits(char **path_split)
 {
 	int	i;
 
 	i = -1;
-	while (arr[++i])
-		free(arr[i]);
-	free(arr);
+	while (path_split[++i])
+		free(path_split[i]);
+	free(path_split);
 }
 
-static char	*getenv_from_env(char **env, const char *name)
+static char	*getenv_path(char **env, const char *var)
 {
 	int	i;
 	int	len;
 
-	len = ft_strlen(name);
+	len = ft_strlen(var);
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], name, len) == 0 && env[i][len] == '=')
+		if (ft_strncmp(env[i], var, len) == 0 && env[i][len] == '=')
 			return (env[i] + len + 1);
 		i++;
 	}
@@ -40,42 +40,45 @@ static char	*getenv_from_env(char **env, const char *name)
 }
 
 // Concatenate strings and free the first
-char	*ft_strjoin_free(char *s1, char *s2)
+static char	*getfull_path(char *path, char *file)
 {
-	char	*joined_str;
+	char	*full_path;
 
-	joined_str = ft_strjoin(s1, s2);
-	if (!joined_str)
+	if (path == NULL)
 		return (NULL);
-	free(s1);
-	return (joined_str);
+	full_path = ft_strjoin(path, file);
+	free(path);
+	if (full_path == NULL)
+		return (NULL);
+	return (full_path);
 }
 
 // Fill command path by searching PATH environment variable
 void	fill_command_path(t_command *cmd, t_data *shell)
 {
-	char	**paths;
-	char	*test_path;
+	char	**path_split;
+	char	*full_path;
 	char	*path_env;
 	int		i;
 
-	i = 0;
-	path_env = getenv_from_env(shell->env, "PATH");
-	if (!cmd || !cmd->command || !path_env)
+	if (!cmd || !cmd->command)
 		return ;
-	paths = ft_split(path_env, ':');
-	if (!paths)
+	path_env = getenv_path(shell->env, "PATH");
+	if (!path_env)
 		return ;
-	while (paths[i])
+	path_split = ft_split(path_env, ':');
+	if (!path_split)
+		return ;
+	i = -1;
+	while (path_split[++i])
 	{
-		test_path = ft_strjoin_free(ft_strjoin(paths[i], "/"), cmd->command);
-		if (access(test_path, F_OK) == 0)
+		full_path = getfull_path(ft_strjoin(path_split[i], "/"), cmd->command);
+		if (access(full_path, F_OK) == 0)
 		{
-			cmd->path = test_path;
+			cmd->path = full_path;
 			break ;
 		}
-		free(test_path);
-		i++;
+		free(full_path);
 	}
-	free_array(paths);
+	free_splits(path_split);
 }

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/18 16:59:42 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/29 17:14:33 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,8 @@ static int	get_type(const char *s, t_token *last)
 		return (RED_OUT);
 	if (!last)
 		return (COMMAND);
-	while (*s)
-	{
-		if (last->type != PIPE)
-			return (ARG);
-		++s;
-	}
+	if (last->type != PIPE)
+		return (ARG);
 	return (COMMAND);
 }
 

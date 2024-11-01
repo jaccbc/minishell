@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/06 02:46:52 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/10/31 23:10:37 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,16 @@
 // Print command list for debugging, including pipe output status
 void print_command_list(t_command *cmd_list)
 {
-    t_command *current;
-    int i;
+    t_command	*current;
+    int			i;
 
     current = cmd_list;
     i = 0;
     printf("*** DEBUG PRINT_COMMAND_LIST ***\n");
     while (current != NULL)
     {
-        printf("COMMAND NODE Nº%d\n[%p]\n", ++i, (void *)current);
-        printf("command=[%s]\n", current->command ? current->command : "(null)");
-
-        // Print arguments
+        printf("COMMAND NODE Nº%d\n[%p]\n", ++i, current);
+        printf("command=[%s]\n", current->command);
         printf("args=[");
         if (current->args)
         {
@@ -36,38 +34,24 @@ void print_command_list(t_command *cmd_list)
         else
             printf("(null)");
         printf("]\n");
-
         // Print the command path safely
-        printf("path=[%s]\n", current->path ? current->path : "(null)");
-
-        // Print infile redirection
-        printf("infile=[");
-        if (current->rdio->infile)
-            printf("{name=\"%s\"}\n", current->rdio->infile);
-        else
-            printf("(null)");
-        printf("]\n");
-
-        // Print outfile redirection with type
-        printf("outfile=[");
-        if (current->rdio->outfile)
-        {
-            const char *type_str = (current->rdio->trn_or_app == REDIR_OUT_TRUNC) ? "truncate" : "append";
-            printf("{name=\"%s\", type=[%s]} ", current->rdio->outfile, type_str);
-        }
-        else
-            printf("(null)");
-        printf("]\n");
-
-        printf("pipe_fd[0]=[%d]\n", current->pipe_fd[0]);
-        printf("pipe_fd[1]=[%d]\n", current->pipe_fd[1]);
-        printf("has_pipe_output=[%s]\n", current->has_pipe_output ? "true" : "false");
-
-        // Print linked list pointers
-        printf("prev=[%p]\n", (void *)current->prev);
-        printf("next=[%p]\n\n", (void *)current->next);
-
-        current = current->next;
+        printf("path=[%s]\n", current->path);
+        if (current->rdio)
+		{
+			// Print infile redirection
+			printf("infile=[");
+			printf("{name=\"%s\"}]\n", current->rdio->infile);
+			// Print outfile redirection with type
+			printf("outfile=[");
+			//printf("{name=\"%s\", type=[%s]}]", current->rdio->outfile, type_str);
+			printf("pipe_fd[0]=[%d]\n", current->pipe_fd[0]);
+			printf("pipe_fd[1]=[%d]\n", current->pipe_fd[1]);
+			printf("has_pipe_output=[%s]\n", current->has_pipe_output ? "true" : "false");
+		}
+		// Print linked list pointers
+		printf("prev=[%p]\n", current->prev);
+		printf("next=[%p]\n\n", current->next);
+		current = current->next;
     }
     printf("*** DEBUG PRINT_COMMAND_LIST END ***\n");
 }
