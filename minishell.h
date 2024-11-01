@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/01 01:44:46 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/01 02:42:08 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,8 @@ bool		check_files(t_token *lst);
 // cmd
 bool		final_parse(t_data *shell);
 void		fill_command_path(t_command *cmd, t_data *shell);
-bool		fill_args(t_command *cmd, t_token *token);
-bool		fill_command(t_command *cmd, t_token *token, t_data *shell);
+bool		fill_args(t_command **cmd, t_token *token);
+bool		fill_command(t_command **cmd, t_token *token, t_data *shell);
 // utils
 void		minishell_errmsg(char *filename, char *error_message);
 char		**ft_realloc(char **array, size_t new_size);

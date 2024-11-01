@@ -6,17 +6,20 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:06:05 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/01 01:16:14 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/01 02:50:10 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 // Get the command string and initialize args with command name
-bool	fill_command(t_command *cmd, t_token *token, t_data *shell)
+bool	fill_command(t_command **command, t_token *token, t_data *shell)
 {
-	if (!cmd || !token)
+	t_command	*cmd;
+
+	if (!command || !token)
 		return (false);
+	cmd = *command;
 	cmd->command = ft_strdup(token->str);
 	if (cmd->command == NULL)
 		return (false);
@@ -32,13 +35,15 @@ bool	fill_command(t_command *cmd, t_token *token, t_data *shell)
 }
 
 // Add argument to the t_command struct's args field
-bool	fill_args(t_command *cmd, t_token *token)
+bool	fill_args(t_command **command, t_token *token)
 {
-	int	i;
+	t_command	*cmd;
+	int			i;
 
 	i = 0;
-	if (!cmd || !token)
+	if (!command || !token)
 		return (false);
+	cmd = *command;
 	if (cmd->args)
 		while (cmd->args[i])
 			i++;
@@ -50,13 +55,6 @@ bool	fill_args(t_command *cmd, t_token *token)
 		return (false);
 	cmd->args[i + 1] = NULL;
 	return (true);
-}
-
-// Determine if the token is a redirection
-bool	is_redirection(t_token *token)
-{
-	return (token->type == RED_IN || token->type == RED_OUT
-		|| token->type == APPEND);
 }
 
 void	lstdel_command(t_command *lst)

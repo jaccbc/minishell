@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/31 23:05:07 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/01 02:55:34 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static bool	verify_command(t_command *cmd, bool *nl)
 	if (ft_strncmp(cmd->command, "echo", ft_strlen(cmd->command)))
 		return (false);
 	if (cmd->args[0] && cmd->args[1])
-		if (ft_strncmp(cmd->args[1], "-n", ft_strlen(cmd->args[1])))
+		if (ft_strncmp(cmd->args[1], "-n", ft_strlen(cmd->args[1])) == 0)
 			*nl = false;
 	return (true);
 }
@@ -33,15 +33,15 @@ int	echo(t_command *cmd)
 	if (verify_command(cmd, &nl) == false)
 		return (EXIT_FAILURE);
 	i = 1;
-	if (nl)
+	if (nl == false)
 		++i;
-	while (cmd)
+	while (cmd->args[i])
 	{
 		ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
 		if (cmd->args[++i])
 			ft_putstr_fd(" ", STDOUT_FILENO);
 	}
 	if (nl)
-		write(STDOUT_FILENO, "\n", 1);
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	return (EXIT_SUCCESS);
 }

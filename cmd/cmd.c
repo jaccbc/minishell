@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/01 01:25:28 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/01 02:43:23 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ static bool	handle_redirection(t_redirect *rdio, t_token *token)
 static bool	process_token_data(t_token *token, t_command *cmd, t_data *shell)
 {
 	if (token->type == COMMAND || (token->type == ARG && !cmd->command))
-		return (fill_command(cmd, token, shell));
+		return (fill_command(&cmd, token, shell));
 	else if (token->type == ARG)
-		return (fill_args(cmd, token));
+		return (fill_args(&cmd, token));
 	else if (token->type >= RED_IN)
 	{
 		if (cmd->rdio == NULL)
