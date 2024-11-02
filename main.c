@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:26:37 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/01 01:38:33 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 03:56:38 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static bool	init_env(t_data *shell, char **env)
 }
 
 //inicializa a leitura da string do user_input
-static bool	init_shell(t_data *shell, char *user_input)
+static bool	init_prompt(t_data *shell, char *user_input)
 {
 	shell->lst = tokenize(user_input);
 	if (shell->lst == NULL)
@@ -64,19 +64,23 @@ int	main(int argc, char **argv, char **env)
 
 	if (!(argc == 3 || argc == 1))
 		return (-1);
-	if (init_env(&shell, env) == false)
+	if (init_env(ft_memset(&shell, 0, sizeof(shell)), env) == false)
 		return (1);
 	if (argc == 3)
 		if (ft_strncmp(argv[1], "-c", ft_strlen(argv[1])) == 0)
-			if (init_shell(&shell, argv[2]))
+			if (init_prompt(&shell, argv[2]))
 				return (0);
 	while (argc == 1)
 	{
 		shell.user_input = readline(PROMPT);
-		init_shell(&shell, shell.user_input);
+		if (shell.user_input == NULL)
+			ft_exit(&shell);
+		init_prompt(&shell, shell.user_input);
 		if (*shell.user_input)
 			add_history(shell.user_input);
 		free(shell.user_input);
+		shell.lst = NULL;
+		shell.command = NULL;
 	}
 	return (1);
 }

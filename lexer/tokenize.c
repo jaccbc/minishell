@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:45:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/29 17:14:33 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/01 21:04:35 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ static int	add_split(const char *s, size_t len, t_token **lst)
 	if (!new->str)
 		return (free(new), 0);
 	new->type = get_type(new->str, lstiter_token(*lst, DOWN, 0));
+	new->next = NULL;
+	new->prev = NULL;
 	lstadd_token(lst, new);
 	return (ft_strlen(new->str));
 }
@@ -91,7 +93,8 @@ static int	split(int type, const char *s, t_token **lst)
 		{
 			if (is_type(QUOTE, str))
 				return (split_quote(s, str, lst));
-			++str;
+			if (*(++str) == '\n')
+				break ;
 		}
 		return (add_split(s, str - s, lst));
 	}

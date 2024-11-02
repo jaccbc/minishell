@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2024/10/22 02:42:02 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 03:29:46 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void	*create_buffer(char *str, char **env, char *var, char **expand)
 //1º while loop copia tudo ate encontrar o $ da variavel
 //2º while loop copia a expansao se existir
 //3º while loop copia o resto da string
-static void	expander(char **s, char **env, char *var)
+void	expander(char **s, char **env, char *var)
 {
 	char	*str;
 	char	*expand;
@@ -92,33 +92,32 @@ static void	expander(char **s, char **env, char *var)
 	*s = new;
 }
 
-// Expande as variáveis em shell->lst
-// varifica is_type(VAR), expande e recomeça o check com a string atualizada
-void	var_expander(t_data *shell)
+//função responsável por apagar os dollars não expansiveis (fora de quotes)
+void	del_dollar(t_token *lst)
 {
+	char	*q;
 	int		i;
-	t_token	*t;
 
-	t = shell->lst;
-	while (t)
+	while (lst)
 	{
 		i = 0;
-		while (t->str[i] && ft_strchr(&t->str[i], '$'))
+		while (lst->str[i] && ft_strchr(&lst->str[i], '$'))
 		{
-			if (t->str[i] == '\'' && is_type(QUOTE, &t->str[i]))
-				while (t->str[++i])
-					if (t->str[i] == '\'')
+			q = &lst->str[i];
+			if (is_type(QUOTE, &lst->str[i]))
+				while (lst->str[++i])
+					if (lst->str[i] == *q)
 						break ;
-			if (t->str[i] == '\"' && is_type(QUOTE, &t->str[i]))
-				while (t->str[i++])
-					if (t->str[i] == '\"' || is_type(VAR, &t->str[i]))
-						break ;
-			if (is_type(VAR, &t->str[i++]))
+			if (lst->str[i++] == '$')
 			{
-				expander(&t->str, shell->env, &t->str[i]);
-				continue ;
+				if (lst->str[i] != '\0')
+				{
+					q = &lst->str[i - 1];
+					while (*q)
+						*q++ = lst->str[i++];
+				}
 			}
 		}
-		t = t->next;
+		lst = lst->next;
 	}
 }

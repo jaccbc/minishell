@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:06:05 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/01 02:50:10 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 02:43:12 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ void	lstdel_command(t_command *lst)
 		free(lst->path);
 		if (lst->rdio)
 		{
+			if (lst->rdio->heredoc)
+				unlink(lst->rdio->infile);
 			free(lst->rdio->infile);
 			free(lst->rdio->outfile);
 			free(lst->rdio);

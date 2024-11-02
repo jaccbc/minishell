@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/01 02:42:08 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 03:24:01 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_redirect
 {
 	char					*infile;
 	char					*outfile;
+	bool					heredoc;
 	int						fd_in;
 	int						fd_out;
 }							t_redirect;
@@ -97,7 +98,7 @@ bool		is_type(int type, const char *s);
 bool		syntax_error(t_token *lst);
 bool		del_quote(t_token *lst);
 void		del_dollar(t_token *lst);
-void		var_expander(t_data *shell);
+void		expander(char **s, char **env, char *var);
 bool		check_syntax(t_data *shell);
 bool		check_files(t_token *lst);
 // cmd
@@ -105,6 +106,7 @@ bool		final_parse(t_data *shell);
 void		fill_command_path(t_command *cmd, t_data *shell);
 bool		fill_args(t_command **cmd, t_token *token);
 bool		fill_command(t_command **cmd, t_token *token, t_data *shell);
+bool		parse_heredoc(t_redirect *rdio, t_token *lst, char **env);
 // utils
 void		minishell_errmsg(char *filename, char *error_message);
 char		**ft_realloc(char **array, size_t new_size);

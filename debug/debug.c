@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/10/31 23:10:37 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 03:41:55 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,40 +15,37 @@
 // Print command list for debugging, including pipe output status
 void print_command_list(t_command *cmd_list)
 {
-    t_command	*current;
-    int			i;
+	t_command	*current;
+	int			i;
 
-    current = cmd_list;
-    i = 0;
-    printf("*** DEBUG PRINT_COMMAND_LIST ***\n");
-    while (current != NULL)
-    {
-        printf("COMMAND NODE Nº%d\n[%p]\n", ++i, current);
-        printf("command=[%s]\n", current->command);
-        printf("args=[");
-        if (current->args)
-        {
-            for (int j = 0; current->args[j] != NULL; j++)
-                printf("\"%s\" ", current->args[j]);
-        }
-        else
-            printf("(null)");
-        printf("]\n");
-        // Print the command path safely
-        printf("path=[%s]\n", current->path);
-        if (current->rdio)
+	current = cmd_list;
+	i = 0;
+	printf("*** DEBUG PRINT_COMMAND_LIST ***\n");
+	while (current != NULL)
+	{
+		printf("COMMAND NODE Nº%d\n[%p]\n", ++i, current);
+		printf("command=[%s]\n", current->command);
+		printf("args=[");
+		if (current->args)
 		{
-			// Print infile redirection
-			printf("infile=[");
-			printf("{name=\"%s\"}]\n", current->rdio->infile);
-			// Print outfile redirection with type
-			printf("outfile=[");
-			//printf("{name=\"%s\", type=[%s]}]", current->rdio->outfile, type_str);
-			printf("pipe_fd[0]=[%d]\n", current->pipe_fd[0]);
-			printf("pipe_fd[1]=[%d]\n", current->pipe_fd[1]);
-			printf("has_pipe_output=[%s]\n", current->has_pipe_output ? "true" : "false");
+			for (int j = 0; current->args[j] != NULL; j++)
+				printf("\"%s\" ", current->args[j]);
 		}
-		// Print linked list pointers
+		else
+			printf("(null)");
+		printf("]\n");
+		printf("path=[%s]\n", current->path);
+		printf("has_pipe_output=[%s]\n", current->has_pipe_output ? "true" : "false");
+		printf("pipe_fd[0]=[%d]\n", current->pipe_fd[0]);
+		printf("pipe_fd[1]=[%d]\n", current->pipe_fd[1]);
+		if (current->rdio)
+		{
+			printf("infile=[%s]\n", current->rdio->infile);
+			printf("outfile=[%s]\n", current->rdio->outfile);
+			printf("heredoc=[%s]\n", current->rdio->heredoc ? "true" : "false");
+			printf("fd_in=[%d]\n", current->rdio->fd_in);
+			printf("fd_out=[%d]\n", current->rdio->fd_out);
+		}
 		printf("prev=[%p]\n", current->prev);
 		printf("next=[%p]\n\n", current->next);
 		current = current->next;

@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/01 02:43:23 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 04:05:15 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static t_redirect	*create_redirect(void)
 {
 	t_redirect	*new;
 
-	new = malloc(sizeof(t_redirect));
+	new = ft_calloc(1, sizeof(t_redirect));
 	if (new == NULL)
 		return (NULL);
 	new->infile = NULL;
@@ -82,6 +82,8 @@ static bool	process_token_data(t_token *token, t_command *cmd, t_data *shell)
 	{
 		if (cmd->rdio == NULL)
 			cmd->rdio = create_redirect();
+		if (token->type == HEREDOC)
+			return (parse_heredoc(cmd->rdio, token->next, shell->env));
 		return (handle_redirection(cmd->rdio, token));
 	}
 	return (false);
@@ -109,27 +111,23 @@ static void	add_command_back(t_command **head, t_command *new)
 // Parse tokens and construct a command list within shell 
 bool	final_parse(t_data *shell)
 {
-	t_command	*cmd;
 	t_token		*token;
 
 	shell->command = create_command();
 	if (shell->command == NULL)
 		return (false);
-	cmd = shell->command;
 	token = shell->lst;
 	while (token)
 	{
 		if (token->type == PIPE)
 		{
-			cmd->has_pipe_output = true;
+			shell->command->has_pipe_output = true;
 			add_command_back(&shell->command, create_command());
-			cmd = cmd->next;
-			if (cmd == NULL)
-				return (false);
+			shell->command = shell->command->next;
 		}
 		else
 		{
-			if (!process_token_data(token, cmd, shell))
+			if (!process_token_data(token, shell->command, shell))
 				return (false);
 			if (token->type >= RED_IN)
 				token = token->next;
