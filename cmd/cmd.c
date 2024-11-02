@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/02 04:05:15 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 19:01:14 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,22 +112,24 @@ static void	add_command_back(t_command **head, t_command *new)
 bool	final_parse(t_data *shell)
 {
 	t_token		*token;
+	t_command	*cmd;
 
 	shell->command = create_command();
 	if (shell->command == NULL)
 		return (false);
 	token = shell->lst;
+	cmd = shell->command;
 	while (token)
 	{
 		if (token->type == PIPE)
 		{
-			shell->command->has_pipe_output = true;
+			cmd->has_pipe_output = true;
 			add_command_back(&shell->command, create_command());
-			shell->command = shell->command->next;
+			cmd = cmd->next;
 		}
 		else
 		{
-			if (!process_token_data(token, shell->command, shell))
+			if (!process_token_data(token, cmd, shell))
 				return (false);
 			if (token->type >= RED_IN)
 				token = token->next;
