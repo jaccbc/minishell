@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 03:24:01 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 19:21:35 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,8 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdbool.h>
-# include <stdio.h>
-# include <stdlib.h>
 # include <string.h>
+# include <signal.h>
 
 # define PROMPT "MINISHELL$ "
 
@@ -111,6 +110,8 @@ bool		parse_heredoc(t_redirect *rdio, t_token *lst, char **env);
 void		minishell_errmsg(char *filename, char *error_message);
 char		**ft_realloc(char **array, size_t new_size);
 void		lstdel_command(t_command *cmd);
+// signal
+bool		sighandler(void);
 // debug
 void		print_list(t_token *lst);
 char		*token_name(int type);

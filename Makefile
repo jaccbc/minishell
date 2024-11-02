@@ -6,7 +6,7 @@
 #    By: joandre- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2024/10/21 01:36:27 by joandre-         ###   ########.fr        #
+#    Updated: 2024/11/02 19:20:50 by joandre-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,8 @@ LEX = $(shell find lexer -name "*.c")
 BLT = $(shell find builtin -name "*.c")
 VAR = $(shell find var -name "*.c")
 CMD = $(shell find cmd -name "*.c")
-SRC = $(BLT) $(LEX) $(DBG) $(VAR) $(CMD)
+SIG = $(shell find signal -name "*.c")
+SRC = $(BLT) $(LEX) $(DBG) $(VAR) $(CMD) $(SIG)
 OBJ = $(SRC:.c=.o)
 
 

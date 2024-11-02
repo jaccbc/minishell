@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:26:37 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 03:56:38 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 19:19:11 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	main(int argc, char **argv, char **env)
 {
 	t_data	shell;
 
-	if (!(argc == 3 || argc == 1))
+	if (!(argc == 3 || argc == 1) || !sighandler())
 		return (-1);
 	if (init_env(ft_memset(&shell, 0, sizeof(shell)), env) == false)
 		return (1);
