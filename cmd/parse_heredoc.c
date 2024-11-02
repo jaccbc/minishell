@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 04:09:43 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/02 05:43:20 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ static bool	get_doc(char *delimiter, t_redirect *rdio, char **env)
 		return (free(delimiter), false);
 	while (1)
 	{
+		ft_putstr_fd("> ", STDIN_FILENO);
 		line = get_next_line(STDIN_FILENO);
 		if (!line || !(*line))
 			return (free(delimiter), false);
