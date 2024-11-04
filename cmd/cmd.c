@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/04 04:05:05 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/04 21:22:58 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,15 @@ bool	final_parse(t_data *shell)
 			add_command_back(&shell->command, create_command());
 			cmd = cmd->next;
 		}
-		else if (!process_token_data(token, cmd, shell))
-			return (false);
-		token = token->next;
+		else
+		{
+			if (!process_token_data(token, cmd, shell))
+				return (false);
+			if (token->type >= RED_IN)
+				token = token->next;
+		}
+		if (token)
+			token = token->next;
 	}
 	return (lstdel_token(shell->lst), true);
 }
