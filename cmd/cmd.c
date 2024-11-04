@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/02 19:01:14 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/04 04:05:05 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,26 +89,7 @@ static bool	process_token_data(t_token *token, t_command *cmd, t_data *shell)
 	return (false);
 }
 
-// Add a command node to the back of the command list
-static void	add_command_back(t_command **head, t_command *new)
-{
-	t_command	*last;
-
-	if (!head || !new)
-		return ;
-	if (!*head)
-		*head = new;
-	else
-	{
-		last = *head;
-		while (last->next)
-			last = last->next;
-		last->next = new;
-		new->prev = last;
-	}
-}
-
-// Parse tokens and construct a command list within shell 
+// Parse tokens and construct a command list within shell
 bool	final_parse(t_data *shell)
 {
 	t_token		*token;
@@ -127,15 +108,9 @@ bool	final_parse(t_data *shell)
 			add_command_back(&shell->command, create_command());
 			cmd = cmd->next;
 		}
-		else
-		{
-			if (!process_token_data(token, cmd, shell))
-				return (false);
-			if (token->type >= RED_IN)
-				token = token->next;
-		}
-		if (token)
-			token = token->next;
+		else if (!process_token_data(token, cmd, shell))
+			return (false);
+		token = token->next;
 	}
 	return (lstdel_token(shell->lst), true);
 }

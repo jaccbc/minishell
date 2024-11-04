@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 19:21:35 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/04 04:12:58 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,12 @@ typedef struct s_data
 // builtin
 int			echo(t_command *cmd);
 int			ft_exit(t_data *shell);
+// utils
+void		minishell_errmsg(char *filename, char *error_message);
+char		**ft_realloc(char **array, size_t new_size);
+void		lstdel_command(t_command *cmd);
+void		add_command_back(t_command **cmd, t_command *new);
+
 // lexer
 t_token		*tokenize(char *s);
 t_token		*lstiter_token(t_token *lst, int type, size_t i);
@@ -106,10 +112,6 @@ void		fill_command_path(t_command *cmd, t_data *shell);
 bool		fill_args(t_command **cmd, t_token *token);
 bool		fill_command(t_command **cmd, t_token *token, t_data *shell);
 bool		parse_heredoc(t_redirect *rdio, t_token *lst, char **env);
-// utils
-void		minishell_errmsg(char *filename, char *error_message);
-char		**ft_realloc(char **array, size_t new_size);
-void		lstdel_command(t_command *cmd);
 // signal
 bool		sighandler(void);
 // debug

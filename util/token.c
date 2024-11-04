@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/01 18:09:12 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/04 04:16:20 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,23 +85,4 @@ bool	is_type(int type, const char *s)
 	if (type == VAR)
 		return (*s == '$' && (ft_isalnum(*(s + 1)) || *(s + 1) == '_'));
 	return (false);
-}
-
-char	**ft_realloc(char **array, size_t new_size)
-{
-	char	**new_array;
-	size_t	i;
-
-	new_array = malloc(sizeof(char *) * new_size);
-	if (!new_array)
-		return (NULL);
-	i = 0;
-	while (array && array[i] && i < new_size - 1)
-	{
-		new_array[i] = array[i];
-		i++;
-	}
-	new_array[i] = NULL;
-	free(array);
-	return (new_array);
 }

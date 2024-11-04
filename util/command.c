@@ -1,16 +1,54 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cmd_utils.c                                        :+:      :+:    :+:   */
+/*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
+/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/28 20:06:05 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/02 02:43:12 by joandre-         ###   ########.fr       */
+/*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
+/*   Updated: 2024/11/04 04:06:40 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+char	**ft_realloc(char **array, size_t new_size)
+{
+	char	**new_array;
+	size_t	i;
+
+	new_array = malloc(sizeof(char *) * new_size);
+	if (!new_array)
+		return (NULL);
+	i = 0;
+	while (array && array[i] && i < new_size - 1)
+	{
+		new_array[i] = array[i];
+		i++;
+	}
+	new_array[i] = NULL;
+	free(array);
+	return (new_array);
+}
+
+// Add a command node to the back of the command list
+void	add_command_back(t_command **head, t_command *new)
+{
+	t_command	*last;
+
+	if (!head || !new)
+		return ;
+	if (!*head)
+		*head = new;
+	else
+	{
+		last = *head;
+		while (last->next)
+			last = last->next;
+		last->next = new;
+		new->prev = last;
+	}
+}
 
 // Get the command string and initialize args with command name
 bool	fill_command(t_command **command, t_token *token, t_data *shell)

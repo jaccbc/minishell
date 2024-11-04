@@ -6,11 +6,20 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 05:43:20 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/04 04:25:57 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+static void	null_errmsg(int i, char *delimiter)
+{
+	ft_putstr_fd("minishell: warning: here-document at line ", STDERR_FILENO);
+	ft_putnbr_fd(i, STDERR_FILENO);
+	ft_putstr_fd(" delimited by end-of-file (wanted `", STDERR_FILENO);
+	write(STDERR_FILENO, delimiter, ft_strlen(delimiter) - 1);
+	ft_putstr_fd("')\n", STDERR_FILENO);
+}
 
 static void	var_lookup(char **line, char **env)
 {
@@ -35,30 +44,41 @@ static void	var_lookup(char **line, char **env)
 	}
 }
 
-static bool	get_doc(char *delimiter, t_redirect *rdio, char **env)
+static void	get_user_input(t_redirect *rdio, char *delimiter, char **env)
 {
-	char	*line;
+	static int	i = 0;
+	char		*line;
 
+	while (1)
+	{
+		line = readline("> ");
+		if (line == NULL)
+		{
+			null_errmsg(i, delimiter);
+			break ;
+		}
+		var_lookup(&line, env);
+		if (*line && ft_strncmp(line, delimiter, ft_strlen(line)) == 0)
+			break ;
+		ft_putstr_fd(line, rdio->fd_in);
+		free(line);
+		++i;
+	}
+	free(line);
+	i = 0;
+}
+
+static bool	fill_heredoc(char *delimiter, t_redirect *rdio, char **env)
+{
 	if (!delimiter || !rdio || !env)
 		return (free(delimiter), false);
 	rdio->infile = ft_strdup(".temp_heredoc");
 	rdio->fd_in = open(rdio->infile, O_CREAT | O_RDWR | O_TRUNC, 0664);
 	if (rdio->fd_in < 0)
 		return (free(delimiter), false);
-	while (1)
-	{
-		ft_putstr_fd("> ", STDIN_FILENO);
-		line = get_next_line(STDIN_FILENO);
-		if (!line || !(*line))
-			return (free(delimiter), false);
-		var_lookup(&line, env);
-		if (ft_strncmp(line, delimiter, ft_strlen(line)) == 0)
-			break ;
-		free(line);
-	}
+	get_user_input(rdio, delimiter, env);
 	close(rdio->fd_in);
 	rdio->fd_in = -1;
-	free(line);
 	return (free(delimiter), true);
 }
 
@@ -68,7 +88,7 @@ bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
 		return (false);
 	if (rdio->fd_in != -1)
 		close(rdio->fd_in);
-	if (get_doc(ft_strjoin(lst->str, "\n"), rdio, env) == false)
+	if (fill_heredoc(ft_strjoin(lst->str, "\n"), rdio, env) == false)
 		return (false);
 	rdio->heredoc = true;
 	return (true);

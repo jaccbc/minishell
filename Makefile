@@ -6,7 +6,7 @@
 #    By: joandre- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2024/11/02 19:20:50 by joandre-         ###   ########.fr        #
+#    Updated: 2024/11/04 04:15:10 by joandre-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ BLT = $(shell find builtin -name "*.c")
 VAR = $(shell find var -name "*.c")
 CMD = $(shell find cmd -name "*.c")
 SIG = $(shell find signal -name "*.c")
-SRC = $(BLT) $(LEX) $(DBG) $(VAR) $(CMD) $(SIG)
+UTL = $(shell find util -name "*.c")
+SRC = $(UTL) $(BLT) $(LEX) $(DBG) $(VAR) $(CMD) $(SIG)
 OBJ = $(SRC:.c=.o)
 
 

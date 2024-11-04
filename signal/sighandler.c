@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 19:04:31 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 19:52:16 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/03 01:00:24 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static void	signl_prompt(int signum)
 	if (signum == SIGINT)
 	{
 		ft_putchar_fd('\n', STDIN_FILENO);
+		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 	}
