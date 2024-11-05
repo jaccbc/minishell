@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/04 04:16:20 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/05 04:54:02 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,16 @@ bool	is_type(int type, const char *s)
 	if (type == VAR)
 		return (*s == '$' && (ft_isalnum(*(s + 1)) || *(s + 1) == '_'));
 	return (false);
+}
+
+bool	ft_strcmp(char *line, char *delimiter)
+{
+	if (!line || !delimiter)
+		return (false);
+	if (ft_strlen(line) != ft_strlen(delimiter))
+		return (false);
+	while (*line && *delimiter)
+		if (*line++ != *delimiter++)
+			return (false);
+	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/04 04:25:57 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/05 04:55:26 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ static void	get_user_input(t_redirect *rdio, char *delimiter, char **env)
 			break ;
 		}
 		var_lookup(&line, env);
-		if (*line && ft_strncmp(line, delimiter, ft_strlen(line)) == 0)
-			break ;
+		if (*line && ft_strcmp(line, delimiter))
+				break ;
 		ft_putstr_fd(line, rdio->fd_in);
 		free(line);
 		++i;
@@ -71,15 +71,15 @@ static void	get_user_input(t_redirect *rdio, char *delimiter, char **env)
 static bool	fill_heredoc(char *delimiter, t_redirect *rdio, char **env)
 {
 	if (!delimiter || !rdio || !env)
-		return (free(delimiter), false);
+		return (false);
 	rdio->infile = ft_strdup(".temp_heredoc");
 	rdio->fd_in = open(rdio->infile, O_CREAT | O_RDWR | O_TRUNC, 0664);
 	if (rdio->fd_in < 0)
-		return (free(delimiter), false);
+		return (false);
 	get_user_input(rdio, delimiter, env);
 	close(rdio->fd_in);
 	rdio->fd_in = -1;
-	return (free(delimiter), true);
+	return (true);
 }
 
 bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
@@ -88,7 +88,7 @@ bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
 		return (false);
 	if (rdio->fd_in != -1)
 		close(rdio->fd_in);
-	if (fill_heredoc(ft_strjoin(lst->str, "\n"), rdio, env) == false)
+	if (fill_heredoc(lst->str, rdio, env) == false)
 		return (false);
 	rdio->heredoc = true;
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/04 04:12:58 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/05 04:55:05 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ typedef struct s_data
 int			echo(t_command *cmd);
 int			ft_exit(t_data *shell);
 // utils
+bool		ft_strcmp(char *s1, char *s2);
 void		minishell_errmsg(char *filename, char *error_message);
 char		**ft_realloc(char **array, size_t new_size);
 void		lstdel_command(t_command *cmd);
