@@ -6,11 +6,35 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:34:20 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/04 02:59:18 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/06 02:01:31 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+static void	check_heredoc_expansion(t_token *lst)
+{
+	int	i;
+
+	while (lst)
+	{
+		if (lst->type == HEREDOC)
+		{
+			lst = lst->next;
+			i = -1;
+			while (lst->str[++i])
+			{
+				if (lst->str[i] == '\'' || lst->str[i] == '\"')
+				{
+					lst->s_quotes = true;
+					lst->d_quotes = true;
+					return ;
+				}
+			}
+		}
+		lst = lst->next;
+	}
+}
 
 // Expande as variáveis em shell->lst
 // varifica is_type(VAR), expande e recomeça o check com a string atualizada
@@ -50,6 +74,8 @@ bool	check_syntax(t_data *shell)
 		return (false);
 	if (!syntax_error(shell->lst))
 		return (false);
+	print_list(shell->lst);
+	check_heredoc_expansion(shell->lst);
 	var_expander(shell);
 	del_dollar(shell->lst);
 	if (!del_quote(shell->lst))

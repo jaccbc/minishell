@@ -6,29 +6,32 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/05 04:55:26 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/06 04:02:53 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static void	null_errmsg(int i, char *delimiter)
+static void	null_errmsg(char *delimiter)
 {
-	ft_putstr_fd("minishell: warning: here-document at line ", STDERR_FILENO);
-	ft_putnbr_fd(i, STDERR_FILENO);
+	ft_putstr_fd("minishell: warning: here-document", STDERR_FILENO);
 	ft_putstr_fd(" delimited by end-of-file (wanted `", STDERR_FILENO);
-	write(STDERR_FILENO, delimiter, ft_strlen(delimiter) - 1);
+	write(STDERR_FILENO, delimiter, ft_strlen(delimiter));
 	ft_putstr_fd("')\n", STDERR_FILENO);
 }
 
-static void	var_lookup(char **line, char **env)
+static char	*var_lookup(t_token *lst, char *line, char **env)
 {
 	char	*str;
 	int		i;
 
-	if (!line || !(*line))
-		return ;
-	str = *line;
+	if (!line)
+		return (NULL);
+	str = ft_strdup(line);
+	if (str == NULL)
+		return (NULL);
+	if (lst->d_quotes && lst->s_quotes)
+		return (str);
 	i = 0;
 	while (str[i])
 	{
@@ -36,50 +39,38 @@ static void	var_lookup(char **line, char **env)
 		{
 			if (ft_isalnum(str[i]) || str[i] == '_' || str[i] == '?')
 			{
-				expander(line, env, &str[i]);
+				expander(&str, env, &str[i]);
 				i = 0;
 				continue ;
 			}
 		}
 	}
+	return (str);
 }
 
-static void	get_user_input(t_redirect *rdio, char *delimiter, char **env)
+static void	get_user_input(t_token *lst, t_redirect *rdio, char **env)
 {
-	static int	i = 0;
 	char		*line;
+	char		*str;
 
+	str = NULL;
 	while (1)
 	{
 		line = readline("> ");
 		if (line == NULL)
 		{
-			null_errmsg(i, delimiter);
+			null_errmsg(lst->str);
 			break ;
 		}
-		var_lookup(&line, env);
-		if (*line && ft_strcmp(line, delimiter))
-				break ;
-		ft_putstr_fd(line, rdio->fd_in);
+		str = var_lookup(lst, line, env);
 		free(line);
-		++i;
+		line = NULL;
+		if (*str && ft_strcmp(str, lst->str))
+			break ;
+		ft_putstr_fd(str, rdio->fd_in);
+		free(str);
 	}
-	free(line);
-	i = 0;
-}
-
-static bool	fill_heredoc(char *delimiter, t_redirect *rdio, char **env)
-{
-	if (!delimiter || !rdio || !env)
-		return (false);
-	rdio->infile = ft_strdup(".temp_heredoc");
-	rdio->fd_in = open(rdio->infile, O_CREAT | O_RDWR | O_TRUNC, 0664);
-	if (rdio->fd_in < 0)
-		return (false);
-	get_user_input(rdio, delimiter, env);
-	close(rdio->fd_in);
-	rdio->fd_in = -1;
-	return (true);
+	free(str);
 }
 
 bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
@@ -88,8 +79,15 @@ bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
 		return (false);
 	if (rdio->fd_in != -1)
 		close(rdio->fd_in);
-	if (fill_heredoc(lst->str, rdio, env) == false)
+	if (rdio->infile)
+		free(rdio->infile);
+	rdio->infile = ft_strdup(".temp_heredoc");
+	rdio->fd_in = open(rdio->infile, O_CREAT | O_RDWR | O_TRUNC, 0664);
+	if (rdio->fd_in < 0)
 		return (false);
+	get_user_input(lst, rdio, env);
+	close(rdio->fd_in);
+	rdio->fd_in = -1;
 	rdio->heredoc = true;
 	return (true);
 }

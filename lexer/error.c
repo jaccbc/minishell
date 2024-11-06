@@ -6,25 +6,20 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 17:42:30 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/01 01:57:51 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/06 01:19:40 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 // Function to print error messages with optional quotes around the detail
-static void	err_msg(char *msg, char *detail, bool in_quotes)
+static void	err_msg(char *msg, char *detail)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
 	ft_putstr_fd(msg, STDERR_FILENO);
-	if (in_quotes)
-		ft_putstr_fd(" `", STDERR_FILENO);
-	else
-		ft_putstr_fd(" ", STDERR_FILENO);
+	ft_putstr_fd(" `", STDERR_FILENO);
 	ft_putstr_fd(detail, STDERR_FILENO);
-	if (in_quotes)
-		ft_putstr_fd("'", STDERR_FILENO);
-	ft_putchar_fd('\n', STDERR_FILENO);
+	ft_putstr_fd("'\n", STDERR_FILENO);
 }
 
 // verifica se existem separadores seguidos
@@ -35,12 +30,12 @@ static bool	consecutive_sep(t_token *lst)
 		if ((lst->prev && ((lst->prev->type > PIPE && lst->type >= PIPE)))
 			|| (!lst->next && lst->type == PIPE))
 		{
-			err_msg("syntax error near unexpected token ", lst->str, true);
+			err_msg("syntax error near unexpected token ", lst->str);
 			return (true);
 		}
 		else if (lst->type > PIPE && !lst->next)
 		{
-			err_msg("syntax error near unexpected token ", "newline", true);
+			err_msg("syntax error near unexpected token ", "newline");
 			return (true);
 		}
 		lst = lst->next;
@@ -78,14 +73,22 @@ static bool	quotes_verify(t_token *current)
 }
 
 // lança o erro correspondente para unclosed quotes
-static bool	unclosed_quotes(t_token *current)
+static void	unclosed_quotes(t_token *current)
 {
-	if (current->s_quotes)
-		err_msg("unexpected EOF while looking for matching ", "\'", true);
-	else if (current->d_quotes)
-		err_msg("unexpected EOF while looking for matching ", "\"", true);
-	err_msg("syntax error: unexpected end of file", "", false);
-	return (false);
+	while (current)
+	{
+		if (current->s_quotes)
+		{
+			err_msg("unexpected EOF while looking for matching ", "\'");
+			break ;
+		}
+		else if (current->d_quotes)
+		{
+			err_msg("unexpected EOF while looking for matching ", "\"");
+			break ;
+		}
+		current = current->next;
+	}
 }
 
 // analisa alguns erros de sintaxe e recorre
@@ -93,12 +96,12 @@ bool	syntax_error(t_token *lst)
 {
 	if (lst->type == PIPE)
 	{
-		err_msg("syntax error near unexpected token ", lst->str, true);
+		err_msg("syntax error near unexpected token ", lst->str);
 		return (false);
 	}
 	if (consecutive_sep(lst))
 		return (false);
 	if (quotes_verify(lst))
-		return (unclosed_quotes(lst));
+		return (unclosed_quotes(lst), false);
 	return (true);
 }
