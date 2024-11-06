@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/06 04:02:53 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/06 05:32:44 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static void	get_user_input(t_token *lst, t_redirect *rdio, char **env)
 		if (line == NULL)
 		{
 			null_errmsg(lst->str);
-			break ;
+			return ;
 		}
 		str = var_lookup(lst, line, env);
 		free(line);
