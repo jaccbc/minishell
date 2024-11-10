@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/04 21:22:58 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/10 04:06:56 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static t_command	*create_command(void)
 	if (new == NULL)
 		return (NULL);
 	new->command = NULL;
+	new->error = NULL;
 	new->args = NULL;
 	new->path = NULL;
 	new->pipe_fd[0] = -1;
@@ -31,7 +32,7 @@ static t_command	*create_command(void)
 	return (new);
 }
 
-static t_redirect	*create_redirect(void)
+t_redirect	*create_redirect(void)
 {
 	t_redirect	*new;
 
@@ -45,20 +46,32 @@ static t_redirect	*create_redirect(void)
 	return (new);
 }
 
-// Set redirection target based on token type, storing only the last entries
+static bool	have_heredoc(t_token *token)
+{
+	while (token && token->type != PIPE)
+	{
+		if (token->type == HEREDOC)
+			return (true);
+		token = token->next;
+	}
+	return (false);
+}
+
 static bool	handle_redirection(t_redirect *rdio, t_token *token)
 {
 	char	*filename;
 
-	if (!rdio || !token || !token->next)
-		return (false);
 	filename = ft_strdup(token->next->str);
 	if (filename == NULL)
 		return (false);
-	if (token->type == RED_IN)
+	if (token->type == RED_IN && !have_heredoc(token))
 	{
-		if (rdio->infile)
-			free(rdio->infile);
+		if (rdio->heredoc)
+		{
+			unlink(rdio->infile);
+			rdio->heredoc = false;
+		}
+		free(rdio->infile);
 		rdio->infile = filename;
 	}
 	if (token->type == RED_OUT || token->type == APPEND)
@@ -72,21 +85,27 @@ static bool	handle_redirection(t_redirect *rdio, t_token *token)
 }
 
 // Process token data
-static bool	process_token_data(t_token *token, t_command *cmd, t_data *shell)
+static void	process_token_data(t_token *token, t_command *cmd, t_data *shell)
 {
-	if (token->type == COMMAND || (token->type == ARG && !cmd->command))
-		return (fill_command(&cmd, token, shell));
-	else if (token->type == ARG)
-		return (fill_args(&cmd, token));
-	else if (token->type >= RED_IN)
+	while (token && token->type != PIPE)
 	{
-		if (cmd->rdio == NULL)
-			cmd->rdio = create_redirect();
-		if (token->type == HEREDOC)
-			return (parse_heredoc(cmd->rdio, token->next, shell->env));
-		return (handle_redirection(cmd->rdio, token));
+		if (token->type == COMMAND || (token->type == ARG
+				&& !cmd->command && token->prev
+				&& !(token->prev->type >= RED_IN)))
+			fill_command(&cmd, token, shell);
+		else if (token->type == ARG)
+			fill_args(&cmd, token);
+		else if (token->type >= RED_IN)
+		{
+			if (cmd->rdio == NULL)
+				cmd->rdio = create_redirect();
+			if (token->type != HEREDOC)
+				handle_redirection(cmd->rdio, token);
+			token = token->next;
+		}
+		if (token)
+			token = token->next;
 	}
-	return (false);
 }
 
 // Parse tokens and construct a command list within shell
@@ -106,16 +125,14 @@ bool	final_parse(t_data *shell)
 		{
 			cmd->has_pipe_output = true;
 			add_command_back(&shell->command, create_command());
-			cmd = cmd->next;
-		}
-		else
-		{
-			if (!process_token_data(token, cmd, shell))
+			if (cmd->next == NULL)
 				return (false);
-			if (token->type >= RED_IN)
-				token = token->next;
+			cmd = cmd->next;
+			token = token->next;
 		}
-		if (token)
+		if (check_files(token, &cmd, shell->env))
+			process_token_data(token, cmd, shell);
+		while (token && token->type != PIPE)
 			token = token->next;
 	}
 	return (lstdel_token(shell->lst), true);

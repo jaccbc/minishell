@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/04 04:06:40 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/10 03:21:22 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,30 @@ void	add_command_back(t_command **head, t_command *new)
 	}
 }
 
+static bool	fill_data(t_token *token, t_command *cmd)
+{
+	if (access(token->str, F_OK) != -1 && access(token->str, X_OK) != -1)
+	{
+		cmd->path = ft_strdup(token->str);
+		if (cmd->path == NULL)
+			return (false);
+		cmd->command = ft_strdup(ft_strrchr(cmd->path, '/') + 1);
+		if (cmd->command == NULL)
+			return (false);
+	}
+	else
+	{
+		cmd->error = minishell_errmsg(token->str, strerror(errno));
+		return (false);
+	}
+	cmd->args = ft_realloc(cmd->args, 2);
+	if (cmd->args == NULL)
+		return (false);
+	cmd->args[0] = cmd->command;
+	cmd->args[1] = NULL;
+	return (true);
+}
+
 // Get the command string and initialize args with command name
 bool	fill_command(t_command **command, t_token *token, t_data *shell)
 {
@@ -58,7 +82,10 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	if (!command || !token)
 		return (false);
 	cmd = *command;
-	cmd->command = ft_strdup(token->str);
+	if (is_type(PATH, token->str))
+		return (fill_data(token, cmd));
+	else
+		cmd->command = ft_strdup(token->str);
 	if (cmd->command == NULL)
 		return (false);
 	cmd->args = ft_realloc(cmd->args, 2);
@@ -66,9 +93,14 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 		return (false);
 	cmd->args[0] = cmd->command;
 	cmd->args[1] = NULL;
+	if (cmd->path)
+		return (true);
 	fill_command_path(cmd, shell);
 	if (!cmd->path)
-		return (minishell_errmsg(cmd->command, "command not found"), false);
+	{
+		cmd->error = minishell_errmsg(cmd->command, "command not found");
+		return (false);
+	}
 	return (true);
 }
 
@@ -102,6 +134,8 @@ void	lstdel_command(t_command *lst)
 
 	while (lst)
 	{
+		if (lst->error)
+			free(lst->error);
 		if (lst->args)
 		{
 			i = -1;
@@ -109,7 +143,8 @@ void	lstdel_command(t_command *lst)
 				free(lst->args[i]);
 			free(lst->args);
 		}
-		free(lst->path);
+		if (lst->path)
+			free(lst->path);
 		if (lst->rdio)
 		{
 			if (lst->rdio->heredoc)

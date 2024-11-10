@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/06 05:32:44 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/10 04:13:33 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ static char	*var_lookup(t_token *lst, char *line, char **env)
 	char	*str;
 	int		i;
 
-	if (!line)
-		return (NULL);
 	str = ft_strdup(line);
 	if (str == NULL)
 		return (NULL);
@@ -75,15 +73,28 @@ static void	get_user_input(t_token *lst, t_redirect *rdio, char **env)
 
 bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
 {
+	char	*name;
+
 	if (!rdio || !lst)
 		return (false);
 	if (rdio->fd_in != -1)
 		close(rdio->fd_in);
-	if (rdio->infile)
+	if (rdio->infile && !rdio->heredoc)
 		free(rdio->infile);
-	rdio->infile = ft_strdup(".temp_heredoc");
+	if (rdio->heredoc == false)
+	{
+		name = ft_itoa((long long)rdio);
+		if (name == NULL)
+			return (false);
+		rdio->infile = ft_strjoin(".temp_heredoc", name);
+		if (rdio->infile == NULL)
+			return (free(name), false);
+		free(name);
+	}
+	if (rdio->infile == NULL)
+		return (false);
 	rdio->fd_in = open(rdio->infile, O_CREAT | O_RDWR | O_TRUNC, 0664);
-	if (rdio->fd_in < 0)
+	if (rdio->fd_in == -1)
 		return (false);
 	get_user_input(lst, rdio, env);
 	close(rdio->fd_in);

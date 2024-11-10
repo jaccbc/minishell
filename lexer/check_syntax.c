@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:34:20 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/06 02:01:31 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/08 02:45:22 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,6 @@ bool	check_syntax(t_data *shell)
 	var_expander(shell);
 	del_dollar(shell->lst);
 	if (!del_quote(shell->lst))
-		return (false);
-	if (!check_files(shell->lst))
 		return (false);
 	return (true);
 }

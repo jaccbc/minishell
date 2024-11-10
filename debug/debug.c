@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 03:41:55 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/09 21:04:02 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void print_command_list(t_command *cmd_list)
 		else
 			printf("(null)");
 		printf("]\n");
+		printf("error=[%s]\n", current->error);
 		printf("path=[%s]\n", current->path);
 		printf("has_pipe_output=[%s]\n", current->has_pipe_output ? "true" : "false");
 		printf("pipe_fd[0]=[%d]\n", current->pipe_fd[0]);
@@ -62,7 +63,7 @@ void	print_list(t_token *lst)
 
 	current = lst;
 	i = 0;
-	printf("*** DEBUG PRINT_LIST ***\n");
+	printf("*** DEBUG PRINT_TOKEN_LIST ***\n");
 	while (current != NULL)
 	{
 		printf("TOKEN Nº%d\n[%p]\n", ++i, current);
@@ -70,7 +71,7 @@ void	print_list(t_token *lst)
 			token_name(current->type), current->prev, current->next);
 		current = current->next;
 	}
-	printf("*** DEBUG PRINT_LIST END***\n");
+	printf("*** DEBUG PRINT_TOKEN_LIST END***\n");
 }
 
 void	print_array(char **arr)

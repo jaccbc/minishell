@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/05 04:55:05 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/10 02:27:14 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ typedef enum token_utils
 	UNQUOTE,
 	DELIMIT,
 	UP,
-	DOWN
+	DOWN,
+	PATH
 }								t_split;
 
 typedef enum token_types
@@ -58,6 +59,7 @@ typedef struct s_redirect
 typedef struct s_command
 {
 	char					*command;
+	char					*error;
 	char					**args;
 	char					*path;
 	bool					has_pipe_output;
@@ -90,7 +92,7 @@ int			echo(t_command *cmd);
 int			ft_exit(t_data *shell);
 // utils
 bool		ft_strcmp(char *s1, char *s2);
-void		minishell_errmsg(char *filename, char *error_message);
+char		*minishell_errmsg(char *filename, char *error_message);
 char		**ft_realloc(char **array, size_t new_size);
 void		lstdel_command(t_command *cmd);
 void		add_command_back(t_command **cmd, t_command *new);
@@ -106,8 +108,9 @@ bool		del_quote(t_token *lst);
 void		del_dollar(t_token *lst);
 void		expander(char **s, char **env, char *var);
 bool		check_syntax(t_data *shell);
-bool		check_files(t_token *lst);
+bool		check_files(t_token *lst, t_command **cmd, char **env);
 // cmd
+t_redirect	*create_redirect(void);
 bool		final_parse(t_data *shell);
 void		fill_command_path(t_command *cmd, t_data *shell);
 bool		fill_args(t_command **cmd, t_token *token);
