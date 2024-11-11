@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/10 03:21:22 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/11 00:52:47 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,31 +74,54 @@ static bool	fill_data(t_token *token, t_command *cmd)
 	return (true);
 }
 
+static bool	is_directory(char *str, t_command **command)
+{
+	struct stat	data;
+	int			i;
+	bool		dir;
+
+	if (!str || !(*str))
+		return (false);
+	dir = false;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i++] == '/')
+			dir = true;
+	}
+	if (dir && stat(str, &data) == 0)
+	{
+		if (S_ISDIR(data.st_mode) && (*command)->error == NULL)
+			(*command)->error = minishell_errmsg(str, "Is a directory");
+		return (true);
+	}
+	return (false);
+}
+
 // Get the command string and initialize args with command name
 bool	fill_command(t_command **command, t_token *token, t_data *shell)
 {
-	t_command	*cmd;
-
-	if (!command || !token)
+	if (!command || !(*command) || !token)
 		return (false);
-	cmd = *command;
+	if (is_directory(token->str, command))
+		return (false);
 	if (is_type(PATH, token->str))
-		return (fill_data(token, cmd));
+		return (fill_data(token, *command));
 	else
-		cmd->command = ft_strdup(token->str);
-	if (cmd->command == NULL)
+		(*command)->command = ft_strdup(token->str);
+	if ((*command)->command == NULL)
 		return (false);
-	cmd->args = ft_realloc(cmd->args, 2);
-	if (cmd->args == NULL)
+	(*command)->args = ft_realloc((*command)->args, 2);
+	if ((*command)->args == NULL)
 		return (false);
-	cmd->args[0] = cmd->command;
-	cmd->args[1] = NULL;
-	if (cmd->path)
+	(*command)->args[0] = (*command)->command;
+	(*command)->args[1] = NULL;
+	if ((*command)->path)
 		return (true);
-	fill_command_path(cmd, shell);
-	if (!cmd->path)
+	fill_command_path((*command), shell);
+	if (!(*command)->path)
 	{
-		cmd->error = minishell_errmsg(cmd->command, "command not found");
+		(*command)->error = minishell_errmsg((*command)->command, "command not found");
 		return (false);
 	}
 	return (true);

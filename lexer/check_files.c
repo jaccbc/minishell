@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:00:19 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/10 17:05:53 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/11 00:00:26 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 	fd = open(token->next->str, flags, mode);
 	if (fd == -1)
 	{
-		cmd->error = minishell_errmsg(token->next->str, strerror(errno));
+		if (cmd->error == NULL)
+			cmd->error = minishell_errmsg(token->next->str, strerror(errno));
 		return (false);
 	}
 	close(fd);
@@ -63,25 +64,22 @@ static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 // Verify all redirection files for access errors
 bool	check_files(t_token *token, t_command **cmd, char **env)
 {
+	bool	result;
+
+	result = true;
 	write_heredoc(token, cmd, env);
 	while (token && token->type != PIPE)
 	{
 		if (token->type == RED_IN && access(token->next->str, R_OK) != 0)
 		{
 			(*cmd)->error = minishell_errmsg(token->next->str, strerror(errno));
-			return (false);
+			result = false;
 		}
 		else if (token->type == APPEND)
-		{
-			if (!open_file(*cmd, token, O_WRONLY | O_CREAT | O_APPEND, 0644))
-				return (false);
-		}
+			result = open_file(*cmd, token, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		else if (token->type == RED_OUT)
-		{
-			if (!open_file(*cmd, token, O_WRONLY | O_CREAT | O_TRUNC, 0644))
-				return (false);
-		}
+			result = open_file(*cmd, token, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		token = token->next;
 	}
-	return (true);
+	return (result);
 }
