@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:00:19 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/11 00:00:26 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/11 02:38:10 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ bool	check_files(t_token *token, t_command **cmd, char **env)
 			result = false;
 		}
 		else if (token->type == APPEND)
-			result = open_file(*cmd, token, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			result = open_file(*cmd, token,
+					O_WRONLY | O_CREAT | O_APPEND, 0644);
 		else if (token->type == RED_OUT)
 			result = open_file(*cmd, token, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		token = token->next;

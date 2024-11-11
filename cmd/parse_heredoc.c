@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/10 04:13:33 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/11 02:56:05 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,19 @@ static void	get_user_input(t_token *lst, t_redirect *rdio, char **env)
 	free(str);
 }
 
-bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
+static void	generate_name(t_redirect *rdio)
 {
 	char	*name;
 
+	name = ft_itoa((long long)rdio);
+	if (name == NULL)
+		return ;
+	rdio->infile = ft_strjoin(".temp_heredoc", name);
+	free(name);
+}
+
+bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
+{
 	if (!rdio || !lst)
 		return (false);
 	if (rdio->fd_in != -1)
@@ -83,13 +92,9 @@ bool	parse_heredoc(t_redirect *rdio, t_token *lst, char **env)
 		free(rdio->infile);
 	if (rdio->heredoc == false)
 	{
-		name = ft_itoa((long long)rdio);
-		if (name == NULL)
-			return (false);
-		rdio->infile = ft_strjoin(".temp_heredoc", name);
+		generate_name(rdio);
 		if (rdio->infile == NULL)
-			return (free(name), false);
-		free(name);
+			return (false);
 	}
 	if (rdio->infile == NULL)
 		return (false);

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/11 00:52:47 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/11 02:54:18 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,17 @@ static bool	is_directory(char *str, t_command **command)
 		if (str[i++] == '/')
 			dir = true;
 	}
-	if (dir && stat(str, &data) == 0)
+	if (dir && lstat(str, &data) == 0)
 	{
 		if (S_ISDIR(data.st_mode) && (*command)->error == NULL)
 			(*command)->error = minishell_errmsg(str, "Is a directory");
-		return (true);
+		if (S_ISLNK(data.st_mode) && (*command)->error == NULL)
+			(*command)->error = minishell_errmsg(str, "Permission denied");
+		if (access(str, X_OK) == -1 && (*command)->error == NULL)
+			(*command)->error = minishell_errmsg(str, strerror(errno));
 	}
+	if ((*command)->error)
+		return (true);
 	return (false);
 }
 
@@ -121,7 +126,8 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	fill_command_path((*command), shell);
 	if (!(*command)->path)
 	{
-		(*command)->error = minishell_errmsg((*command)->command, "command not found");
+		(*command)->error = minishell_errmsg((*command)->command,
+				"command not found");
 		return (false);
 	}
 	return (true);
@@ -150,6 +156,18 @@ bool	fill_args(t_command **command, t_token *token)
 	return (true);
 }
 
+static void	del_redirect(t_redirect *rdio)
+{
+	if (rdio)
+	{
+		if (rdio->heredoc)
+			unlink(rdio->infile);
+		free(rdio->infile);
+		free(rdio->outfile);
+		free(rdio);
+	}
+}
+
 void	lstdel_command(t_command *lst)
 {
 	t_command	*del;
@@ -168,14 +186,7 @@ void	lstdel_command(t_command *lst)
 		}
 		if (lst->path)
 			free(lst->path);
-		if (lst->rdio)
-		{
-			if (lst->rdio->heredoc)
-				unlink(lst->rdio->infile);
-			free(lst->rdio->infile);
-			free(lst->rdio->outfile);
-			free(lst->rdio);
-		}
+		del_redirect(lst->rdio);
 		del = lst;
 		lst = lst->next;
 		free(del);
