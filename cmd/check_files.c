@@ -47,17 +47,17 @@ static void	write_heredoc(t_token *lst, t_command **cmd, char **env)
 // handle error reporting with strerror(errno)
 static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 {
-	int	fd;
-
-	fd = open(token->next->str, flags, mode);
-	if (fd == -1)
+	if (cmd->rdio == NULL)
+		cmd->rdio = create_redirect();
+	if (cmd->rdio->fd_out != -1)
+		close(cmd->rdio->fd_out);
+	cmd->rdio->fd_out = open(token->next->str, flags, mode);
+	if (cmd->rdio->fd_out == -1)
 	{
 		if (cmd->error == NULL)
 			cmd->error = minishell_errmsg(token->next->str, strerror(errno));
 		return (false);
 	}
-	close(fd);
-	fd = -1;
 	return (true);
 }
 
@@ -73,7 +73,7 @@ bool	check_files(t_token *token, t_command **cmd, char **env)
 		if (token->type == RED_IN && access(token->next->str, R_OK) != 0)
 		{
 			(*cmd)->error = minishell_errmsg(token->next->str, strerror(errno));
-			result = false;
+			/* result = false; */
 		}
 		else if (token->type == APPEND)
 			result = open_file(*cmd, token,

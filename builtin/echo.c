@@ -24,7 +24,7 @@ static bool	verify_command(t_command *cmd, bool *nl)
 	return (true);
 }
 
-int	echo(t_command *cmd)
+int	ft_echo(t_command *cmd)
 {
 	bool	nl;
 	int		i;

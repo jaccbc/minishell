@@ -52,7 +52,7 @@ static bool	init_prompt(t_data *shell, char *user_input)
 		return (false);
 	}
 	print_command_list(shell->command);
-	echo(shell->command);
+	execute(shell);
 	return (lstdel_command(shell->command), true);
 }
 

@@ -22,8 +22,15 @@
 # include <stdbool.h>
 # include <string.h>
 # include <signal.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 
 # define PROMPT "MINISHELL$ "
+
+extern int	g_last_exit_code;
+
+# define CMD_NOT_FOUND 127
+# define CMD_NOT_EXECUTABLE 126
 
 typedef enum token_utils
 {
@@ -55,6 +62,8 @@ typedef struct s_redirect
 	bool					heredoc;
 	int						fd_in;
 	int						fd_out;
+	int						stdin_backup;
+	int						stdout_backup;
 }							t_redirect;
 
 typedef struct s_command
@@ -64,7 +73,7 @@ typedef struct s_command
 	char					**args;
 	char					*path;
 	bool					has_pipe_output;
-	int						pipe_fd[2];
+	int						*pipe_fd;
 	t_redirect				*rdio;
 	struct s_command		*next;
 	struct s_command		*prev;
@@ -86,10 +95,11 @@ typedef struct s_data
 	t_token					*lst;
 	t_command				*command;
 	char					**env;
+	pid_t					pid;
 }							t_data;
 
 // builtin
-int			echo(t_command *cmd);
+int			ft_echo(t_command *cmd);
 int			ft_exit(t_data *shell);
 // utils
 bool		ft_strcmp(char *s1, char *s2);
@@ -119,6 +129,8 @@ bool		fill_command(t_command **cmd, t_token *token, t_data *shell);
 bool		parse_heredoc(t_redirect *rdio, t_token *lst, char **env);
 // signal
 bool		sighandler(void);
+//execute
+int			execute(t_data *shell);
 // debug
 void		print_list(t_token *lst);
 char		*token_name(int type);

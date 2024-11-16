@@ -22,7 +22,8 @@ VAR = $(shell find var -name "*.c")
 CMD = $(shell find cmd -name "*.c")
 SIG = $(shell find signal -name "*.c")
 UTL = $(shell find util -name "*.c")
-SRC = $(UTL) $(BLT) $(LEX) $(DBG) $(VAR) $(CMD) $(SIG)
+EXC = $(shell find execute -name "*.c")
+SRC = $(UTL) $(BLT) $(LEX) $(DBG) $(VAR) $(CMD) $(SIG) $(EXC)
 OBJ = $(SRC:.c=.o)
 
 

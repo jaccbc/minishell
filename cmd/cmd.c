@@ -24,11 +24,12 @@ static t_command	*create_command(void)
 	new->error = NULL;
 	new->args = NULL;
 	new->path = NULL;
-	new->pipe_fd[0] = -1;
-	new->pipe_fd[1] = -1;
+	new->pipe_fd = NULL;
 	new->rdio = NULL;
 	new->next = NULL;
 	new->prev = NULL;
+	new->error = NULL;
+	new->has_pipe_output = false;
 	return (new);
 }
 

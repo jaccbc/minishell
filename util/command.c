@@ -98,8 +98,8 @@ static bool	is_directory(char *str, t_command **command)
 		if (access(str, X_OK) == -1 && (*command)->error == NULL)
 			(*command)->error = minishell_errmsg(str, strerror(errno));
 	}
-	if ((*command)->error)
-		return (true);
+	/* if ((*command)->error)
+		return (true); */
 	return (false);
 }
 
@@ -164,6 +164,10 @@ static void	del_redirect(t_redirect *rdio)
 			unlink(rdio->infile);
 		free(rdio->infile);
 		free(rdio->outfile);
+		if (rdio->fd_in != -1)
+			close(rdio->fd_in);
+		if (rdio->fd_out != -1)
+			close(rdio->fd_out);
 		free(rdio);
 	}
 }

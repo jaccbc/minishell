@@ -12,6 +12,24 @@
 
 #include "../minishell.h"
 
+void print_file_content(const char *filename)
+{
+    int fd = open(filename, O_RDONLY);
+    if (fd == -1)
+        return ;
+
+    printf("Content of file \"%s\":\n", filename);
+    char *line;
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        printf("%s", line);  // Print each line as read
+        free(line);  // Free line after printing
+    }
+
+    close(fd);
+    printf("\n");  // Add a newline after file content for readability
+}
+
 // Print command list for debugging, including pipe output status
 void print_command_list(t_command *cmd_list)
 {
@@ -37,12 +55,12 @@ void print_command_list(t_command *cmd_list)
 		printf("error=[%s]\n", current->error);
 		printf("path=[%s]\n", current->path);
 		printf("has_pipe_output=[%s]\n", current->has_pipe_output ? "true" : "false");
-		printf("pipe_fd[0]=[%d]\n", current->pipe_fd[0]);
-		printf("pipe_fd[1]=[%d]\n", current->pipe_fd[1]);
 		if (current->rdio)
 		{
 			printf("infile=[%s]\n", current->rdio->infile);
+			print_file_content(current->rdio->infile);
 			printf("outfile=[%s]\n", current->rdio->outfile);
+			print_file_content(current->rdio->outfile);
 			printf("heredoc=[%s]\n", current->rdio->heredoc ? "true" : "false");
 			printf("fd_in=[%d]\n", current->rdio->fd_in);
 			printf("fd_out=[%d]\n", current->rdio->fd_out);
@@ -53,6 +71,7 @@ void print_command_list(t_command *cmd_list)
     }
     printf("*** DEBUG PRINT_COMMAND_LIST END ***\n");
 }
+
 
 
 // imprime a lista de tokens
