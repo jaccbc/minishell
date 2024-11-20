@@ -103,7 +103,7 @@ int			ft_echo(t_command *cmd);
 int			ft_exit(t_data *shell);
 // utils
 bool		ft_strcmp(char *s1, char *s2);
-char		*minishell_errmsg(char *filename, char *error_message);
+char		*minishell_errmsg(char *filename, char *error_message, bool prt_mini);
 char		**ft_realloc(char **array, size_t new_size);
 void		lstdel_command(t_command *cmd);
 void		add_command_back(t_command **cmd, t_command *new);

@@ -13,14 +13,23 @@
 #include "../minishell.h"
 
 // Function to output error messages in a Bash-like format
-char	*minishell_errmsg(char *filename, char *error_message)
+char	*minishell_errmsg(char *filename, char *error_message, bool prt_mini)
 {
 	char	*str1;
 	char	*str2;
 
-	str1 = ft_strjoin("minishell: ", filename);
-	if (str1 == NULL)
-		return (NULL);
+	if (prt_mini)
+	{	
+		str1 = ft_strjoin("minishell: ", filename);
+		if (str1 == NULL)
+			return (NULL);
+	}
+	else
+	{
+		str1 = ft_strdup(filename);
+		if (str1 == NULL)
+			return (NULL);
+	}
 	str2 = ft_strjoin(str1, ": ");
 	free(str1);
 	if (str2 == NULL)
@@ -55,7 +64,7 @@ static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 	if (cmd->rdio->fd_out == -1)
 	{
 		if (cmd->error == NULL)
-			cmd->error = minishell_errmsg(token->next->str, strerror(errno));
+			cmd->error = minishell_errmsg(token->next->str, strerror(errno), true);
 		g_last_exit_code = 1;
 		return (false);
 	}
@@ -70,7 +79,7 @@ bool	check_files(t_token *token, t_command **cmd, char **env)
 	{
 		if (token->type == RED_IN && access(token->next->str, R_OK) != 0)
 		{
-			(*cmd)->error = minishell_errmsg(token->next->str, strerror(errno));
+			(*cmd)->error = minishell_errmsg(token->next->str, strerror(errno), true);
 			g_last_exit_code = 1;
 			return (false);
 		}
