@@ -73,8 +73,11 @@ bool	check_syntax(t_data *shell)
 	if (!shell->lst)
 		return (false);
 	if (!syntax_error(shell->lst))
+	{
+		g_last_exit_code = 2;
 		return (false);
-	print_list(shell->lst);
+	}
+	/* print_list(shell->lst); */
 	check_heredoc_expansion(shell->lst);
 	var_expander(shell);
 	del_dollar(shell->lst);

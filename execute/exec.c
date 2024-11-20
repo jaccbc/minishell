@@ -38,19 +38,9 @@ int	wait_for_children(void)
 	while (waitpid(-1, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
-			last_exit_code = WEXITSTATUS(status);
+			last_exit_code = WEXITSTATUS(status); // Normal exit
 		else if (WIFSIGNALED(status))
-		{
-			int sig = WTERMSIG(status);
-			if (sig == SIGINT)
-				printf("\n"); // Handle Ctrl+C
-			else if (sig == SIGSEGV)
-				printf("Segmentation fault (core dumped)\n");
-			else if (sig == SIGTERM)
-				printf("Terminated\n");
-			else
-				printf("Killed by signal %d\n", sig); // Fallback
-		}
+			last_exit_code = 128 + WTERMSIG(status); // Exit code for signal-terminated process
 	}
 	return (last_exit_code);
 }
@@ -107,25 +97,25 @@ int	execute_sys_n_local_bin(t_data *shell, t_command *cmd)
 		return (CMD_NOT_FOUND);
 	execve(cmd->path, cmd->args, shell->env);
 	perror("execve");
-	return (EXIT_FAILURE);
+	return (CMD_NOT_FOUND);
 }
 
 // Executes the given command in a child process
 int	execute_cmd(t_data *shell, t_command *cmd)
 {
-	int	ret;
+	/* int	ret; */
 
-	if (!cmd->command)
-		return (EXIT_FAILURE);
 	if (cmd->error != NULL)
 	{
 		ft_putendl_fd(cmd->error, STDERR_FILENO);
-		return (errno); // Return the errno value as the error code
+		return (g_last_exit_code);
 	}
+	if (!cmd->command)
+		return (EXIT_FAILURE);
 	handle_pipes_and_redirections(cmd);
-	/* ret = execute_builtin(shell, cmd); */
+	/* ret = execute_builtin(shell, cmd);
 	if (ret != CMD_NOT_FOUND)
-		return (ret);
+		return (ret); */
 	return (execute_sys_n_local_bin(shell, cmd));
 }
 
@@ -137,7 +127,6 @@ int	execute(t_data *shell)
 	cmd = shell->command;
 	if (!shell || !cmd || !piping(shell) || !open_last_red(shell))
 		return (EXIT_FAILURE);
-
 	while (cmd)
 	{
 		shell->pid = fork();

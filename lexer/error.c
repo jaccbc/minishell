@@ -20,6 +20,7 @@ static void	err_msg(char *msg, char *detail)
 	ft_putstr_fd(" `", STDERR_FILENO);
 	ft_putstr_fd(detail, STDERR_FILENO);
 	ft_putstr_fd("'\n", STDERR_FILENO);
+	g_last_exit_code = 2;
 }
 
 // verifica se existem separadores seguidos

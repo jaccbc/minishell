@@ -12,10 +12,13 @@
 
 #include "minishell.h"
 
+int	g_last_exit_code;
+
 static bool	init_env(t_data *shell, char **env)
 {
 	int	i;
 
+	g_last_exit_code = 0;
 	i = 0;
 	while (env[i])
 		++i;
@@ -51,8 +54,8 @@ static bool	init_prompt(t_data *shell, char *user_input)
 		lstdel_command(shell->command);
 		return (false);
 	}
-	print_command_list(shell->command);
-	execute(shell);
+	/* print_command_list(shell->command); */
+	g_last_exit_code = execute(shell);
 	return (lstdel_command(shell->command), true);
 }
 

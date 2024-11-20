@@ -17,7 +17,7 @@ static size_t	get_varlen(const char *s)
 	size_t	len;
 
 	len = 0;
-	while (ft_isalnum(s[len]) || s[len] == '_')
+	while (ft_isalnum(s[len]) || s[len] == '_' || s[len] == '?')
 		++len;
 	return (len);
 }
@@ -29,6 +29,8 @@ static char	*get_value(char **env, const char *s)
 	int		i;
 	char	*var;
 
+	if (s[0] == '?')
+		return (ft_strdup(ft_itoa(g_last_exit_code)));
 	var = ft_calloc(get_varlen(s) + 2, sizeof(char));
 	if (!var)
 		return (NULL);

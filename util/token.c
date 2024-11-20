@@ -83,7 +83,7 @@ bool	is_type(int type, const char *s)
 				return (true);
 	}
 	if (type == VAR)
-		return (*s == '$' && (ft_isalnum(*(s + 1)) || *(s + 1) == '_'));
+		return (*s == '$' && (ft_isalnum(*(s + 1)) || *(s + 1) == '_' || *(s + 1) == '?'));
 	if (type == PATH)
 	{
 		while (*s)

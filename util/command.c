@@ -89,14 +89,28 @@ static bool	is_directory(char *str, t_command **command)
 		if (str[i++] == '/')
 			dir = true;
 	}
-	if (dir && lstat(str, &data) == 0)
+	lstat(str, &data);
+	if (dir /* && lstat(str, &data) == 0 */)
 	{
 		if (S_ISDIR(data.st_mode) && (*command)->error == NULL)
+		{
 			(*command)->error = minishell_errmsg(str, "Is a directory");
-		if (S_ISLNK(data.st_mode) && (*command)->error == NULL)
-			(*command)->error = minishell_errmsg(str, "Permission denied");
-		if (access(str, X_OK) == -1 && (*command)->error == NULL)
-			(*command)->error = minishell_errmsg(str, strerror(errno));
+			g_last_exit_code = CMD_NOT_EXECUTABLE;
+		}
+		/* if (S_ISLNK(data.st_mode) && (*command)->error == NULL)
+		{	
+				(*command)->error = minishell_errmsg(str, "Permission denied");
+				g_last_exit_code = CMD_NOT_EXECUTABLE;
+		}
+		} */
+		if (access(str, X_OK) != 0 && (*command)->error == NULL) // Check if the file exists
+		{
+    		(*command)->error = minishell_errmsg(str, strerror(errno));
+			if (access(str, F_OK) == -1)
+				g_last_exit_code = CMD_NOT_FOUND;
+			else
+   				g_last_exit_code = CMD_NOT_EXECUTABLE;
+		}
 	}
 	/* if ((*command)->error)
 		return (true); */
@@ -111,7 +125,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	if (is_directory(token->str, command))
 		return (false);
 	if (is_type(PATH, token->str))
-		return (fill_data(token, *command));
+		return (fill_data(token, *command));	
 	else
 		(*command)->command = ft_strdup(token->str);
 	if ((*command)->command == NULL)
@@ -124,7 +138,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	if ((*command)->path)
 		return (true);
 	fill_command_path((*command), shell);
-	if (!(*command)->path)
+	if (!(*command)->path && !(*command)->error)
 	{
 		(*command)->error = minishell_errmsg((*command)->command,
 				"command not found");
