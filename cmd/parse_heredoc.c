@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/11 02:56:05 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/23 22:12:41 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void	get_user_input(t_token *lst, t_redirect *rdio, char **env)
 		line = NULL;
 		if (*str && ft_strcmp(str, lst->str))
 			break ;
-		ft_putstr_fd(str, rdio->fd_in);
+		ft_putendl_fd(str, rdio->fd_in);
 		free(str);
 	}
 	free(str);

@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/06 03:05:53 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/23 20:34:36 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static char	*get_value(char **env, const char *s)
 	char	*var;
 
 	if (s[0] == '?')
-		return (ft_strdup(ft_itoa(g_last_exit_code)));
+		return (ft_itoa(g_last_exit_code));
 	var = ft_calloc(get_varlen(s) + 2, sizeof(char));
 	if (!var)
 		return (NULL);
@@ -85,8 +85,12 @@ void	expander(char **s, char **env, char *var)
 		new[i] = str[i];
 	k = i;
 	if (expand)
+	{
 		while (*expand)
 			new[i++] = *expand++;
+		if (*var == '?')
+			free(expand - (i - k));
+	}
 	k += get_varlen(var) + 1;
 	while (str[k])
 		new[i++] = str[k++];
