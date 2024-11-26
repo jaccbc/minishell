@@ -26,7 +26,8 @@ char	**ft_realloc(char **array, size_t new_size)
 		new_array[i] = array[i];
 		i++;
 	}
-	new_array[i] = NULL;
+	while(i < new_size -1)
+		new_array[i++] = NULL;
 	free(array);
 	return (new_array);
 }
@@ -63,7 +64,7 @@ static bool	fill_data(t_token *token, t_command *cmd)
 	}
 	else if (!cmd->error)
 	{
-		cmd->error = minishell_errmsg(token->str, strerror(errno), false);
+		cmd->error = minishell_errmsg(token->str, NULL, strerror(errno), false);
 		return (false);
 	}
 	cmd->args = ft_realloc(cmd->args, 2);
@@ -94,7 +95,7 @@ static bool	is_directory(char *str, t_command **command)
 	{
 		if (S_ISDIR(data.st_mode) && (*command)->error == NULL)
 		{
-			(*command)->error = minishell_errmsg(str, "Is a directory", true);
+			(*command)->error = minishell_errmsg(str, NULL, "Is a directory", true);
 			g_last_exit_code = CMD_NOT_EXECUTABLE;
 		}
 		/* if (S_ISLNK(data.st_mode) && (*command)->error == NULL)
@@ -105,7 +106,7 @@ static bool	is_directory(char *str, t_command **command)
 		} */
 		if (access(str, X_OK) != 0 && (*command)->error == NULL) // Check if the file exists
 		{
-    		(*command)->error = minishell_errmsg(str, strerror(errno), true);
+    		(*command)->error = minishell_errmsg(str, NULL, strerror(errno), true);
 			if (access(str, F_OK) == -1)
 				g_last_exit_code = CMD_NOT_FOUND;
 			else
@@ -140,7 +141,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	fill_command_path((*command), shell);
 	if (!(*command)->path && !(*command)->error)
 	{
-		(*command)->error = minishell_errmsg((*command)->command,
+		(*command)->error = minishell_errmsg((*command)->command, NULL,
 				"command not found", false);
 		return (false);
 	}

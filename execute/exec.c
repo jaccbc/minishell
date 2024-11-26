@@ -1,14 +1,24 @@
 #include "../minishell.h"
 
 // Handles pipes and redirections for the child process
-void	handle_pipes_and_redirections(t_command *cmd)
+bool	handle_pipes_and_redirections(t_command *cmd)
 {
 	if (cmd->rdio && cmd->rdio->infile && cmd->rdio->fd_in != -1)
+	{
+		cmd->rdio->stdin_backup = dup(STDIN_FILENO);
+		if (cmd->rdio->stdin_backup == -1)
+			return (false);
 		dup2(cmd->rdio->fd_in, STDIN_FILENO);
+	}
 	else if (cmd->prev && cmd->prev->has_pipe_output)
 		dup2(cmd->prev->pipe_fd[0], STDIN_FILENO);
 	if (cmd->rdio && cmd->rdio->outfile && cmd->rdio->fd_out != -1)
+	{
+		cmd->rdio->stdout_backup = dup(STDOUT_FILENO);
+		if (cmd->rdio->stdout_backup == -1)
+			return (false);
 		dup2(cmd->rdio->fd_out, STDOUT_FILENO);
+	}
 	else if (cmd->has_pipe_output)
 		dup2(cmd->pipe_fd[1], STDOUT_FILENO);
 
@@ -17,6 +27,22 @@ void	handle_pipes_and_redirections(t_command *cmd)
 		close(cmd->pipe_fd[0]);
 	if (cmd->prev && cmd->prev->has_pipe_output)
 		close(cmd->prev->pipe_fd[1]);
+	return (true);
+}
+
+bool	restore_red(t_command *cmd)
+{
+	if (cmd->rdio && cmd->rdio->stdin_backup != -1)
+	{
+		dup2(STDIN_FILENO, cmd->rdio->stdin_backup);
+		cmd->rdio->stdin_backup = -1;
+	}
+	if (cmd->rdio && cmd->rdio->stdout_backup != -1)
+	{
+		dup2(STDOUT_FILENO, cmd->rdio->stdin_backup);
+		cmd->rdio->stdout_backup = -1;
+	}
+	return (true);
 }
 
 // Closes unused pipe file descriptors in the parent process
@@ -81,14 +107,22 @@ bool	open_last_red(t_data *shell)
 }
 
 // Executes a built-in command if found
-/* int	execute_builtin(t_data *shell, t_command *cmd)
+int	execute_builtin(t_data *shell, t_command *cmd)
 {
 	if (ft_strncmp(cmd->command, "echo", 5) == 0)
-		return (echo(cmd));
+		return (ft_echo(cmd));
 	if (ft_strncmp(cmd->command, "exit", 5) == 0)
 		return (ft_exit(shell));
+	if (ft_strncmp(cmd->command, "env", 4) == 0)
+		return (ft_env(shell));
+	if (ft_strncmp(cmd->command, "pwd", 4) == 0)
+		return (ft_pwd(shell));
+	if (ft_strncmp(cmd->command, "unset", 6) == 0)
+		return (ft_unset(shell));
+	if (ft_strncmp(cmd->command, "export", 7) == 0)
+		return (ft_export(shell));
 	return (CMD_NOT_FOUND);
-} */
+}
 
 // Executes a system or local binary using execve
 int	execute_sys_n_local_bin(t_data *shell, t_command *cmd)
@@ -103,7 +137,7 @@ int	execute_sys_n_local_bin(t_data *shell, t_command *cmd)
 // Executes the given command in a child process
 int	execute_cmd(t_data *shell, t_command *cmd)
 {
-	/* int	ret; */
+	int	ret;
 
 	if (cmd->error != NULL)
 	{
@@ -113,9 +147,9 @@ int	execute_cmd(t_data *shell, t_command *cmd)
 	if (!cmd->command)
 		return (EXIT_FAILURE);
 	handle_pipes_and_redirections(cmd);
-	/* ret = execute_builtin(shell, cmd);
+	ret = execute_builtin(shell, cmd);
 	if (ret != CMD_NOT_FOUND)
-		return (ret); */
+		return (ret);
 	return (execute_sys_n_local_bin(shell, cmd));
 }
 
@@ -123,10 +157,20 @@ int	execute_cmd(t_data *shell, t_command *cmd)
 int	execute(t_data *shell)
 {
 	t_command	*cmd;
+	int	ret;
 
 	cmd = shell->command;
+	ret = CMD_NOT_FOUND;
 	if (!shell || !cmd || !piping(shell) || !open_last_red(shell))
 		return (EXIT_FAILURE);
+	if (!shell->command->has_pipe_output)
+	{
+		handle_pipes_and_redirections(cmd);
+		ret = execute_builtin(shell, cmd);
+		restore_red(cmd);
+	}
+	if (ret != CMD_NOT_FOUND)
+		return (ret);
 	while (cmd)
 	{
 		shell->pid = fork();

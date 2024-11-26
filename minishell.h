@@ -25,7 +25,7 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 
-# define PROMPT "MINISHELL$ "
+#define PROMPT "\033[1;34mMINISHELL$ \033[0m"
 
 extern int	g_last_exit_code;
 
@@ -96,14 +96,20 @@ typedef struct s_data
 	t_command				*command;
 	char					**env;
 	pid_t					pid;
+	char					*working_dir;
+	char					*old_working_dir;
 }							t_data;
 
 // builtin
 int			ft_echo(t_command *cmd);
 int			ft_exit(t_data *shell);
+int			ft_env(t_data *shell);
+int			ft_pwd(t_data *shell);
+int			ft_unset(t_data *shell);
+int			ft_export(t_data *shell);
 // utils
 bool		ft_strcmp(char *s1, char *s2);
-char		*minishell_errmsg(char *filename, char *error_message, bool prt_mini);
+char		*minishell_errmsg(char *command, char *detail, char *error_message, bool prt_mini);
 char		**ft_realloc(char **array, size_t new_size);
 void		lstdel_command(t_command *cmd);
 void		add_command_back(t_command **cmd, t_command *new);

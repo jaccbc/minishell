@@ -12,31 +12,55 @@
 
 #include "../minishell.h"
 
-// Function to output error messages in a Bash-like format
-char	*minishell_errmsg(char *filename, char *error_message, bool prt_mini)
+char	*join_strs(char *str, char *add)
 {
-	char	*str1;
-	char	*str2;
+	char	*tmp;
 
-	if (prt_mini)
-	{	
-		str1 = ft_strjoin("minishell: ", filename);
-		if (str1 == NULL)
-			return (NULL);
-	}
-	else
-	{
-		str1 = ft_strdup(filename);
-		if (str1 == NULL)
-			return (NULL);
-	}
-	str2 = ft_strjoin(str1, ": ");
-	free(str1);
-	if (str2 == NULL)
-		return (NULL);
-	str1 = ft_strjoin(str2, error_message);
-	return (free(str2), str1);
+	if (!add)
+		return (str);
+	if (!str)
+		return (ft_strdup(add));
+	tmp = str;
+	str = ft_strjoin(tmp, add);
+	free(tmp);
+	return (str);
 }
+
+static bool	add_detail_quotes(char *command)
+{
+	if (ft_strncmp(command, "export", 7) == 0
+		|| ft_strncmp(command, "unset", 6) == 0)
+		return (true);
+	return (false);
+}
+
+char	*minishell_errmsg(char *command, char *detail, char *error_message, bool prt_mini)
+{
+	char	*msg;
+	bool	detail_quotes;
+
+	msg = NULL;
+	if (prt_mini)
+		msg = ft_strdup("minishell: ");
+	if (command != NULL)
+	{
+		msg = join_strs(msg, command);
+		msg = join_strs(msg, ": ");
+	}
+	if (detail != NULL)
+	{
+		detail_quotes = add_detail_quotes(command);
+		if (detail_quotes)
+			msg = join_strs(msg, "`");
+		msg = join_strs(msg, detail);
+		if (detail_quotes)
+			msg = join_strs(msg, "'");
+		msg = join_strs(msg, ": ");
+	}
+	msg = join_strs(msg, error_message);
+	return (msg);
+}
+
 
 static void	write_heredoc(t_token *lst, t_command **cmd, char **env)
 {
@@ -64,7 +88,7 @@ static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 	if (cmd->rdio->fd_out == -1)
 	{
 		if (cmd->error == NULL)
-			cmd->error = minishell_errmsg(token->next->str, strerror(errno), true);
+			cmd->error = minishell_errmsg(token->next->str, NULL, strerror(errno), true);
 		g_last_exit_code = 1;
 		return (false);
 	}
@@ -79,7 +103,7 @@ bool	check_files(t_token *token, t_command **cmd, char **env)
 	{
 		if (token->type == RED_IN && access(token->next->str, R_OK) != 0)
 		{
-			(*cmd)->error = minishell_errmsg(token->next->str, strerror(errno), true);
+			(*cmd)->error = minishell_errmsg(token->next->str, NULL, strerror(errno), true);
 			g_last_exit_code = 1;
 			return (false);
 		}

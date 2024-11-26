@@ -44,6 +44,8 @@ t_redirect	*create_redirect(void)
 	new->outfile = NULL;
 	new->fd_in = -1;
 	new->fd_out = -1;
+	new->stdin_backup = -1;
+	new->stdout_backup = -1;
 	return (new);
 }
 
