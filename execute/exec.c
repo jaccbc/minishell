@@ -109,6 +109,8 @@ bool	open_last_red(t_data *shell)
 // Executes a built-in command if found
 int	execute_builtin(t_data *shell, t_command *cmd)
 {
+	if (!cmd->command)
+		return (CMD_NOT_FOUND);
 	if (ft_strncmp(cmd->command, "echo", 5) == 0)
 		return (ft_echo(cmd));
 	if (ft_strncmp(cmd->command, "exit", 5) == 0)
