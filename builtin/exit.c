@@ -28,5 +28,6 @@ int	ft_exit(t_data *shell)
 	lstdel_command(shell->command);
 	free(shell->user_input);
 	rl_clear_history();
+	ft_putendl_fd("exit", 1);
 	exit(EXIT_SUCCESS);
 }

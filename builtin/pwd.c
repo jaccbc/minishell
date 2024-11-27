@@ -4,7 +4,7 @@ int	ft_pwd(t_data *shell)
 {
 	int	i;
 
-	if (!shell || shell->env)
+	if (!shell || !shell->env)
 		return (EXIT_FAILURE);
 	i = -1;
 	while (shell->env[++i])
