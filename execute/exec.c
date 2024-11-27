@@ -99,7 +99,7 @@ bool	open_last_red(t_data *shell)
 	cmd = shell->command;
 	while (cmd)
 	{
-		if (cmd->rdio && cmd->rdio->infile)
+		if (cmd->rdio && cmd->rdio->infile && !cmd->rdio->heredoc)
 			cmd->rdio->fd_in = open(cmd->rdio->infile, O_RDONLY);
 		cmd = cmd->next;
 	}
