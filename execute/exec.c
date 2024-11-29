@@ -39,7 +39,7 @@ bool	restore_red(t_command *cmd)
 	}
 	if (cmd->rdio && cmd->rdio->stdout_backup != -1)
 	{
-		dup2(cmd->rdio->stdin_backup, STDOUT_FILENO);
+		dup2(cmd->rdio->stdout_backup, STDOUT_FILENO);
 		cmd->rdio->stdout_backup = -1;
 	}
 	return (true);
