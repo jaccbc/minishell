@@ -14,6 +14,8 @@
 
 void print_file_content(const char *filename)
 {
+	if (!filename)
+		return ;
     int fd = open(filename, O_RDONLY);
     if (fd == -1)
         return ;

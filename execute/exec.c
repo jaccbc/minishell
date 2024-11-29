@@ -34,12 +34,12 @@ bool	restore_red(t_command *cmd)
 {
 	if (cmd->rdio && cmd->rdio->stdin_backup != -1)
 	{
-		dup2(STDIN_FILENO, cmd->rdio->stdin_backup);
+		dup2(cmd->rdio->stdin_backup, STDIN_FILENO);
 		cmd->rdio->stdin_backup = -1;
 	}
 	if (cmd->rdio && cmd->rdio->stdout_backup != -1)
 	{
-		dup2(STDOUT_FILENO, cmd->rdio->stdin_backup);
+		dup2(cmd->rdio->stdin_backup, STDOUT_FILENO);
 		cmd->rdio->stdout_backup = -1;
 	}
 	return (true);
