@@ -53,6 +53,13 @@ static char	*getfull_path(char *path, char *file)
 	return (full_path);
 }
 
+static bool	is_dot(char *str)
+{
+	if (ft_strncmp(str, ".", 2) == 0 || ft_strncmp(str, "..", 3) == 0)
+		return (true);
+	return (false);
+}
+
 // Fill command path by searching PATH environment variable
 void	fill_command_path(t_command *cmd, t_data *shell)
 {
@@ -61,7 +68,7 @@ void	fill_command_path(t_command *cmd, t_data *shell)
 	char	*path_env;
 	int		i;
 
-	if (!cmd || !cmd->command)
+	if (!cmd || !cmd->command || is_dot(cmd->command))
 		return ;
 	path_env = getenv_path(shell->env, "PATH");
 	if (!path_env)

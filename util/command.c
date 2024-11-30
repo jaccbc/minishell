@@ -143,6 +143,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	{
 		(*command)->error = minishell_errmsg((*command)->command, NULL,
 				"command not found", false);
+		g_last_exit_code = CMD_NOT_FOUND;
 		return (false);
 	}
 	return (true);

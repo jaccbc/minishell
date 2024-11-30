@@ -28,8 +28,7 @@ char	*join_strs(char *str, char *add)
 
 static bool	add_detail_quotes(char *command)
 {
-	if (ft_strncmp(command, "export", 7) == 0
-		|| ft_strncmp(command, "unset", 6) == 0)
+	if (ft_strncmp(command, "export", 7) == 0)
 		return (true);
 	return (false);
 }
