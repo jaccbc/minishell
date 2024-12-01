@@ -123,6 +123,8 @@ int	execute_builtin(t_data *shell, t_command *cmd)
 		return (ft_unset(shell));
 	if (ft_strncmp(cmd->command, "export", 7) == 0)
 		return (ft_export(shell));
+	if (ft_strncmp(cmd->command, "cd", 3) == 0)
+		return (ft_cd(cmd, shell->env));
 	return (CMD_NOT_FOUND);
 }
 

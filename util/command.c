@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/11 02:54:18 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/01 03:41:01 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,20 +51,72 @@ void	add_command_back(t_command **head, t_command *new)
 	}
 }
 
-static bool	fill_data(t_token *token, t_command *cmd)
+char	*expand_path(char **env, char *str)
 {
-	if (access(token->str, F_OK) != -1 && access(token->str, X_OK) != -1)
+	char	*pwd;
+	int		i;
+
+	pwd = getenv_path(env, "PWD");
+	if (pwd == NULL)
+		return (ft_putendl_fd("PWD not set", STDERR_FILENO), NULL);
+	if (ft_strncmp(str, "./", 2) == 0)
+		return (ft_strjoin(getenv_path(env, "PWD"), str + 1));
+	if (ft_strncmp(str, "~/", 2) == 0)
+		return (ft_strjoin(getenv_path(env, "HOME"), str + 1));
+	i = ft_strlen(pwd);
+	if (ft_strncmp(str, "../", 3) == 0)
 	{
-		cmd->path = ft_strdup(token->str);
+		while (ft_strncmp(str, "../", 3) == 0)
+		{
+			str += 3;
+			while (i)
+			{
+				if (pwd[--i] == '/')
+					break ;
+			}
+		}
+		pwd[i + 1] = '\0';
+		return (ft_strjoin(pwd, str));
+	}
+	if (ft_strcmp(str, ".."))
+	{
+		while (i)
+		{
+			if (pwd[--i] == '/')
+			{
+				if (i == 0)
+					pwd[i + 1] = '\0';
+				else
+					pwd[i] = '\0';
+				break ;
+			}
+		}
+		return (ft_strdup(pwd));
+	}
+	return (ft_strdup(str));
+}
+
+static bool	fill_data(t_token *token, t_command *cmd, t_data *shell)
+{
+	char	*str;
+
+	str = expand_path(shell->env, token->str);
+	if (str == NULL)
+		return (minishell_errmsg("error", NULL, strerror(errno), false), false);
+	if (access(str, F_OK) != -1 && access(str, X_OK) != -1)
+	{
+		cmd->path = ft_strdup(str);
+		free(str);
 		if (cmd->path == NULL)
 			return (false);
 		cmd->command = ft_strdup(ft_strrchr(cmd->path, '/') + 1);
 		if (cmd->command == NULL)
 			return (false);
 	}
-	else if (!cmd->error)
+	else if (cmd->error == NULL)
 	{
 		cmd->error = minishell_errmsg(token->str, NULL, strerror(errno), false);
+		free(str);
 		return (false);
 	}
 	cmd->args = ft_realloc(cmd->args, 2);
@@ -84,37 +136,35 @@ static bool	is_directory(char *str, t_command **command)
 	if (!str || !(*str))
 		return (false);
 	dir = false;
-	i = 0;
-	while (str[i])
+	i = -1;
+	while (str[++i])
 	{
-		if (str[i++] == '/')
+		if (str[i] == '/')
+		{
 			dir = true;
+			break ;
+		}
 	}
-	lstat(str, &data);
-	if (dir /* && lstat(str, &data) == 0 */)
+	if (dir && lstat(str, &data) == 0)
 	{
-		if (S_ISDIR(data.st_mode) && (*command)->error == NULL)
+		if ((*command)->error == NULL && S_ISDIR(data.st_mode))
 		{
 			(*command)->error = minishell_errmsg(str, NULL, "Is a directory", true);
 			g_last_exit_code = CMD_NOT_EXECUTABLE;
 		}
-		/* if (S_ISLNK(data.st_mode) && (*command)->error == NULL)
-		{	
-				(*command)->error = minishell_errmsg(str, "Permission denied");
-				g_last_exit_code = CMD_NOT_EXECUTABLE;
+		if ((*command)->error == NULL && S_ISLNK(data.st_mode))
+		{
+			(*command)->error = minishell_errmsg(str, NULL, "Permission denied", true);
+			g_last_exit_code = CMD_NOT_EXECUTABLE;
 		}
-		} */
-		if (access(str, X_OK) != 0 && (*command)->error == NULL) // Check if the file exists
+		if ((*command)->error == NULL && access(str, F_OK) == -1)
 		{
     		(*command)->error = minishell_errmsg(str, NULL, strerror(errno), true);
-			if (access(str, F_OK) == -1)
-				g_last_exit_code = CMD_NOT_FOUND;
-			else
-   				g_last_exit_code = CMD_NOT_EXECUTABLE;
+			g_last_exit_code = CMD_NOT_FOUND;
 		}
 	}
-	/* if ((*command)->error)
-		return (true); */
+	if ((*command)->error)
+		return (true);
 	return (false);
 }
 
@@ -126,7 +176,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	if (is_directory(token->str, command))
 		return (false);
 	if (is_type(PATH, token->str))
-		return (fill_data(token, *command));	
+		return (fill_data(token, *command, shell));
 	else
 		(*command)->command = ft_strdup(token->str);
 	if ((*command)->command == NULL)
@@ -138,12 +188,14 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	(*command)->args[1] = NULL;
 	if ((*command)->path)
 		return (true);
-	fill_command_path((*command), shell);
+	if (ft_strncmp(token->str, "./", 2) == 0)
+		(*command)->path = ft_strjoin(getenv_path(shell->env, "PWD"), token->str + 1);
+	else
+		fill_command_path((*command), shell);
 	if (!(*command)->path && !(*command)->error)
 	{
 		(*command)->error = minishell_errmsg((*command)->command, NULL,
 				"command not found", false);
-		g_last_exit_code = CMD_NOT_FOUND;
 		return (false);
 	}
 	return (true);
@@ -204,8 +256,6 @@ void	lstdel_command(t_command *lst)
 				free(lst->args[i]);
 			free(lst->args);
 		}
-		if (lst->pipe_fd)
-			free(lst->pipe_fd);
 		if (lst->path)
 			free(lst->path);
 		del_redirect(lst->rdio);

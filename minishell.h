@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/11 00:38:48 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/30 03:11:09 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,13 +107,15 @@ int			ft_env(t_data *shell);
 int			ft_pwd(t_data *shell);
 int			ft_unset(t_data *shell);
 int			ft_export(t_data *shell);
+int			ft_cd(t_command *cmd, char **env);
 // utils
 bool		ft_strcmp(char *s1, char *s2);
 char		*minishell_errmsg(char *command, char *detail, char *error_message, bool prt_mini);
 char		**ft_realloc(char **array, size_t new_size);
 void		lstdel_command(t_command *cmd);
 void		add_command_back(t_command **cmd, t_command *new);
-
+char		*getenv_path(char **env, const char *var);
+char		*expand_path(char **env, char *str);
 // lexer
 t_token		*tokenize(char *s);
 t_token		*lstiter_token(t_token *lst, int type, size_t i);

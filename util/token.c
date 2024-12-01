@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/10 02:26:29 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/11/30 19:18:16 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,8 @@ bool	is_type(int type, const char *s)
 	if (type == VAR)
 		return (*s == '$' && (ft_isalnum(*(s + 1)) || *(s + 1) == '_' || *(s + 1) == '?'));
 	if (type == PATH)
-	{
-		while (*s)
-			if (*s++ == '/')
-				return (true);
-	}
+		return (ft_strncmp(s, "/", 1) == 0 || ft_strncmp(s, "../", 3) == 0
+				|| ft_strncmp(s, "~/", 2) == 0);
 	return (false);
 }
 

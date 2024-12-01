@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:01:33 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/10 01:54:50 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/01 04:26:22 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	free_splits(char **path_split)
 	free(path_split);
 }
 
-static char	*getenv_path(char **env, const char *var)
+char	*getenv_path(char **env, const char *var)
 {
 	int	i;
 	int	len;
