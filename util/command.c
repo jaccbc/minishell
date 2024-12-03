@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/01 03:41:01 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/03 04:25:54 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,9 +258,32 @@ void	lstdel_command(t_command *lst)
 		}
 		if (lst->path)
 			free(lst->path);
+		if (lst->pipe_fd)
+			free(lst->pipe_fd);
 		del_redirect(lst->rdio);
 		del = lst;
 		lst = lst->next;
 		free(del);
 	}
+}
+
+bool	is_builtin(t_command *cmd)
+{
+	if (!cmd->command)
+		return (false);
+	if (ft_strncmp(cmd->command, "echo", 5) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "exit", 5) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "env", 4) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "pwd", 4) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "unset", 6) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "export", 7) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "cd", 3) == 0)
+		return (true);
+	return (false);
 }
