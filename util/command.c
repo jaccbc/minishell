@@ -256,10 +256,10 @@ void	lstdel_command(t_command *lst)
 				free(lst->args[i]);
 			free(lst->args);
 		}
-		if (lst->pipe_fd)
-			free(lst->pipe_fd);
 		if (lst->path)
 			free(lst->path);
+		if (lst->pipe_fd)
+			free(lst->pipe_fd);
 		del_redirect(lst->rdio);
 		del = lst;
 		lst = lst->next;
