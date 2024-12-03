@@ -4,12 +4,14 @@ bool	key_is_valid(char *arg)
 {
 	int	i;
 	bool	status;
+	char	*err;
 
 	status = true;
 	if (!ft_isalpha(arg[0]) && arg[0] != '_')
 	{
-		ft_putendl_fd(minishell_errmsg("export", 
-			arg, "not a valid identifier", true), STDERR_FILENO);
+		err = mini_errmsg("export", arg, "not a valid identifier", true);
+		ft_putendl_fd(err, STDERR_FILENO);
+		free(err);
 		status = false;
 	}
 	i = 1;
@@ -17,8 +19,9 @@ bool	key_is_valid(char *arg)
 	{
 		if (!ft_isalnum(arg[i]) && arg[i] != '_')
 		{
-			ft_putendl_fd(minishell_errmsg("export", 
-				arg, "not a valid identifier", true), STDERR_FILENO);
+			err = mini_errmsg("export", arg, "not a valid identifier", true);
+			ft_putendl_fd(err, STDERR_FILENO);
+			free(err);
 			status = false;
 		}
 		i++;

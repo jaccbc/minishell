@@ -110,7 +110,7 @@ int			ft_export(t_data *shell);
 int			ft_cd(t_command *cmd, char **env);
 // utils
 bool		ft_strcmp(char *s1, char *s2);
-char		*minishell_errmsg(char *command, char *detail, char *error_message, bool prt_mini);
+char		*mini_errmsg(char *command, char *detail, char *error_message, bool prt_mini);
 char		**ft_realloc(char **array, size_t new_size);
 void		lstdel_command(t_command *cmd);
 void		add_command_back(t_command **cmd, t_command *new);

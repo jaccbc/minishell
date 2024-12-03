@@ -33,7 +33,7 @@ static bool	add_detail_quotes(char *command)
 	return (false);
 }
 
-char	*minishell_errmsg(char *command, char *detail, char *error_message, bool prt_mini)
+char	*mini_errmsg(char *command, char *detail, char *error_message, bool prt_mini)
 {
 	char	*msg;
 	bool	detail_quotes;
@@ -87,7 +87,7 @@ static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 	if (cmd->rdio->fd_out == -1)
 	{
 		if (cmd->error == NULL)
-			cmd->error = minishell_errmsg(token->next->str, NULL, strerror(errno), true);
+			cmd->error = mini_errmsg(token->next->str, NULL, strerror(errno), true);
 		g_last_exit_code = 1;
 		return (false);
 	}
@@ -102,7 +102,7 @@ bool	check_files(t_token *token, t_command **cmd, char **env)
 	{
 		if (token->type == RED_IN && access(token->next->str, R_OK) != 0)
 		{
-			(*cmd)->error = minishell_errmsg(token->next->str, NULL, strerror(errno), true);
+			(*cmd)->error = mini_errmsg(token->next->str, NULL, strerror(errno), true);
 			g_last_exit_code = 1;
 			return (false);
 		}

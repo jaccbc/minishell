@@ -76,7 +76,8 @@ int	ft_unset(t_data *shell)
 			if (!ft_strncmp(shell->command->args[j], shell->env[i], var_len)
 				&& shell->env[i][var_len] == '=')
 			{
-				redo_env(shell, i);
+				if (redo_env(shell, i) == EXIT_FAILURE)
+					return (EXIT_FAILURE);
 				break ;
 			}
 			i++;
@@ -84,4 +85,5 @@ int	ft_unset(t_data *shell)
 	}
 	return (EXIT_SUCCESS);
 }
+
 

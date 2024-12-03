@@ -14,13 +14,21 @@
 
 static bool	verify_command(t_command *cmd, bool *nl)
 {
+	int	i;
+
 	if (!cmd || !cmd->command || !cmd->args)
 		return (false);
 	if (ft_strncmp(cmd->command, "echo", ft_strlen(cmd->command)))
 		return (false);
 	if (cmd->args[0] && cmd->args[1])
-		if (ft_strncmp(cmd->args[1], "-n", ft_strlen(cmd->args[1])) == 0)
-			*nl = false;
+	{
+		i = 0;
+		if (cmd->args[1][0] == '-' && cmd->args[1][1] == 'n')
+			while (cmd->args[1][++i] == 'n')
+				*nl = false;
+		if (cmd->args[1][i] != '\0')
+			*nl = true;
+	}
 	return (true);
 }
 

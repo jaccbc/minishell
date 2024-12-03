@@ -102,7 +102,7 @@ static bool	fill_data(t_token *token, t_command *cmd, t_data *shell)
 
 	str = expand_path(shell->env, token->str);
 	if (str == NULL)
-		return (minishell_errmsg("error", NULL, strerror(errno), false), false);
+		return (mini_errmsg("error", NULL, strerror(errno), false), false);
 	if (access(str, F_OK) != -1 && access(str, X_OK) != -1)
 	{
 		cmd->path = ft_strdup(str);
@@ -115,7 +115,7 @@ static bool	fill_data(t_token *token, t_command *cmd, t_data *shell)
 	}
 	else if (cmd->error == NULL)
 	{
-		cmd->error = minishell_errmsg(token->str, NULL, strerror(errno), false);
+		cmd->error = mini_errmsg(token->str, NULL, strerror(errno), false);
 		free(str);
 		return (false);
 	}
@@ -149,17 +149,17 @@ static bool	is_directory(char *str, t_command **command)
 	{
 		if ((*command)->error == NULL && S_ISDIR(data.st_mode))
 		{
-			(*command)->error = minishell_errmsg(str, NULL, "Is a directory", true);
+			(*command)->error = mini_errmsg(str, NULL, "Is a directory", true);
 			g_last_exit_code = CMD_NOT_EXECUTABLE;
 		}
 		if ((*command)->error == NULL && S_ISLNK(data.st_mode))
 		{
-			(*command)->error = minishell_errmsg(str, NULL, "Permission denied", true);
+			(*command)->error = mini_errmsg(str, NULL, "Permission denied", true);
 			g_last_exit_code = CMD_NOT_EXECUTABLE;
 		}
 		if ((*command)->error == NULL && access(str, F_OK) == -1)
 		{
-    		(*command)->error = minishell_errmsg(str, NULL, strerror(errno), true);
+    		(*command)->error = mini_errmsg(str, NULL, strerror(errno), true);
 			g_last_exit_code = CMD_NOT_FOUND;
 		}
 	}
@@ -194,7 +194,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 		fill_command_path((*command), shell);
 	if (!(*command)->path && !(*command)->error)
 	{
-		(*command)->error = minishell_errmsg((*command)->command, NULL,
+		(*command)->error = mini_errmsg((*command)->command, NULL,
 				"command not found", false);
 		return (false);
 	}
@@ -256,6 +256,8 @@ void	lstdel_command(t_command *lst)
 				free(lst->args[i]);
 			free(lst->args);
 		}
+		if (lst->pipe_fd)
+			free(lst->pipe_fd);
 		if (lst->path)
 			free(lst->path);
 		del_redirect(lst->rdio);
