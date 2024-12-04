@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:00:19 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/11 02:38:10 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/04 13:17:31 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,14 @@ char	*join_strs(char *str, char *add)
 	return (str);
 }
 
-static bool	add_detail_quotes(char *command)
-{
-	if (ft_strncmp(command, "export", 7) == 0)
-		return (true);
-	return (false);
-}
-
-char	*mini_errmsg(char *command, char *detail, char *error_message, bool prt_mini)
+char	*mini_errmsg(char *command, char *detail, char *error_message,
+		bool prt_mini)
 {
 	char	*msg;
 	bool	detail_quotes;
 
 	msg = NULL;
+	detail_quotes = false;
 	if (prt_mini)
 		msg = ft_strdup("minishell: ");
 	if (command != NULL)
@@ -48,7 +43,8 @@ char	*mini_errmsg(char *command, char *detail, char *error_message, bool prt_min
 	}
 	if (detail != NULL)
 	{
-		detail_quotes = add_detail_quotes(command);
+		if (ft_strncmp(command, "export", 7) == 0)
+			detail_quotes = true;
 		if (detail_quotes)
 			msg = join_strs(msg, "`");
 		msg = join_strs(msg, detail);
@@ -59,7 +55,6 @@ char	*mini_errmsg(char *command, char *detail, char *error_message, bool prt_min
 	msg = join_strs(msg, error_message);
 	return (msg);
 }
-
 
 static void	write_heredoc(t_token *lst, t_command **cmd, char **env)
 {
@@ -87,7 +82,8 @@ static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 	if (cmd->rdio->fd_out == -1)
 	{
 		if (cmd->error == NULL)
-			cmd->error = mini_errmsg(token->next->str, NULL, strerror(errno), true);
+			cmd->error = mini_errmsg(token->next->str, NULL, strerror(errno),
+					true);
 		g_last_exit_code = 1;
 		return (false);
 	}
@@ -102,12 +98,13 @@ bool	check_files(t_token *token, t_command **cmd, char **env)
 	{
 		if (token->type == RED_IN && access(token->next->str, R_OK) != 0)
 		{
-			(*cmd)->error = mini_errmsg(token->next->str, NULL, strerror(errno), true);
+			(*cmd)->error = mini_errmsg(token->next->str, NULL, strerror(errno),
+					true);
 			g_last_exit_code = 1;
 			return (false);
 		}
 		else if (token->type == APPEND)
-		{	
+		{
 			if (!open_file(*cmd, token, O_WRONLY | O_CREAT | O_APPEND, 0644))
 				return (false);
 		}

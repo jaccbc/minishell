@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/10 04:06:56 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:24:41 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,8 @@ static void	process_token_data(t_token *token, t_command *cmd, t_data *shell)
 {
 	while (token && token->type != PIPE)
 	{
-		if (token->type == COMMAND || (token->type == ARG
-				&& !cmd->command && token->prev
-				&& !(token->prev->type >= RED_IN)))
+		if (token->type == COMMAND || (token->type == ARG && !cmd->command
+				&& token->prev && !(token->prev->type >= RED_IN)))
 			fill_command(&cmd, token, shell);
 		else if (token->type == ARG)
 			fill_args(&cmd, token);

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:36:54 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/01 03:39:21 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:12:31 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 {
 	struct stat	data;
 
-	if ((argc == 1) || (argc == 2
-			&& (ft_strcmp(cmd->args[1], "--") || ft_strcmp(cmd->args[1], "-"))))
+	if ((argc == 1) || (argc == 2 && (ft_strcmp(cmd->args[1], "--")
+				|| ft_strcmp(cmd->args[1], "-"))))
 		return (false);
 	if (argc > 3 || (argc >= 3 && !ft_strcmp(cmd->args[1], "--")))
 		return (cd_errmsg("too many arguments", 0), true);
 	if (getenv_path(env, "OLDPWD") == NULL)
-		if ((argc == 2 && ft_strcmp(cmd->args[1], "-"))
-			|| (argc == 3 && ft_strcmp(cmd->args[1], "--")
-				&& ft_strcmp(cmd->args[2], "-")))
+		if ((argc == 2 && ft_strcmp(cmd->args[1], "-")) || (argc == 3
+				&& ft_strcmp(cmd->args[1], "--") && ft_strcmp(cmd->args[2],
+					"-")))
 			return (cd_errmsg("OLDPWD not set", 0), true);
 	if (argc == 3 && ft_strcmp(cmd->args[2], "-"))
 		return (false);
@@ -61,7 +61,7 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 
 static bool	set_oldpwd(char **env)
 {
-	int		i;
+	int	i;
 
 	if (getenv_path(env, "OLDPWD"))
 		return (true);
@@ -70,12 +70,10 @@ static bool	set_oldpwd(char **env)
 		++i;
 	env = ft_realloc(env, i + 2);
 	if (env == NULL)
-		return (ft_putendl_fd(strerror(errno), STDERR_FILENO),
-			false);
+		return (ft_putendl_fd(strerror(errno), STDERR_FILENO), false);
 	env[i] = ft_strjoin("OLDPWD=", getenv_path(env, "PWD"));
 	if (env[i++] == NULL)
-		return (ft_putendl_fd(strerror(errno), STDERR_FILENO),
-			false);
+		return (ft_putendl_fd(strerror(errno), STDERR_FILENO), false);
 	env[i] = NULL;
 	return (true);
 }
@@ -143,8 +141,8 @@ int	ft_cd(t_command *cmd, char **env)
 		return (switch_dir(path, env, 0));
 	if (argc == 2 && ft_strcmp(cmd->args[1], "-"))
 		return (switch_dir(path, env, 1));
-	if (argc == 3
-		&& ft_strcmp(cmd->args[1], "--") && ft_strcmp(cmd->args[2], "-"))
+	if (argc == 3 && ft_strcmp(cmd->args[1], "--") && ft_strcmp(cmd->args[2],
+			"-"))
 		return (switch_dir(path, env, 1));
 	return (switch_dir(path, env, 2));
 }

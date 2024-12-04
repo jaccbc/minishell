@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:34:20 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/08 02:45:22 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/04 13:06:57 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static void	var_expander(t_data *shell)
 	}
 }
 
-//função inicia syntax analysis
+// função inicia syntax analysis
 bool	check_syntax(t_data *shell)
 {
 	if (!shell->lst)
@@ -77,7 +77,6 @@ bool	check_syntax(t_data *shell)
 		g_last_exit_code = 2;
 		return (false);
 	}
-	/* print_list(shell->lst); */
 	check_heredoc_expansion(shell->lst);
 	var_expander(shell);
 	del_dollar(shell->lst);

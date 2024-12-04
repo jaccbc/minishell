@@ -6,34 +6,34 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:10:33 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/09 21:04:02 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/04 13:16:44 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void print_file_content(const char *filename)
+void	print_file_content(const char *filename)
 {
+	int		fd;
+	char	*line;
+
 	if (!filename)
 		return ;
-    int fd = open(filename, O_RDONLY);
-    if (fd == -1)
-        return ;
-
-    printf("Content of file \"%s\":\n", filename);
-    char *line;
-    while ((line = get_next_line(fd)) != NULL)
-    {
-        printf("%s", line);  // Print each line as read
-        free(line);  // Free line after printing
-    }
-
-    close(fd);
-    printf("\n");  // Add a newline after file content for readability
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		return ;
+	printf("Content of file \"%s\":\n", filename);
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line); // Print each line as read
+		free(line);         // Free line after printing
+	}
+	close(fd);
+	printf("\n"); // Add a newline after file content for readability
 }
 
 // Print command list for debugging, including pipe output status
-void print_command_list(t_command *cmd_list)
+void	print_command_list(t_command *cmd_list)
 {
 	t_command	*current;
 	int			i;
@@ -56,7 +56,8 @@ void print_command_list(t_command *cmd_list)
 		printf("]\n");
 		printf("error=[%s]\n", current->error);
 		printf("path=[%s]\n", current->path);
-		printf("has_pipe_output=[%s]\n", current->has_pipe_output ? "true" : "false");
+		printf("has_pipe_output=[%s]\n",
+			current->has_pipe_output ? "true" : "false");
 		if (current->rdio)
 		{
 			printf("infile=[%s]\n", current->rdio->infile);
@@ -70,11 +71,9 @@ void print_command_list(t_command *cmd_list)
 		printf("prev=[%p]\n", current->prev);
 		printf("next=[%p]\n\n", current->next);
 		current = current->next;
-    }
-    printf("*** DEBUG PRINT_COMMAND_LIST END ***\n");
+	}
+	printf("*** DEBUG PRINT_COMMAND_LIST END ***\n");
 }
-
-
 
 // imprime a lista de tokens
 void	print_list(t_token *lst)
@@ -106,7 +105,7 @@ void	print_array(char **arr)
 	}
 }
 
-//retorna o nome do token_type
+// retorna o nome do token_type
 char	*token_name(int type)
 {
 	if (type == COMMAND)

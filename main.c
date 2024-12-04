@@ -6,13 +6,13 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:26:37 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 19:19:11 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/04 10:25:53 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	g_last_exit_code;
+int			g_last_exit_code;
 
 static bool	init_env(t_data *shell, char **env)
 {
@@ -40,7 +40,7 @@ static bool	init_env(t_data *shell, char **env)
 	return (true);
 }
 
-//inicializa a leitura da string do user_input
+// inicializa a leitura da string do user_input
 static bool	init_prompt(t_data *shell, char *user_input)
 {
 	shell->lst = tokenize(user_input);
@@ -59,8 +59,8 @@ static bool	init_prompt(t_data *shell, char *user_input)
 	return (lstdel_command(shell->command), true);
 }
 
-//será parte do modo interactivo, o loop que pede o input do utilizador
-//que será mais tarde lexado, parsado e executado
+// será parte do modo interactivo, o loop que pede o input do utilizador
+// que será mais tarde lexado, parsado e executado
 int	main(int argc, char **argv, char **env)
 {
 	t_data	shell;

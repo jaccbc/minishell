@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/04 13:10:58 by vamachad          #+#    #+#             */
+/*   Updated: 2024/12/04 13:10:59 by vamachad         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 int	ft_env(t_data *shell)
 {
-	int	i;
+	int		i;
 	char	*err;
 
-	if(shell->command->args && shell->command->args[1])
+	if (shell->command->args && shell->command->args[1])
 	{
 		err = mini_errmsg("env", NULL, "too many arguments", true);
 		ft_putendl_fd(err, STDERR_FILENO);

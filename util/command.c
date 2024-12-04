@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:20:35 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/03 04:25:54 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/04 13:16:17 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	**ft_realloc(char **array, size_t new_size)
 		new_array[i] = array[i];
 		i++;
 	}
-	while(i < new_size -1)
+	while (i < new_size - 1)
 		new_array[i++] = NULL;
 	free(array);
 	return (new_array);
@@ -154,12 +154,13 @@ static bool	is_directory(char *str, t_command **command)
 		}
 		if ((*command)->error == NULL && S_ISLNK(data.st_mode))
 		{
-			(*command)->error = mini_errmsg(str, NULL, "Permission denied", true);
+			(*command)->error = mini_errmsg(str, NULL, "Permission denied",
+					true);
 			g_last_exit_code = CMD_NOT_EXECUTABLE;
 		}
 		if ((*command)->error == NULL && access(str, F_OK) == -1)
 		{
-    		(*command)->error = mini_errmsg(str, NULL, strerror(errno), true);
+			(*command)->error = mini_errmsg(str, NULL, strerror(errno), true);
 			g_last_exit_code = CMD_NOT_FOUND;
 		}
 	}
@@ -189,7 +190,8 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	if ((*command)->path)
 		return (true);
 	if (ft_strncmp(token->str, "./", 2) == 0)
-		(*command)->path = ft_strjoin(getenv_path(shell->env, "PWD"), token->str + 1);
+		(*command)->path = ft_strjoin(getenv_path(shell->env, "PWD"), token->str
+				+ 1);
 	else
 		fill_command_path((*command), shell);
 	if (!(*command)->path && !(*command)->error)

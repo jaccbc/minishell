@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/04 13:05:20 by vamachad          #+#    #+#             */
+/*   Updated: 2024/12/04 13:05:29 by vamachad         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 bool	key_is_valid(char *arg)
 {
-	int	i;
+	int		i;
 	bool	status;
 	char	*err;
 
@@ -38,7 +50,7 @@ int	get_var_index(t_data *shell, char *arg)
 	i = -1;
 	while (shell->env[++i])
 	{
-		if (!ft_strncmp(shell->env[i], arg, key_len) 
+		if (!ft_strncmp(shell->env[i], arg, key_len)
 			&& shell->env[i][key_len] == '=')
 			return (i);
 	}
@@ -57,7 +69,7 @@ int	replace_var_value(t_data *shell, char *var_n_value, int index)
 int	add_var(t_data *shell, char *var_n_value)
 {
 	char	**new_env;
-	int	env_count;
+	int		env_count;
 
 	env_count = 0;
 	while (shell->env[env_count])
