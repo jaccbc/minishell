@@ -12,6 +12,27 @@
 
 #include "../minishell.h"
 
+bool	is_builtin(t_command *cmd)
+{
+	if (!cmd->command)
+		return (false);
+	if (ft_strncmp(cmd->command, "echo", 5) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "exit", 5) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "env", 4) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "pwd", 4) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "unset", 6) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "export", 7) == 0)
+		return (true);
+	if (ft_strncmp(cmd->command, "cd", 3) == 0)
+		return (true);
+	return (false);
+}
+
 char	**ft_realloc(char **array, size_t new_size)
 {
 	char	**new_array;
@@ -136,36 +157,29 @@ static bool	is_directory(char *str, t_command **command)
 	if (!str || !(*str))
 		return (false);
 	dir = false;
-	i = -1;
-	while (str[++i])
+	i = 0;
+	while (str[i])
 	{
-		if (str[i] == '/')
-		{
+		if (str[i++] == '/')
 			dir = true;
-			break ;
-		}
 	}
-	if (dir && lstat(str, &data) == 0)
+	lstat(str, &data);
+	if (dir)
 	{
-		if ((*command)->error == NULL && S_ISDIR(data.st_mode))
+		if (S_ISDIR(data.st_mode) && (*command)->error == NULL)
 		{
 			(*command)->error = mini_errmsg(str, NULL, "Is a directory", true);
 			g_last_exit_code = CMD_NOT_EXECUTABLE;
 		}
-		if ((*command)->error == NULL && S_ISLNK(data.st_mode))
+		if (access(str, X_OK) != 0 && (*command)->error == NULL)
 		{
-			(*command)->error = mini_errmsg(str, NULL, "Permission denied",
-					true);
-			g_last_exit_code = CMD_NOT_EXECUTABLE;
-		}
-		if ((*command)->error == NULL && access(str, F_OK) == -1)
-		{
-			(*command)->error = mini_errmsg(str, NULL, strerror(errno), true);
-			g_last_exit_code = CMD_NOT_FOUND;
+    		(*command)->error = mini_errmsg(str, NULL, strerror(errno), true);
+			if (access(str, F_OK) == -1)
+				g_last_exit_code = CMD_NOT_FOUND;
+			else
+   				g_last_exit_code = CMD_NOT_EXECUTABLE;
 		}
 	}
-	if ((*command)->error)
-		return (true);
 	return (false);
 }
 
@@ -194,7 +208,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 				+ 1);
 	else
 		fill_command_path((*command), shell);
-	if (!(*command)->path && !(*command)->error)
+	if (!(*command)->path && !(*command)->error && !(is_builtin((*command))))
 	{
 		(*command)->error = mini_errmsg((*command)->command, NULL,
 				"command not found", false);
@@ -269,23 +283,3 @@ void	lstdel_command(t_command *lst)
 	}
 }
 
-bool	is_builtin(t_command *cmd)
-{
-	if (!cmd->command)
-		return (false);
-	if (ft_strncmp(cmd->command, "echo", 5) == 0)
-		return (true);
-	if (ft_strncmp(cmd->command, "exit", 5) == 0)
-		return (true);
-	if (ft_strncmp(cmd->command, "env", 4) == 0)
-		return (true);
-	if (ft_strncmp(cmd->command, "pwd", 4) == 0)
-		return (true);
-	if (ft_strncmp(cmd->command, "unset", 6) == 0)
-		return (true);
-	if (ft_strncmp(cmd->command, "export", 7) == 0)
-		return (true);
-	if (ft_strncmp(cmd->command, "cd", 3) == 0)
-		return (true);
-	return (false);
-}
