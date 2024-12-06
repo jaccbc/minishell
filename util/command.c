@@ -196,6 +196,8 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 		(*command)->command = ft_strdup(token->str);
 	if ((*command)->command == NULL)
 		return (false);
+	else if ((*command)->command[0] =='\0')
+		return (true); 
 	(*command)->args = ft_realloc((*command)->args, 2);
 	if ((*command)->args == NULL)
 		return (false);
@@ -212,6 +214,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 	{
 		(*command)->error = mini_errmsg((*command)->command, NULL,
 				"command not found", false);
+		g_last_exit_code = CMD_NOT_FOUND;
 		return (false);
 	}
 	return (true);
@@ -263,6 +266,8 @@ void	lstdel_command(t_command *lst)
 
 	while (lst)
 	{
+		if (lst->command[0] == '\0')
+			free(lst->command);
 		if (lst->error)
 			free(lst->error);
 		if (lst->args)

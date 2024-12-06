@@ -107,6 +107,11 @@ int	ft_exit(t_data *shell)
 		exit(EXIT_FAILURE);
 	if (!shell->command->prev && ! shell->command->next)
 		ft_putendl_fd("exit", 1);
+	if (!shell->command->args[1])
+	{
+		exit_cleanup(shell);
+		exit(EXIT_SUCCESS);
+	}
 	if (!check_args(shell->command))
 	{
 		err = mini_errmsg("exit", NULL, "too many arguments", true);

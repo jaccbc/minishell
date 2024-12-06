@@ -147,6 +147,7 @@ bool					parse_heredoc(t_redirect *rdio, t_token *lst,
 bool					sighandler(void);
 // execute
 int						execute(t_data *shell);
+void					free_env(char **env);
 // debug
 void					print_list(t_token *lst);
 char					*token_name(int type);

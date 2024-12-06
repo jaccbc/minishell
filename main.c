@@ -54,7 +54,7 @@ static bool	init_prompt(t_data *shell, char *user_input)
 		lstdel_command(shell->command);
 		return (false);
 	}
-	/* print_command_list(shell->command); */
+	print_command_list(shell->command);
 	g_last_exit_code = execute(shell);
 	return (lstdel_command(shell->command), true);
 }
@@ -77,7 +77,10 @@ int	main(int argc, char **argv, char **env)
 	{
 		shell.user_input = readline(PROMPT);
 		if (shell.user_input == NULL)
+		{
+			free_env(shell.env);
 			ft_exit(&shell);
+		}
 		init_prompt(&shell, shell.user_input);
 		if (*shell.user_input)
 			add_history(shell.user_input);

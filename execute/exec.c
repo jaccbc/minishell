@@ -51,18 +51,31 @@ static int	execute_builtin(t_data *shell, t_command *cmd)
 	return (CMD_NOT_FOUND);
 }
 
+
 // Executes the given command in a child process
 static int	execute_cmd(t_data *shell, t_command *cmd)
 {
 	int	ret;
 
+	if (!cmd->command[0])
+	{
+		lstdel_command(cmd);
+		free_env(shell->env);
+		return (EXIT_SUCCESS);
+	}
 	if (cmd->error != NULL)
 	{
 		ft_putendl_fd(cmd->error, STDERR_FILENO);
+		lstdel_command(cmd);
+		free_env(shell->env);
 		return (g_last_exit_code);
 	}
 	if (!cmd->command)
+	{
+		lstdel_command(cmd);
+		free_env(shell->env);
 		return (EXIT_FAILURE);
+	}
 	handle_pipes_and_redirections(cmd);
 	ret = execute_builtin(shell, cmd);
 	if (ret != CMD_NOT_FOUND)
