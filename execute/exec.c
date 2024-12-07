@@ -65,7 +65,7 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 			ret = g_last_exit_code;
 		}
 		/* else if (!cmd->command)
-			ret = EXIT_FAILURE; */ // este acho que não faz falta
+			ret = EXIT_FAILURE; */ //este acho que não faz
 		else if (!cmd->command[0])
 			ret = EXIT_SUCCESS;
 		lstdel_command(shell->command);

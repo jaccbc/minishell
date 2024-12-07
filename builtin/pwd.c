@@ -17,17 +17,16 @@ int	ft_pwd(t_data *shell)
 	char	buf[4096];
 	char	*err;
 	char	*cwd;
+	int		i;
 
+	i = -1;
 	if (!shell->env)
 		return (EXIT_FAILURE);
-	while (*shell->env)
+	while (shell->env[++i])
 	{
-		if (ft_strncmp(*shell->env, "PWD", 3) == 0)
-		{
-			ft_putendl_fd((*shell->env) + 4, STDOUT_FILENO);
-			return (EXIT_SUCCESS);
-		}
-		shell->env++;
+		if (ft_strncmp(shell->env[i], "PWD", 3) == 0)
+			return (ft_putendl_fd((shell->env[i] + 4), STDOUT_FILENO), 
+				EXIT_SUCCESS);
 	}
 	cwd = getcwd(buf, 4096);
 	if (cwd)
