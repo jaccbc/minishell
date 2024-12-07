@@ -57,29 +57,29 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 {
 	int	ret;
 
-	if (!cmd->command[0])
+	if (cmd->error != NULL || !cmd->command || !cmd->command[0])
 	{
-		lstdel_command(cmd);
+		if (cmd->error)
+		{
+			ft_putendl_fd(cmd->error, STDERR_FILENO);
+			ret = g_last_exit_code;
+		}
+		/* else if (!cmd->command)
+			ret = EXIT_FAILURE; */ // este acho que não faz falta
+		else if (!cmd->command[0])
+			ret = EXIT_SUCCESS;
+		lstdel_command(shell->command);
 		free_env(shell->env);
-		return (EXIT_SUCCESS);
-	}
-	if (cmd->error != NULL)
-	{
-		ft_putendl_fd(cmd->error, STDERR_FILENO);
-		lstdel_command(cmd);
-		free_env(shell->env);
-		return (g_last_exit_code);
-	}
-	if (!cmd->command)
-	{
-		lstdel_command(cmd);
-		free_env(shell->env);
-		return (EXIT_FAILURE);
+		return (ret);
 	}
 	handle_pipes_and_redirections(cmd);
 	ret = execute_builtin(shell, cmd);
 	if (ret != CMD_NOT_FOUND)
+	{
+		lstdel_command(shell->command);
+		free_env(shell->env);
 		return (ret);
+	}
 	execve(cmd->path, cmd->args, shell->env);
 	perror("execve");
 	return (CMD_NOT_FOUND);

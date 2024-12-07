@@ -266,8 +266,9 @@ void	lstdel_command(t_command *lst)
 
 	while (lst)
 	{
-		if (lst->command[0] == '\0')
-			free(lst->command);
+		if (lst->command)	
+			if (lst->command[0] == '\0')
+				free(lst->command);
 		if (lst->error)
 			free(lst->error);
 		if (lst->args)

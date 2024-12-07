@@ -122,6 +122,7 @@ bool					restore_red(t_command *cmd);
 void					close_unused_pipes(t_command *cmd);
 bool					piping(t_data *shell);
 bool					open_last_red(t_data *shell);
+void					exit_cleanup(t_data *shell);
 // lexer
 t_token					*tokenize(char *s);
 t_token					*lstiter_token(t_token *lst, int type, size_t i);

@@ -105,7 +105,7 @@ int	ft_exit(t_data *shell)
 
 	if (shell->command == NULL)
 		exit(EXIT_FAILURE);
-	if (!shell->command->prev && ! shell->command->next)
+	if (!shell->command->prev && !shell->command->next)
 		ft_putendl_fd("exit", 1);
 	if (!shell->command->args[1])
 	{
