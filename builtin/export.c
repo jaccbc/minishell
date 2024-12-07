@@ -85,7 +85,7 @@ int	add_var(t_data *shell, char *var_n_value)
 	return (EXIT_SUCCESS);
 }
 
-int	ft_export(t_data *shell)
+int	ft_export(t_data *shell, t_command *cmd)
 {
 	char	**args;
 	int		i;
@@ -94,7 +94,7 @@ int	ft_export(t_data *shell)
 
 	i = 0;
 	status = EXIT_SUCCESS;
-	args = shell->command->args;
+	args = cmd->args;
 	while (args[++i])
 	{
 		if (!key_is_valid(args[i]))

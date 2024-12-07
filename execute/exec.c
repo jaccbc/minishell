@@ -37,15 +37,15 @@ static int	execute_builtin(t_data *shell, t_command *cmd)
 	if (ft_strncmp(cmd->command, "echo", 5) == 0)
 		return (ft_echo(cmd));
 	if (ft_strncmp(cmd->command, "exit", 5) == 0)
-		return (ft_exit(shell));
+		return (ft_exit(shell, cmd));
 	if (ft_strncmp(cmd->command, "env", 4) == 0)
-		return (ft_env(shell));
+		return (ft_env(shell, cmd));
 	if (ft_strncmp(cmd->command, "pwd", 4) == 0)
 		return (ft_pwd(shell));
 	if (ft_strncmp(cmd->command, "unset", 6) == 0)
-		return (ft_unset(shell));
+		return (ft_unset(shell, cmd));
 	if (ft_strncmp(cmd->command, "export", 7) == 0)
-		return (ft_export(shell));
+		return (ft_export(shell, cmd));
 	if (ft_strncmp(cmd->command, "cd", 3) == 0)
 		return (ft_cd(cmd, shell->env));
 	return (CMD_NOT_FOUND);

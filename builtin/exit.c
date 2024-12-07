@@ -99,27 +99,27 @@ void	exit_cleanup(t_data *shell)
 	rl_clear_history();
 }
 
-int	ft_exit(t_data *shell)
+int	ft_exit(t_data *shell, t_command *cmd)
 {
 	char	*err;
 
-	if (shell->command == NULL)
+	if (cmd == NULL)
 		exit(EXIT_FAILURE);
-	if (!shell->command->prev && !shell->command->next)
+	if (!cmd->prev && !cmd->next)
 		ft_putendl_fd("exit", 1);
-	if (!shell->command->args[1])
+	if (!cmd->args[1])
 	{
 		exit_cleanup(shell);
 		exit(EXIT_SUCCESS);
 	}
-	if (!check_args(shell->command))
+	if (!check_args(cmd))
 	{
 		err = mini_errmsg("exit", NULL, "too many arguments", true);
 		ft_putendl_fd(err, STDERR_FILENO);
 		free (err);
 		return (g_last_exit_code);
 	}
-	prepare_exit(shell->command->args[1]);
+	prepare_exit(cmd->args[1]);
 	exit_cleanup(shell);
 	exit(g_last_exit_code);
 }

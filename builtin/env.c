@@ -12,12 +12,12 @@
 
 #include "../minishell.h"
 
-int	ft_env(t_data *shell)
+int	ft_env(t_data *shell, t_command *cmd)
 {
 	int		i;
 	char	*err;
 
-	if (shell->command->args && shell->command->args[1])
+	if (cmd->args && cmd->args[1])
 	{
 		err = mini_errmsg("env", NULL, "too many arguments", true);
 		ft_putendl_fd(err, STDERR_FILENO);

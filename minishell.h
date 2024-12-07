@@ -102,11 +102,11 @@ typedef struct s_data
 
 // builtin
 int						ft_echo(t_command *cmd);
-int						ft_exit(t_data *shell);
-int						ft_env(t_data *shell);
+int						ft_exit(t_data *shell, t_command *cmd);
+int						ft_env(t_data *shell, t_command *cmd);
 int						ft_pwd(t_data *shell);
-int						ft_unset(t_data *shell);
-int						ft_export(t_data *shell);
+int						ft_unset(t_data *shell, t_command *cmd);
+int						ft_export(t_data *shell, t_command *cmd);
 int						ft_cd(t_command *cmd, char **env);
 // utils
 bool					ft_strcmp(char *s1, char *s2);

@@ -70,16 +70,16 @@ int	redo_env(t_data *shell, int var_index)
 	return (EXIT_SUCCESS);
 }
 
-int	ft_unset(t_data *shell)
+int	ft_unset(t_data *shell, t_command *cmd)
 {
 	int	i;
 	int	j;
 	int	var_len;
 
-	if (!shell || !shell->env || !shell->command || !shell->command->args[1])
+	if (!shell || !shell->env || !cmd)
 		return (EXIT_FAILURE);
 	j = 0;
-	while (shell->command->args[++j])
+	while (cmd->args[++j])
 	{
 		i = 0;
 		while (shell->env[i])

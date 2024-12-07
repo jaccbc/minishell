@@ -78,8 +78,8 @@ int	main(int argc, char **argv, char **env)
 		shell.user_input = readline(PROMPT);
 		if (shell.user_input == NULL)
 		{
-			free_env(shell.env);
-			ft_exit(&shell);
+			exit_cleanup(&shell);
+			exit(EXIT_SUCCESS);
 		}
 		init_prompt(&shell, shell.user_input);
 		if (*shell.user_input)
