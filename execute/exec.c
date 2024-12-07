@@ -102,6 +102,7 @@ static int	loop_children(t_data *shell)
 			perror("fork");
 			return (EXIT_FAILURE);
 		}
+		g_last_exit_code = wait_for_children();
 		cmd = cmd->next;
 	}
 	return (EXIT_SUCCESS);
@@ -111,21 +112,19 @@ static int	loop_children(t_data *shell)
 int	execute(t_data *shell)
 {
 	t_command	*cmd;
-	int			ret;
 
 	cmd = shell->command;
-	ret = CMD_NOT_FOUND;
 	if (!shell || !cmd || !piping(shell) || !open_last_red(shell))
 		return (EXIT_FAILURE);
 	if (!shell->command->has_pipe_output)
 	{
 		handle_pipes_and_redirections(cmd);
-		ret = execute_builtin(shell, cmd);
+		g_last_exit_code = execute_builtin(shell, cmd);
 		restore_red(cmd);
 	}
-	if (ret != CMD_NOT_FOUND)
-		return (ret);
+	if (g_last_exit_code != CMD_NOT_FOUND)
+		return (g_last_exit_code);
 	if (loop_children(shell) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	return (wait_for_children());
+	return (g_last_exit_code);
 }
