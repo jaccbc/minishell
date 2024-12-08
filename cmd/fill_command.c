@@ -57,11 +57,10 @@ static bool	is_directory(char *str, t_command **command)
 	struct stat	data;
 	bool		dir;
 
-	ft_memset(&data, 0, sizeof(struct stat));
 	if (!str || !(*str))
 		return (false);
 	dir = isdir_name(str);
-	lstat(str, &data);
+	lstat(str, ft_memset(&data, 0, sizeof(struct stat)));
 	if (dir && S_ISDIR(data.st_mode) && (*command)->error == NULL)
 	{
 		(*command)->error = mini_errmsg(str, NULL, "Is a directory", true);
