@@ -13,19 +13,20 @@
 #include "../minishell.h"
 
 // Waits for all child processes and returns the last exit code
-static int	wait_for_children(void)
+static int	wait_for_children(t_data *shell)
 {
 	int	status;
 	int	last_exit_code;
 
 	last_exit_code = 0;
-	while (waitpid(-1, &status, 0) > 0)
+	while (waitpid(shell->pid, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
 			last_exit_code = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			last_exit_code = 128 + WTERMSIG(status);
 	}
+	waitpid(-1, &status, 0);
 	return (last_exit_code);
 }
 
@@ -57,6 +58,7 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 {
 	int	ret;
 
+	ret = CMD_NOT_FOUND;
 	if (cmd->error != NULL || !cmd->command || !cmd->command[0])
 	{
 		if (cmd->error)
@@ -64,8 +66,6 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 			ft_putendl_fd(cmd->error, STDERR_FILENO);
 			ret = g_last_exit_code;
 		}
-		/* else if (!cmd->command)
-			ret = EXIT_FAILURE; */ //este acho que não faz
 		else if (!cmd->command[0])
 			ret = EXIT_SUCCESS;
 		lstdel_command(shell->command);
@@ -88,43 +88,52 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 static int	loop_children(t_data *shell)
 {
 	t_command	*cmd;
+	pid_t		pid;
 
 	cmd = shell->command;
 	while (cmd)
 	{
-		shell->pid = fork();
-		if (shell->pid == 0)
-			exit(execute_cmd(shell, cmd));
-		else if (shell->pid > 0)
-			close_unused_pipes(cmd);
-		else
+		pid = fork();
+		if (pid < 0)
 		{
 			perror("fork");
 			return (EXIT_FAILURE);
 		}
-		g_last_exit_code = wait_for_children();
+		else if (pid == 0)
+		{
+			close_unused_pipes(cmd);
+			exit(execute_cmd(shell, cmd));
+		}
+		else
+		{
+			close_unused_pipes(cmd);
+			shell->pid = pid;
+		}
 		cmd = cmd->next;
 	}
 	return (EXIT_SUCCESS);
 }
 
+
 // Main execute function to fork processes and manage pipes
 int	execute(t_data *shell)
 {
 	t_command	*cmd;
+	int			ret;
 
 	cmd = shell->command;
+	ret = CMD_NOT_FOUND;
 	if (!shell || !cmd || !piping(shell) || !open_last_red(shell))
 		return (EXIT_FAILURE);
 	if (!shell->command->has_pipe_output)
 	{
 		handle_pipes_and_redirections(cmd);
-		g_last_exit_code = execute_builtin(shell, cmd);
+		ret = execute_builtin(shell, cmd);
 		restore_red(cmd);
 	}
-	if (g_last_exit_code != CMD_NOT_FOUND)
-		return (g_last_exit_code);
+	if (ret != CMD_NOT_FOUND)
+		return (ret);
 	if (loop_children(shell) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	return (g_last_exit_code);
+	return (wait_for_children(shell));
 }
