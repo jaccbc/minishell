@@ -58,14 +58,17 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 	int	ret;
 
 	ret = CMD_NOT_FOUND;
-	if (cmd->error != NULL || !cmd->command || !cmd->command[0])
+	if (cmd->error != NULL || !cmd->command 
+		|| (cmd->command && !cmd->command[0]))
 	{
 		if (cmd->error)
 		{
 			ft_putendl_fd(cmd->error, STDERR_FILENO);
 			ret = g_last_exit_code;
 		}
-		else if (!cmd->command[0])
+		else if (!cmd->command)
+			ret = EXIT_FAILURE;
+		else if (cmd -> command && !cmd->command[0])
 			ret = EXIT_SUCCESS;
 		return (lstdel_command(shell->command), free_env(shell->env), ret);
 	}

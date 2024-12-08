@@ -57,6 +57,7 @@ static bool	is_directory(char *str, t_command **command)
 	struct stat	data;
 	bool		dir;
 
+	ft_memset(&data, 0, sizeof(struct stat));
 	if (!str || !(*str))
 		return (false);
 	dir = isdir_name(str);
