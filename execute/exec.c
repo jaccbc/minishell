@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:48:09 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/08 01:56:09 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/08 12:41:56 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 	int	ret;
 
 	ret = CMD_NOT_FOUND;
-	if (cmd->error != NULL || !cmd->command 
+	if (cmd->error != NULL || !cmd->command
 		|| (cmd->command && !cmd->command[0]))
 	{
 		if (cmd->error)

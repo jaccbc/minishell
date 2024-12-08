@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/08 02:45:31 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/08 13:13:06 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@ static size_t	get_varlen(const char *s)
 {
 	size_t	len;
 
+	if (s[0] == '?')
+		return (1);
 	len = 0;
-	while (ft_isalnum(s[len]) || s[len] == '_' || s[len] == '?')
+	while (ft_isalnum(s[len]) || s[len] == '_')
 		++len;
 	return (len);
 }
