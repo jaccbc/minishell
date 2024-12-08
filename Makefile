@@ -6,7 +6,7 @@
 #    By: joandre- <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2024/11/04 04:15:10 by joandre-         ###   ########.fr        #
+#    Updated: 2024/12/08 01:48:24 by joandre-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +42,9 @@ debug: $(LIBFT) $(OBJ)
 norm:
 	norminette $(SRC) *.c *.h
 
+run: $(NAME)
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind_readline.supp ./minishell
+
 clean:
 	rm -rf $(OBJ) *.o
 
@@ -50,3 +53,4 @@ fclean: clean
 	make fclean -s -C libft
 
 re: fclean all
+

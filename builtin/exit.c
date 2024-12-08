@@ -6,17 +6,17 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/02 02:23:52 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/08 02:49:31 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-long	ft_atol (char *str_nb)
+long	ft_atol(char *str_nb)
 {
-	int	i;
+	int					i;
 	unsigned long long	nb;
-	int	neg;
+	int					neg;
 
 	neg = 1;
 	i = 0;
@@ -33,8 +33,8 @@ long	ft_atol (char *str_nb)
 	while (str_nb[i])
 	{
 		nb = nb * 10 + (str_nb[i] - '0');
-		if ((nb > LONG_MAX && neg == 1) || 
-			(nb > -(unsigned long)LONG_MIN && neg == -1))
+		if ((nb > LONG_MAX && neg == 1)
+			|| (nb > -(unsigned long)LONG_MIN && neg == -1))
 			g_last_exit_code = 2;
 		i++;
 	}
@@ -55,7 +55,7 @@ static bool	check_args(t_command *cmd)
 			g_last_exit_code = EXIT_FAILURE;
 			return (false);
 		}
-		while(cmd->args[1][++i]) 
+		while (cmd->args[1][++i])
 			if (!ft_isdigit(cmd->args[1][i]) && !ft_isspace(cmd->args[1][i])
 			&& cmd->args[1][i] != '+' && cmd->args[1][i] != '-')
 				g_last_exit_code = 2;

@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2024/11/23 20:34:36 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/08 02:45:31 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,13 +84,10 @@ void	expander(char **s, char **env, char *var)
 	while (&str[++i] != var - 1)
 		new[i] = str[i];
 	k = i;
-	if (expand)
-	{
-		while (*expand)
-			new[i++] = *expand++;
-		if (*var == '?')
-			free(expand - (i - k));
-	}
+	while (expand && *expand)
+		new[i++] = *expand++;
+	if (expand && *var == '?')
+		free(expand - (i - k));
 	k += get_varlen(var) + 1;
 	while (str[k])
 		new[i++] = str[k++];

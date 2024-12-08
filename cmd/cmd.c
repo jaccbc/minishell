@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/04 15:24:41 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/12/08 02:32:34 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,6 @@ static t_command	*create_command(void)
 	new->prev = NULL;
 	new->error = NULL;
 	new->has_pipe_output = false;
-	return (new);
-}
-
-t_redirect	*create_redirect(void)
-{
-	t_redirect	*new;
-
-	new = ft_calloc(1, sizeof(t_redirect));
-	if (new == NULL)
-		return (NULL);
-	new->infile = NULL;
-	new->outfile = NULL;
-	new->fd_in = -1;
-	new->fd_out = -1;
-	new->stdin_backup = -1;
-	new->stdout_backup = -1;
 	return (new);
 }
 

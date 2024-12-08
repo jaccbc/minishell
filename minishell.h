@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/04 14:48:02 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/12/08 03:19:08 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,57 +101,57 @@ typedef struct s_data
 }						t_data;
 
 // builtin
-int						ft_echo(t_command *cmd);
-int						ft_exit(t_data *shell, t_command *cmd);
-int						ft_env(t_data *shell, t_command *cmd);
-int						ft_pwd(t_data *shell);
-int						ft_unset(t_data *shell, t_command *cmd);
-int						ft_export(t_data *shell, t_command *cmd);
-int						ft_cd(t_command *cmd, char **env);
+int			ft_echo(t_command *cmd);
+int			ft_exit(t_data *shell, t_command *cmd);
+int			ft_env(t_data *shell, t_command *cmd);
+int			ft_pwd(t_data *shell);
+int			ft_unset(t_data *shell, t_command *cmd);
+int			ft_export(t_data *shell, t_command *cmd);
+int			ft_cd(t_command *cmd, char **env);
 // utils
-bool					ft_strcmp(char *s1, char *s2);
-char					*mini_errmsg(char *command, char *detail,
-							char *error_message, bool prt_mini);
-char					**ft_realloc(char **array, size_t new_size);
-void					lstdel_command(t_command *cmd);
-void					add_command_back(t_command **cmd, t_command *new);
-char					*getenv_path(char **env, const char *var);
-char					*expand_path(char **env, char *str);
-bool					handle_pipes_and_redirections(t_command *cmd);
-bool					restore_red(t_command *cmd);
-void					close_unused_pipes(t_command *cmd);
-bool					piping(t_data *shell);
-bool					open_last_red(t_data *shell);
-void					exit_cleanup(t_data *shell);
+void		cd_errmsg(char *msg, int err);
+bool		ft_strcmp(char *s1, char *s2);
+char		*mini_errmsg(char *command, char *detail,
+				char *error_message, bool prt_mini);
+char		**ft_realloc(char **array, size_t new_size);
+void		lstdel_command(t_command *cmd);
+void		add_command_back(t_command **cmd, t_command *new);
+char		*getenv_path(char **env, const char *var);
+char		*expand_path(char **env, char *str);
+bool		is_builtin(t_command *cmd);
+bool		handle_pipes_and_redirections(t_command *cmd);
+bool		restore_red(t_command *cmd);
+void		close_unused_pipes(t_command *cmd);
+bool		piping(t_data *shell);
+bool		open_last_red(t_data *shell);
+void		exit_cleanup(t_data *shell);
 // lexer
-t_token					*tokenize(char *s);
-t_token					*lstiter_token(t_token *lst, int type, size_t i);
-void					lstadd_token(t_token **lst, t_token *new);
-void					lstdel_token(t_token *lst);
-bool					is_type(int type, const char *s);
-bool					syntax_error(t_token *lst);
-bool					del_quote(t_token *lst);
-void					del_dollar(t_token *lst);
-void					expander(char **s, char **env, char *var);
-bool					check_syntax(t_data *shell);
-bool					check_files(t_token *lst, t_command **cmd, char **env);
+t_token		*tokenize(char *s);
+t_token		*lstiter_token(t_token *lst, int type, size_t i);
+void		lstadd_token(t_token **lst, t_token *new);
+void		lstdel_token(t_token *lst);
+bool		is_type(int type, const char *s);
+bool		syntax_error(t_token *lst);
+bool		del_quote(t_token *lst);
+void		del_dollar(t_token *lst);
+void		expander(char **s, char **env, char *var);
+bool		check_syntax(t_data *shell);
+bool		check_files(t_token *lst, t_command **cmd, char **env);
 // cmd
-t_redirect				*create_redirect(void);
-bool					final_parse(t_data *shell);
-void					fill_command_path(t_command *cmd, t_data *shell);
-bool					fill_args(t_command **cmd, t_token *token);
-bool					fill_command(t_command **cmd, t_token *token,
-							t_data *shell);
-bool					parse_heredoc(t_redirect *rdio, t_token *lst,
-							char **env);
+t_redirect	*create_redirect(void);
+bool		final_parse(t_data *shell);
+void		fill_command_path(t_command *cmd, t_data *shell);
+bool		fill_args(t_command **cmd, t_token *token);
+bool		fill_command(t_command **cmd, t_token *token, t_data *shell);
+bool		parse_heredoc(t_redirect *rdio, t_token *lst, char **env);
 // signal
-bool					sighandler(void);
+bool		sighandler(void);
 // execute
-int						execute(t_data *shell);
-void					free_env(char **env);
+int			execute(t_data *shell);
+void		free_env(char **env);
 // debug
-void					print_list(t_token *lst);
-char					*token_name(int type);
-void					print_command_list(t_command *cmd_list);
+void		print_list(t_token *lst);
+char		*token_name(int type);
+void		print_command_list(t_command *cmd_list);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:48:09 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/04 13:48:13 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/12/08 01:56:09 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ static int	execute_builtin(t_data *shell, t_command *cmd)
 	return (CMD_NOT_FOUND);
 }
 
-
 // Executes the given command in a child process
 static int	execute_cmd(t_data *shell, t_command *cmd)
 {
@@ -68,18 +67,12 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 		}
 		else if (!cmd->command[0])
 			ret = EXIT_SUCCESS;
-		lstdel_command(shell->command);
-		free_env(shell->env);
-		return (ret);
+		return (lstdel_command(shell->command), free_env(shell->env), ret);
 	}
 	handle_pipes_and_redirections(cmd);
 	ret = execute_builtin(shell, cmd);
 	if (ret != CMD_NOT_FOUND)
-	{
-		lstdel_command(shell->command);
-		free_env(shell->env);
-		return (ret);
-	}
+		return (lstdel_command(shell->command), free_env(shell->env), ret);
 	execve(cmd->path, cmd->args, shell->env);
 	perror("execve");
 	return (CMD_NOT_FOUND);
@@ -110,7 +103,6 @@ static int	loop_children(t_data *shell)
 	}
 	return (EXIT_SUCCESS);
 }
-
 
 // Main execute function to fork processes and manage pipes
 int	execute(t_data *shell)

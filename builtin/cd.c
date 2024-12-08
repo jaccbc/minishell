@@ -6,30 +6,11 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:36:54 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/04 15:12:31 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/12/08 03:19:40 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-static void	cd_errmsg(char *msg, int err)
-{
-	if (err <= 2)
-		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
-	if (err == 0)
-		ft_putendl_fd(msg, STDERR_FILENO);
-	else if (err == 1)
-	{
-		ft_putstr_fd("-", STDERR_FILENO);
-		ft_putchar_fd(*msg, STDERR_FILENO);
-		ft_putendl_fd(": invalid option", STDERR_FILENO);
-	}
-	else if (err == 2)
-	{
-		ft_putstr_fd(msg, STDERR_FILENO);
-		ft_putendl_fd(": Not a directory", STDERR_FILENO);
-	}
-}
 
 static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 {
@@ -42,8 +23,8 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 		return (cd_errmsg("too many arguments", 0), true);
 	if (getenv_path(env, "OLDPWD") == NULL)
 		if ((argc == 2 && ft_strcmp(cmd->args[1], "-")) || (argc == 3
-				&& ft_strcmp(cmd->args[1], "--") && ft_strcmp(cmd->args[2],
-					"-")))
+				&& ft_strcmp(cmd->args[1], "--")
+				&& ft_strcmp(cmd->args[2], "-")))
 			return (cd_errmsg("OLDPWD not set", 0), true);
 	if (argc == 3 && ft_strcmp(cmd->args[2], "-"))
 		return (false);
@@ -141,8 +122,8 @@ int	ft_cd(t_command *cmd, char **env)
 		return (switch_dir(path, env, 0));
 	if (argc == 2 && ft_strcmp(cmd->args[1], "-"))
 		return (switch_dir(path, env, 1));
-	if (argc == 3 && ft_strcmp(cmd->args[1], "--") && ft_strcmp(cmd->args[2],
-			"-"))
+	if (argc == 3 && ft_strcmp(cmd->args[1], "--")
+		&& ft_strcmp(cmd->args[2], "-"))
 		return (switch_dir(path, env, 1));
 	return (switch_dir(path, env, 2));
 }

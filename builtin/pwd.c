@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:06:03 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/04 13:06:04 by vamachad         ###   ########.fr       */
+/*   Updated: 2024/12/08 02:49:58 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	ft_pwd(t_data *shell)
 	while (shell->env[++i])
 	{
 		if (ft_strncmp(shell->env[i], "PWD", 3) == 0)
-			return (ft_putendl_fd((shell->env[i] + 4), STDOUT_FILENO), 
+			return (ft_putendl_fd((shell->env[i] + 4), STDOUT_FILENO),
 				EXIT_SUCCESS);
 	}
 	cwd = getcwd(buf, 4096);
