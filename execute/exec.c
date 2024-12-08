@@ -100,10 +100,7 @@ static int	loop_children(t_data *shell)
 			return (EXIT_FAILURE);
 		}
 		else if (pid == 0)
-		{
-			close_unused_pipes(cmd);
 			exit(execute_cmd(shell, cmd));
-		}
 		else
 		{
 			close_unused_pipes(cmd);
