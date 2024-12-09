@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:48:09 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/08 12:41:56 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/09 16:58:49 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	execute_builtin(t_data *shell, t_command *cmd)
 	if (ft_strncmp(cmd->command, "export", 7) == 0)
 		return (ft_export(shell, cmd));
 	if (ft_strncmp(cmd->command, "cd", 3) == 0)
-		return (ft_cd(cmd, shell->env));
+		return (ft_cd(shell, cmd));
 	return (CMD_NOT_FOUND);
 }
 

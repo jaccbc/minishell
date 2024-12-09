@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/08 03:19:08 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/09 16:57:52 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int			ft_env(t_data *shell, t_command *cmd);
 int			ft_pwd(t_data *shell);
 int			ft_unset(t_data *shell, t_command *cmd);
 int			ft_export(t_data *shell, t_command *cmd);
-int			ft_cd(t_command *cmd, char **env);
+int			ft_cd(t_data *shell, t_command *cmd);
 // utils
 void		cd_errmsg(char *msg, int err);
 bool		ft_strcmp(char *s1, char *s2);

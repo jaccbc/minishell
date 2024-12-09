@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:36:54 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/08 03:19:40 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/09 17:14:38 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,22 +40,25 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 	return (false);
 }
 
-static bool	set_oldpwd(char **env)
+static bool	set_oldpwd(t_data *shell)
 {
-	int	i;
+	int		i;
+	char	**new_env;
 
-	if (getenv_path(env, "OLDPWD"))
+	if (getenv_path(shell->env, "OLDPWD"))
 		return (true);
 	i = 0;
-	while (env[i])
+	while (shell->env[i])
 		++i;
-	env = ft_realloc(env, i + 2);
-	if (env == NULL)
+	new_env = ft_realloc(shell->env, i + 2);
+	if (new_env == NULL)
 		return (ft_putendl_fd(strerror(errno), STDERR_FILENO), false);
-	env[i] = ft_strjoin("OLDPWD=", getenv_path(env, "PWD"));
-	if (env[i++] == NULL)
-		return (ft_putendl_fd(strerror(errno), STDERR_FILENO), false);
-	env[i] = NULL;
+	new_env[i] = ft_strjoin("OLDPWD=", getenv_path(new_env, "PWD"));
+	if (new_env[i++] == NULL)
+		return (free_env(new_env),
+			ft_putendl_fd(strerror(errno), STDERR_FILENO), false);
+	new_env[i] = NULL;
+	shell->env = new_env;
 	return (true);
 }
 
@@ -82,7 +85,7 @@ static bool	update_env(char *path, const char *var, char **env)
 
 // code 0 = cd || cd --
 // code 1 = cd - || cd -- -
-static int	switch_dir(char *path, char **env, int code)
+static int	switch_dir(char *path, t_data *shell, int code)
 {
 	char	*old;
 
@@ -90,9 +93,9 @@ static int	switch_dir(char *path, char **env, int code)
 	if (old == NULL)
 		return (free(path), EXIT_FAILURE);
 	if (code == 0 && !path)
-		path = ft_strdup(getenv_path(env, "HOME"));
+		path = ft_strdup(getenv_path(shell->env, "HOME"));
 	else if (code == 1 && !path)
-		path = ft_strdup(getenv_path(env, "OLDPWD"));
+		path = ft_strdup(getenv_path(shell->env, "OLDPWD"));
 	if (path == NULL)
 		return (free(old), cd_errmsg(strerror(errno), 0), EXIT_FAILURE);
 	if (code == 1)
@@ -100,30 +103,31 @@ static int	switch_dir(char *path, char **env, int code)
 	if (chdir(path))
 		return (free(path), free(old), cd_errmsg(strerror(errno), 0),
 			EXIT_FAILURE);
-	if (update_env(old, "OLDPWD=", env) && update_env(NULL, "PWD=", env))
+	if (update_env(old, "OLDPWD=", shell->env)
+		&& update_env(NULL, "PWD=", shell->env))
 		return (free(path), EXIT_SUCCESS);
 	return (free(path), EXIT_SUCCESS);
 }
 
-int	ft_cd(t_command *cmd, char **env)
+int	ft_cd(t_data *shell, t_command *cmd)
 {
 	int		argc;
 	char	*path;
 
-	if (!cmd || !cmd->command || !cmd->args || !env)
+	if (!cmd || !shell || !cmd->command || !cmd->args || !shell->env)
 		return (EXIT_FAILURE);
 	argc = 0;
 	while (cmd->args[argc])
 		++argc;
 	path = NULL;
-	if (check_error(cmd, argc, env, &path) || !set_oldpwd(env))
+	if (check_error(cmd, argc, shell->env, &path) || !set_oldpwd(shell))
 		return (EXIT_FAILURE);
 	if (argc == 1 || (argc == 2 && ft_strcmp(cmd->args[1], "--")))
-		return (switch_dir(path, env, 0));
+		return (switch_dir(path, shell, 0));
 	if (argc == 2 && ft_strcmp(cmd->args[1], "-"))
-		return (switch_dir(path, env, 1));
+		return (switch_dir(path, shell, 1));
 	if (argc == 3 && ft_strcmp(cmd->args[1], "--")
 		&& ft_strcmp(cmd->args[2], "-"))
-		return (switch_dir(path, env, 1));
-	return (switch_dir(path, env, 2));
+		return (switch_dir(path, shell, 1));
+	return (switch_dir(path, shell, 2));
 }
