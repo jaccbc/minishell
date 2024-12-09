@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 02:27:42 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/08 02:57:13 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/09 19:45:49 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,29 +52,33 @@ static bool	isdir_name(char *str)
 	return (false);
 }
 
-static bool	is_directory(char *str, t_command **command)
+static bool	is_directory(char *str, t_command **command, char **env)
 {
 	struct stat	data;
-	bool		dir;
+	char		*xstr;
 
 	if (!str || !(*str))
 		return (false);
-	dir = isdir_name(str);
-	lstat(str, ft_memset(&data, 0, sizeof(struct stat)));
-	if (dir && S_ISDIR(data.st_mode) && (*command)->error == NULL)
+	xstr = expand_path(env, str);
+	if (xstr == NULL)
+		return (perror("minishell: "), true);
+	lstat(xstr, ft_memset(&data, 0, sizeof(struct stat)));
+	if (isdir_name(xstr) && S_ISDIR(data.st_mode) && !(*command)->error)
 	{
 		(*command)->error = mini_errmsg(str, NULL, "Is a directory", true);
 		g_last_exit_code = CMD_NOT_EXECUTABLE;
+		return (free(xstr), true);
 	}
-	if (dir && access(str, X_OK) != 0 && (*command)->error == NULL)
+	if (isdir_name(xstr) && access(xstr, X_OK) != 0 && !(*command)->error)
 	{
 		(*command)->error = mini_errmsg(str, NULL, strerror(errno), true);
 		if (access(str, F_OK) == -1)
 			g_last_exit_code = CMD_NOT_FOUND;
 		else
 			g_last_exit_code = CMD_NOT_EXECUTABLE;
+		return (free(xstr), true);
 	}
-	return (false);
+	return (free(xstr), false);
 }
 
 static bool	command_path(t_command **command, t_token *token, t_data *shell)
@@ -99,7 +103,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 {
 	if (!command || !(*command) || !token)
 		return (false);
-	if (is_directory(token->str, command))
+	if (is_directory(token->str, command, shell->env))
 		return (false);
 	if (is_type(PATH, token->str))
 		return (fill_data(token, *command, shell));
