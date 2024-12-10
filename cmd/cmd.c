@@ -61,6 +61,8 @@ static bool	handle_redirection(t_redirect *rdio, t_token *token)
 		free(rdio->infile);
 		rdio->infile = filename;
 	}
+	else if (token->type == RED_IN && have_heredoc(token))
+		free(filename);
 	if (token->type == RED_OUT || token->type == APPEND)
 		if (rdio->outfile)
 			free(rdio->outfile);
