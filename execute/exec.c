@@ -19,14 +19,15 @@ static int	wait_for_children(t_data *shell)
 	int	last_exit_code;
 
 	last_exit_code = 0;
-	while (waitpid(shell->pid, &status, 0) > 0)
+	if (waitpid(shell->pid, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
 			last_exit_code = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			last_exit_code = 128 + WTERMSIG(status);
 	}
-	waitpid(-1, &status, 0);
+	while (waitpid(-1, NULL, 0) > 0)
+		;
 	return (last_exit_code);
 }
 
