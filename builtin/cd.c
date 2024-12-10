@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:36:54 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/09 17:14:38 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/10 02:02:23 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 {
 	struct stat	data;
 
-	if ((argc == 1) || (argc == 2 && (ft_strcmp(cmd->args[1], "--")
-				|| ft_strcmp(cmd->args[1], "-"))))
-		return (false);
-	if (argc > 3 || (argc >= 3 && !ft_strcmp(cmd->args[1], "--")))
-		return (cd_errmsg("too many arguments", 0), true);
 	if (getenv_path(env, "OLDPWD") == NULL)
 		if ((argc == 2 && ft_strcmp(cmd->args[1], "-")) || (argc == 3
 				&& ft_strcmp(cmd->args[1], "--")
 				&& ft_strcmp(cmd->args[2], "-")))
 			return (cd_errmsg("OLDPWD not set", 0), true);
+	if ((argc == 1) || (argc == 2 && (ft_strcmp(cmd->args[1], "--")
+				|| ft_strcmp(cmd->args[1], "-"))))
+		return (false);
+	if (argc > 3 || (argc >= 3 && !ft_strcmp(cmd->args[1], "--")))
+		return (cd_errmsg("too many arguments", 0), true);
 	if (argc == 3 && ft_strcmp(cmd->args[2], "-"))
 		return (false);
 	if (argc == 2 && cmd->args[1][0] == '-' && !ft_strcmp(cmd->args[1], "--"))
