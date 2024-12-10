@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 02:27:42 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/09 19:45:49 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/10 02:41:41 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,18 +61,18 @@ static bool	is_directory(char *str, t_command **command, char **env)
 		return (false);
 	xstr = expand_path(env, str);
 	if (xstr == NULL)
-		return (perror("minishell: "), true);
-	lstat(xstr, ft_memset(&data, 0, sizeof(struct stat)));
+		return (perror("minishell"), true);
+	stat(xstr, ft_memset(&data, 0, sizeof(data)));
 	if (isdir_name(xstr) && S_ISDIR(data.st_mode) && !(*command)->error)
 	{
-		(*command)->error = mini_errmsg(str, NULL, "Is a directory", true);
+		(*command)->error = mini_errmsg(xstr, NULL, "Is a directory", true);
 		g_last_exit_code = CMD_NOT_EXECUTABLE;
 		return (free(xstr), true);
 	}
 	if (isdir_name(xstr) && access(xstr, X_OK) != 0 && !(*command)->error)
 	{
-		(*command)->error = mini_errmsg(str, NULL, strerror(errno), true);
-		if (access(str, F_OK) == -1)
+		(*command)->error = mini_errmsg(xstr, NULL, strerror(errno), true);
+		if (access(xstr, F_OK) == -1)
 			g_last_exit_code = CMD_NOT_FOUND;
 		else
 			g_last_exit_code = CMD_NOT_EXECUTABLE;

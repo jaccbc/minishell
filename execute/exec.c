@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:48:09 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/09 16:58:49 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/10 02:42:35 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,9 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 	if (ret != CMD_NOT_FOUND)
 		return (lstdel_command(shell->command), free_env(shell->env), ret);
 	execve(cmd->path, cmd->args, shell->env);
-	perror("execve");
-	return (CMD_NOT_FOUND);
+	perror("minishell: execve");
+	return (lstdel_command(shell->command),
+		free_env(shell->env), CMD_NOT_FOUND);
 }
 
 static int	loop_children(t_data *shell)

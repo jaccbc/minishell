@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:36:54 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/10 02:02:23 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/10 02:13:06 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 	(*path) = expand_path(env, cmd->args[argc - 1]);
 	if (*path == NULL)
 		return (cd_errmsg(strerror(errno), 0), true);
-	if (stat(*path, &data))
+	if (stat(*path, ft_memset(&data, 0, sizeof(data))))
 		return (free(*path), cd_errmsg(strerror(errno), 0), true);
 	if (S_ISDIR(data.st_mode) == false)
 		return (cd_errmsg(*path, 2), free(*path), true);
