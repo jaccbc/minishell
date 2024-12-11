@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 02:27:42 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/10 02:41:41 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/11 04:57:22 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static bool	fill_data(t_token *token, t_command *cmd, t_data *shell)
 
 	str = expand_path(shell->env, token->str);
 	if (str == NULL)
-		return (mini_errmsg("error", NULL, strerror(errno), false), false);
+		return (false);
 	if (access(str, F_OK) != -1 && access(str, X_OK) != -1)
 	{
 		cmd->path = ft_strdup(str);
@@ -83,9 +83,17 @@ static bool	is_directory(char *str, t_command **command, char **env)
 
 static bool	command_path(t_command **command, t_token *token, t_data *shell)
 {
+	char	*pwd;
+
 	if (ft_strncmp(token->str, "./", 2) == 0)
-		(*command)->path = ft_strjoin(getenv_path(shell->env, "PWD"), token->str
-				+ 1);
+	{
+		pwd = getcwd(NULL, 0);
+		if (pwd == NULL)
+			return (perror("minishell"), false);
+		(*command)->path = ft_strjoin(pwd, token->str + 1);
+		if ((*command)->path == NULL)
+			return (free(pwd), perror("minishell"), false);
+	}
 	else
 		fill_command_path((*command), shell);
 	if (!(*command)->path && !(*command)->error && !(is_builtin((*command))))

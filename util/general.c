@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 01:57:01 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/08 02:08:28 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/11 04:48:58 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,17 +96,22 @@ static char	*expand_backpath(char *str, char *pwd, int i)
 char	*expand_path(char **env, char *str)
 {
 	char	*pwd;
+	char	*path;
 
-	pwd = getenv_path(env, "PWD");
+	if (ft_strncmp(str, "~/", 2) == 0 && getenv_path(env, "HOME") == NULL)
+		return (ft_putendl_fd("minishell: HOME not set", STDERR_FILENO), NULL);
+	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
-		return (ft_putendl_fd("PWD not set", STDERR_FILENO), NULL);
+		return (perror("minishell"), NULL);
 	if (ft_strncmp(str, "./", 2) == 0)
-		return (ft_strjoin(getenv_path(env, "PWD"), str + 1));
-	if (ft_strncmp(str, "~/", 2) == 0)
-		return (ft_strjoin(getenv_path(env, "HOME"), str + 1));
-	if (ft_strncmp(str, "../", 3) == 0)
-		return (expand_backpath(str, pwd, ft_strlen(pwd)));
-	if (ft_strncmp(str, "..", 3) == 0)
-		return (expand_backpath(str, pwd, ft_strlen(pwd)));
-	return (ft_strdup(str));
+		path = ft_strjoin(pwd, str + 1);
+	else if (ft_strncmp(str, "~/", 2) == 0)
+		path = ft_strjoin(getenv_path(env, "HOME"), str + 1);
+	else if (ft_strncmp(str, "../", 3) == 0 || ft_strncmp(str, "..", 3) == 0)
+		path = expand_backpath(str, pwd, ft_strlen(pwd));
+	else
+		path = ft_strdup(str);
+	if (path == NULL)
+		return (free(pwd), perror("minishell"), NULL);
+	return (free(pwd), path);
 }

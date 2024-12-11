@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:36:54 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/10 02:13:06 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/11 04:53:11 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 		return (cd_errmsg(cmd->args[1] + 1, 1), true);
 	(*path) = expand_path(env, cmd->args[argc - 1]);
 	if (*path == NULL)
-		return (cd_errmsg(strerror(errno), 0), true);
+		return (true);
 	if (stat(*path, ft_memset(&data, 0, sizeof(data))))
 		return (free(*path), cd_errmsg(strerror(errno), 0), true);
 	if (S_ISDIR(data.st_mode) == false)
@@ -40,55 +40,41 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 	return (false);
 }
 
-static bool	set_oldpwd(t_data *shell)
+bool	set_oldpwd(t_data *shell)
 {
 	int		i;
 	char	**new_env;
+	char	*pwd;
 
 	if (getenv_path(shell->env, "OLDPWD"))
 		return (true);
 	i = 0;
 	while (shell->env[i])
 		++i;
+	pwd = getcwd(NULL, 0);
+	if (pwd == NULL)
+		return (perror("minishell"), false);
 	new_env = ft_realloc(shell->env, i + 2);
 	if (new_env == NULL)
-		return (ft_putendl_fd(strerror(errno), STDERR_FILENO), false);
-	new_env[i] = ft_strjoin("OLDPWD=", getenv_path(new_env, "PWD"));
+		return (free(pwd), perror("minishell:"), false);
+	new_env[i] = ft_strjoin("OLDPWD=", pwd);
 	if (new_env[i++] == NULL)
-		return (free_env(new_env),
-			ft_putendl_fd(strerror(errno), STDERR_FILENO), false);
+		return (free_env(new_env), free(pwd), perror("minishell:"), false);
 	new_env[i] = NULL;
 	shell->env = new_env;
-	return (true);
-}
-
-static bool	update_env(char *path, const char *var, char **env)
-{
-	int		i;
-	char	*cwd;
-
-	i = 0;
-	while (env[i] && ft_strncmp(env[i], var, ft_strlen(var)))
-		++i;
-	if (path)
-		cwd = path;
-	else
-		cwd = getcwd(NULL, 0);
-	if (cwd == NULL)
-		return (cd_errmsg(strerror(errno), 0), false);
-	free(env[i]);
-	env[i] = ft_strjoin(var, cwd);
-	if (env[i] == NULL)
-		return (free(cwd), cd_errmsg(strerror(errno), 0), false);
-	return (free(cwd), true);
+	return (free(pwd), true);
 }
 
 // code 0 = cd || cd --
 // code 1 = cd - || cd -- -
-static int	switch_dir(char *path, t_data *shell, int code)
+int	switch_dir(char *path, t_data *shell, int code)
 {
 	char	*old;
 
+	if (code == 0 && !path && !getenv_path(shell->env, "HOME"))
+		return (cd_errmsg("HOME not set", 0), EXIT_FAILURE);
+	else if (code == 1 && !path && !getenv_path(shell->env, "OLDPWD"))
+		return (cd_errmsg("OLDPWD not set", 0), EXIT_FAILURE);
 	old = getcwd(NULL, 0);
 	if (old == NULL)
 		return (free(path), EXIT_FAILURE);
@@ -97,16 +83,14 @@ static int	switch_dir(char *path, t_data *shell, int code)
 	else if (code == 1 && !path)
 		path = ft_strdup(getenv_path(shell->env, "OLDPWD"));
 	if (path == NULL)
-		return (free(old), cd_errmsg(strerror(errno), 0), EXIT_FAILURE);
+		return (free(old), perror("minishell"), EXIT_FAILURE);
+	if (chdir(path))
+		return (free(old), free(path), perror("minishell: cd"), EXIT_FAILURE);
 	if (code == 1)
 		ft_putendl_fd(path, STDOUT_FILENO);
-	if (chdir(path))
-		return (free(path), free(old), cd_errmsg(strerror(errno), 0),
-			EXIT_FAILURE);
-	if (update_env(old, "OLDPWD=", shell->env)
-		&& update_env(NULL, "PWD=", shell->env))
-		return (free(path), EXIT_SUCCESS);
-	return (free(path), EXIT_SUCCESS);
+	if (update_env(old, "OLDPWD=", shell) && update_env(NULL, "PWD=", shell))
+		return (free(old), free(path), EXIT_SUCCESS);
+	return (free(old), free(path), EXIT_FAILURE);
 }
 
 int	ft_cd(t_data *shell, t_command *cmd)
