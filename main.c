@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:26:37 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/08 02:59:22 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/11 23:00:10 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ static bool	init_env(t_data *shell, char **env)
 static bool	init_prompt(t_data *shell, char *user_input)
 {
 	shell->lst = tokenize(user_input);
+	if (*user_input)
+		add_history(user_input);
+	free(user_input);
 	if (shell->lst == NULL)
 		return (false);
 	if (check_syntax(shell) == false)
@@ -64,27 +67,26 @@ int	main(int argc, char **argv, char **env)
 {
 	t_data	shell;
 
-	if (!(argc == 3 || argc == 1) || !sighandler())
+	if (!(argc == 3 || argc == 1))
 		return (-1);
 	if (init_env(ft_memset(&shell, 0, sizeof(shell)), env) == false)
 		return (1);
-	if (argc == 3 && ft_strncmp(argv[1], "-c", ft_strlen(argv[1])) == 0)
-		if (init_prompt(&shell, argv[2]))
-			return (0);
 	while (argc == 1)
 	{
+		sighandler();
 		shell.user_input = readline(PROMPT);
+		sighandler_noninteractive();
 		if (shell.user_input == NULL)
 		{
 			exit_cleanup(&shell);
 			exit(EXIT_SUCCESS);
 		}
 		init_prompt(&shell, shell.user_input);
-		if (*shell.user_input)
-			add_history(shell.user_input);
-		free(shell.user_input);
 		shell.lst = NULL;
 		shell.command = NULL;
 	}
+	if (argc == 3 && ft_strncmp(argv[1], "-c", ft_strlen(argv[1])) == 0)
+		if (init_prompt(&shell, argv[2]))
+			return (0);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/11 05:15:28 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/11 22:26:14 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,7 @@ bool		fill_command(t_command **cmd, t_token *token, t_data *shell);
 bool		parse_heredoc(t_redirect *rdio, t_token *lst, char **env);
 // signal
 bool		sighandler(void);
+void		sighandler_noninteractive(void);
 // execute
 int			execute(t_data *shell);
 void		free_env(char **env);

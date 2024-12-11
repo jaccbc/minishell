@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 02:27:42 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/11 04:57:22 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/11 19:26:48 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static bool	is_directory(char *str, t_command **command, char **env)
 		return (false);
 	xstr = expand_path(env, str);
 	if (xstr == NULL)
-		return (perror("minishell"), true);
+		return (true);
 	stat(xstr, ft_memset(&data, 0, sizeof(data)));
 	if (isdir_name(xstr) && S_ISDIR(data.st_mode) && !(*command)->error)
 	{

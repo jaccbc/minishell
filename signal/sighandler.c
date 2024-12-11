@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 19:04:31 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/03 01:00:24 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/11 22:29:20 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,21 @@ bool	sighandler(void)
 		|| sigaction(SIGQUIT, &act_ign, NULL) == -1)
 		return (false);
 	return (true);
+}
+
+static void	signal_nonint(int signal)
+{
+	(void)signal;
+	ft_putchar_fd('\n', STDIN_FILENO);
+}
+
+void	sighandler_noninteractive(void)
+{
+	struct sigaction	act;
+
+	ft_memset(&act, 0, sizeof(act));
+	act.sa_handler = &signal_nonint;
+	if (sigaction(SIGINT, &act, NULL) == -1
+		|| sigaction(SIGQUIT, &act, NULL) == -1)
+		perror("signals");
 }
