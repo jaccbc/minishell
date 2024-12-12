@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 01:57:01 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/11 04:48:58 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/12 00:47:50 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,11 @@ char	*expand_path(t_data *shell, char *str)
 		return (perror("minishell"), NULL);
 	if (ft_strncmp(str, "./", 2) == 0)
 		path = ft_strjoin(pwd, str + 1);
-	else if (ft_strncmp(str, "~/", 2) == 0 && getenv_path(shell->env, "HOME") != NULL)
+	else if (ft_strncmp(str, "~/", 2) == 0 && getenv_path(shell->env,
+			"HOME") != NULL)
 		path = ft_strjoin(getenv_path(shell->env, "HOME"), str + 1);
-	else if (ft_strncmp(str, "~/", 2) == 0 && getenv_path(shell->env, "HOME") == NULL)
+	else if (ft_strncmp(str, "~/", 2) == 0 && getenv_path(shell->env,
+			"HOME") == NULL)
 		path = ft_strjoin(shell->home_dir, str + 1);
 	else if (ft_strncmp(str, "../", 3) == 0 || ft_strncmp(str, "..", 3) == 0)
 		path = expand_backpath(str, pwd, ft_strlen(pwd));
