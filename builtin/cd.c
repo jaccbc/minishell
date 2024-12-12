@@ -12,11 +12,11 @@
 
 #include "../minishell.h"
 
-static bool	check_error(t_command *cmd, int argc, char **env, char **path)
+static bool	check_error(t_command *cmd, int argc, t_data *shell, char **path)
 {
 	struct stat	data;
 
-	if (getenv_path(env, "OLDPWD") == NULL)
+	if (getenv_path(shell->env, "OLDPWD") == NULL)
 		if ((argc == 2 && ft_strcmp(cmd->args[1], "-")) || (argc == 3
 				&& ft_strcmp(cmd->args[1], "--")
 				&& ft_strcmp(cmd->args[2], "-")))
@@ -30,7 +30,7 @@ static bool	check_error(t_command *cmd, int argc, char **env, char **path)
 		return (false);
 	if (argc == 2 && cmd->args[1][0] == '-' && !ft_strcmp(cmd->args[1], "--"))
 		return (cd_errmsg(cmd->args[1] + 1, 1), true);
-	(*path) = expand_path(env, cmd->args[argc - 1]);
+	(*path) = expand_path(shell, cmd->args[argc - 1]);
 	if (*path == NULL)
 		return (true);
 	if (stat(*path, ft_memset(&data, 0, sizeof(data))))
@@ -104,7 +104,7 @@ int	ft_cd(t_data *shell, t_command *cmd)
 	while (cmd->args[argc])
 		++argc;
 	path = NULL;
-	if (check_error(cmd, argc, shell->env, &path) || !set_oldpwd(shell))
+	if (check_error(cmd, argc, shell, &path) || !set_oldpwd(shell))
 		return (EXIT_FAILURE);
 	if (argc == 1 || (argc == 2 && ft_strcmp(cmd->args[1], "--")))
 		return (switch_dir(path, shell, 0));

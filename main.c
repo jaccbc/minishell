@@ -37,6 +37,7 @@ static bool	init_env(t_data *shell, char **env)
 		}
 	}
 	shell->env[i] = NULL;
+	shell->home_dir = getenv_path(env, "HOME");
 	return (true);
 }
 

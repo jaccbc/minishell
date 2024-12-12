@@ -93,20 +93,20 @@ static char	*expand_backpath(char *str, char *pwd, int i)
 	return (ft_strdup(pwd));
 }
 
-char	*expand_path(char **env, char *str)
+char	*expand_path(t_data *shell, char *str)
 {
 	char	*pwd;
 	char	*path;
 
-	if (ft_strncmp(str, "~/", 2) == 0 && getenv_path(env, "HOME") == NULL)
-		return (ft_putendl_fd("minishell: HOME not set", STDERR_FILENO), NULL);
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
 		return (perror("minishell"), NULL);
 	if (ft_strncmp(str, "./", 2) == 0)
 		path = ft_strjoin(pwd, str + 1);
-	else if (ft_strncmp(str, "~/", 2) == 0)
-		path = ft_strjoin(getenv_path(env, "HOME"), str + 1);
+	else if (ft_strncmp(str, "~/", 2) == 0 && getenv_path(shell->env, "HOME") != NULL)
+		path = ft_strjoin(getenv_path(shell->env, "HOME"), str + 1);
+	else if (ft_strncmp(str, "~/", 2) == 0 && getenv_path(shell->env, "HOME") == NULL)
+		path = ft_strjoin(shell->home_dir, str + 1);
 	else if (ft_strncmp(str, "../", 3) == 0 || ft_strncmp(str, "..", 3) == 0)
 		path = expand_backpath(str, pwd, ft_strlen(pwd));
 	else

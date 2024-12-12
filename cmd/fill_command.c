@@ -16,7 +16,7 @@ static bool	fill_data(t_token *token, t_command *cmd, t_data *shell)
 {
 	char	*str;
 
-	str = expand_path(shell->env, token->str);
+	str = expand_path(shell, token->str);
 	if (str == NULL)
 		return (false);
 	if (access(str, F_OK) != -1 && access(str, X_OK) != -1)
@@ -52,14 +52,14 @@ static bool	isdir_name(char *str)
 	return (false);
 }
 
-static bool	is_directory(char *str, t_command **command, char **env)
+static bool	is_directory(char *str, t_command **command, t_data *shell)
 {
 	struct stat	data;
 	char		*xstr;
 
 	if (!str || !(*str))
 		return (false);
-	xstr = expand_path(env, str);
+	xstr = expand_path(shell, str);
 	if (xstr == NULL)
 		return (true);
 	stat(xstr, ft_memset(&data, 0, sizeof(data)));
@@ -93,6 +93,7 @@ static bool	command_path(t_command **command, t_token *token, t_data *shell)
 		(*command)->path = ft_strjoin(pwd, token->str + 1);
 		if ((*command)->path == NULL)
 			return (free(pwd), perror("minishell"), false);
+		free(pwd);
 	}
 	else
 		fill_command_path((*command), shell);
@@ -111,7 +112,7 @@ bool	fill_command(t_command **command, t_token *token, t_data *shell)
 {
 	if (!command || !(*command) || !token)
 		return (false);
-	if (is_directory(token->str, command, shell->env))
+	if (is_directory(token->str, command, shell))
 		return (false);
 	if (is_type(PATH, token->str))
 		return (fill_data(token, *command, shell));

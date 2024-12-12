@@ -98,6 +98,7 @@ typedef struct s_data
 	pid_t				pid;
 	char				*working_dir;
 	char				*old_working_dir;
+	char				*home_dir;
 }						t_data;
 
 // builtin
