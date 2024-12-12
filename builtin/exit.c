@@ -94,8 +94,8 @@ void	exit_cleanup(t_data *shell)
 	}
 	if (shell->command)
 		lstdel_command(shell->command);
-	if (shell->user_input)
-		free(shell->user_input);
+	/* if (shell->user_input)
+		free(shell->user_input); */
 	rl_clear_history();
 }
 

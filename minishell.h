@@ -119,7 +119,7 @@ char		**ft_realloc(char **array, size_t new_size);
 void		lstdel_command(t_command *cmd);
 void		add_command_back(t_command **cmd, t_command *new);
 char		*getenv_path(char **env, const char *var);
-char		*expand_path(char **env, char *str);
+char		*expand_path(t_data *shell, char *str);
 bool		is_builtin(t_command *cmd);
 bool		handle_pipes_and_redirections(t_command *cmd);
 bool		restore_red(t_command *cmd);

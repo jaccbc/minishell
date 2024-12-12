@@ -80,6 +80,7 @@ int	main(int argc, char **argv, char **env)
 		if (shell.user_input == NULL)
 		{
 			exit_cleanup(&shell);
+			ft_putendl_fd("exit", STDOUT_FILENO);
 			exit(EXIT_SUCCESS);
 		}
 		init_prompt(&shell, shell.user_input);
