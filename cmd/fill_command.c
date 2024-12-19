@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 02:27:42 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/11 19:26:48 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/19 21:09:29 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static bool	command_path(t_command **command, t_token *token, t_data *shell)
 	if (!(*command)->path && !(*command)->error && !(is_builtin((*command))))
 	{
 		(*command)->error = mini_errmsg((*command)->command, NULL,
-				"command not found", false);
+				"command not found", true);
 		g_last_exit_code = CMD_NOT_FOUND;
 		return (false);
 	}

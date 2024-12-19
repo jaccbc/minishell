@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/08 02:49:31 by joandre-         ###   ########.fr       */
+/*   Updated: 2024/12/19 21:11:17 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,6 @@ void	exit_cleanup(t_data *shell)
 	}
 	if (shell->command)
 		lstdel_command(shell->command);
-	/* if (shell->user_input)
-		free(shell->user_input); */
 	rl_clear_history();
 }
 
