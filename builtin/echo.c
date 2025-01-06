@@ -45,11 +45,6 @@ int	ft_echo(t_command *cmd)
 		++i;
 	while (cmd->args[i])
 	{
-		if (i == 1 && ft_strncmp(cmd->args[1], "-", 2) == 0)
-		{
-			i++;
-			continue;
-		}
 		ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
 		if (cmd->args[++i])
 			ft_putstr_fd(" ", STDOUT_FILENO);
