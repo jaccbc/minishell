@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/01 02:55:34 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/06 13:38:56 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,11 @@ int	ft_echo(t_command *cmd)
 		++i;
 	while (cmd->args[i])
 	{
+		if (i == 1 && ft_strncmp(cmd->args[1], "-", 2) == 0)
+		{
+			i++;
+			continue;
+		}
 		ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
 		if (cmd->args[++i])
 			ft_putstr_fd(" ", STDOUT_FILENO);

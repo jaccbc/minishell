@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: joandre- <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2024/12/08 01:48:24 by joandre-         ###   ########.fr        #
+#    Updated: 2025/01/06 13:32:22 by vamachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
 NAME = minishell
 DBG = $(shell find debug -name "*.c")
-LEX = $(shell find lexer -name "*.c")
+LEX = lexer/check_syntax.c lexer/del_quote.c lexer/error.c lexer/tokenize.c
 BLT = $(shell find builtin -name "*.c")
 VAR = $(shell find var -name "*.c")
 CMD = $(shell find cmd -name "*.c")
