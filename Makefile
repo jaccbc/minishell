@@ -17,12 +17,12 @@ LIBFT = libft/libft.a
 NAME = minishell
 DBG = $(shell find debug -name "*.c")
 LEX = lexer/check_syntax.c lexer/del_quote.c lexer/error.c lexer/tokenize.c
-BLT = $(shell find builtin -name "*.c")
-VAR = $(shell find var -name "*.c")
-CMD = $(shell find cmd -name "*.c")
-SIG = $(shell find signal -name "*.c")
-UTL = $(shell find util -name "*.c")
-EXC = $(shell find execute -name "*.c")
+BLT = builtin/cd.c builtin/echo.c builtin/env.c builtin/exit.c builtin/export.c builtin/pwd.c builtin/unset.c
+VAR = var/expansion.c
+CMD = cmd/check_files.c cmd/cmd.c cmd/fill_command.c cmd/parse_heredoc.c cmd/path.c
+SIG = signal/sighandler.c
+UTL = util/builtin.c util/command.c util/execute.c util/general.c util/token.c
+EXC = execute/exec.c
 SRC = $(UTL) $(BLT) $(LEX) $(DBG) $(VAR) $(CMD) $(SIG) $(EXC)
 OBJ = $(SRC:.c=.o)
 
@@ -40,13 +40,13 @@ debug: $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS) dmain.c -l readline $(OBJ) $(LIBFT) -o $(NAME)
 
 norm:
-	norminette $(SRC) *.c *.h
+	norminette $(SRC)
 
 run: $(NAME)
 	valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind_readline.supp ./minishell
 
 clean:
-	rm -rf $(OBJ) *.o
+	rm -rf $(OBJ)
 
 fclean: clean
 	rm -rf $(NAME)
