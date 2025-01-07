@@ -41,7 +41,7 @@ static bool	init_env(t_data *shell, char **env)
 	return (true);
 }
 
-// inicializa a leitura da string do user_input
+// initiailizes the read of the user's prompt
 static bool	init_prompt(t_data *shell, char *user_input)
 {
 	shell->lst = tokenize(user_input);
@@ -62,8 +62,6 @@ static bool	init_prompt(t_data *shell, char *user_input)
 	return (lstdel_command(shell->command), true);
 }
 
-// será parte do modo interactivo, o loop que pede o input do utilizador
-// que será mais tarde lexado, parsado e executado
 int	main(int argc, char **argv, char **env)
 {
 	t_data	shell;

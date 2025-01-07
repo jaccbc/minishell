@@ -12,8 +12,8 @@
 
 #include "../minishell.h"
 
-//recebe o novo buffer *str, string original *s e o quote char
-//escreve a nova string sem quotes ' "
+// receives the new buffer *str, original string *s, and the quote char q
+// writes the new string without quotes ' "
 static void	write_buffer(char *str, const char *s, int q)
 {
 	int	count;
@@ -43,7 +43,7 @@ static void	write_buffer(char *str, const char *s, int q)
 	}
 }
 
-//elimina aspas " ' fechedas das strings da lista
+// deletes closed quotes in the strings within the nodes of the list
 bool	del_quote(t_token *lst)
 {
 	int		i;

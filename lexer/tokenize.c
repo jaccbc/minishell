@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-//returna o token type
+// returns the token type
 static int	get_type(const char *s, t_token *last)
 {
 	if (!s || !*s)
@@ -34,8 +34,8 @@ static int	get_type(const char *s, t_token *last)
 	return (COMMAND);
 }
 
-//cria um token (split + token type)
-//returna o numero de bytes do split
+//creates a token (split + token type)
+//returns the number of bytes of split
 static int	add_split(const char *s, size_t len, t_token **lst)
 {
 	t_token	*new;
@@ -78,8 +78,8 @@ static int	split_quote(const char *s, char *quote, t_token **lst)
 	return (add_split(s, split - s, lst));
 }
 
-//calcula os bytes a copiar com pointer arithmetic
-//returna o numero de bytes copiados
+//calculates the bytes to copy with pointer arithmetic
+//returns the number of bytes copied
 static int	split(int type, const char *s, t_token **lst)
 {
 	char	*str;
@@ -108,7 +108,7 @@ static int	split(int type, const char *s, t_token **lst)
 	return (0);
 }
 
-//cria uma lista de tokens
+//creates a list of tokens
 t_token	*tokenize(char *s)
 {
 	t_token	*lst;

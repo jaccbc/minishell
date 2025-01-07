@@ -109,7 +109,6 @@ static int	loop_children(t_data *shell)
 	return (EXIT_SUCCESS);
 }
 
-// Main execute function to fork processes and manage pipes
 int	execute(t_data *shell)
 {
 	t_command	*cmd;

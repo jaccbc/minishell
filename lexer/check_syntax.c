@@ -36,8 +36,9 @@ static void	check_heredoc_expansion(t_token *lst)
 	}
 }
 
-// Expande as variáveis em shell->lst
-// varifica is_type(VAR), expande e recomeça o check com a string atualizada
+// Expands the variables in shell->lst
+/* verifies is_type(VAR), expands and begins the check again
+** now with the updated string */
 static void	var_expander(t_data *shell)
 {
 	int		i;
@@ -67,7 +68,7 @@ static void	var_expander(t_data *shell)
 	}
 }
 
-// função inicia syntax analysis
+// funtion starts syntax analysis
 bool	check_syntax(t_data *shell)
 {
 	if (!shell->lst)

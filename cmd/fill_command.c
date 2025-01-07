@@ -107,7 +107,6 @@ static bool	command_path(t_command **command, t_token *token, t_data *shell)
 	return (true);
 }
 
-// Get the command string and initialize args with command name
 bool	fill_command(t_command **command, t_token *token, t_data *shell)
 {
 	if (!command || !(*command) || !token)

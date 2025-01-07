@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 17:42:30 by joandre-          #+#    #+#             */
-/*   Updated: 2024/11/06 01:19:40 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/07 16:22:31 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	err_msg(char *msg, char *detail)
 	g_last_exit_code = 2;
 }
 
-// verifica se existem separadores seguidos
+// verifies if there are consecutive separators
 static bool	consecutive_sep(t_token *lst)
 {
 	while (lst)
@@ -44,9 +44,7 @@ static bool	consecutive_sep(t_token *lst)
 	return (false);
 }
 
-// verifica se existem quotes que foram deixados abertos, e recategoriza
-// determinado token que esteja em double quotes e que contenha uma variável
-// real lá dentro.
+// verifies if there are unclosed quotes within the string
 static bool	quotes_verify(t_token *current)
 {
 	bool	s_quotes;
@@ -73,7 +71,7 @@ static bool	quotes_verify(t_token *current)
 	return (s_quotes || d_quotes);
 }
 
-// lança o erro correspondente para unclosed quotes
+// casts the error corresponding to each of the unclosed quotes
 static void	unclosed_quotes(t_token *current)
 {
 	while (current)
@@ -92,7 +90,7 @@ static void	unclosed_quotes(t_token *current)
 	}
 }
 
-// analisa alguns erros de sintaxe e recorre
+// analysis of some syntax errors
 bool	syntax_error(t_token *lst)
 {
 	if (lst->type == PIPE)

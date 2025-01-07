@@ -31,7 +31,7 @@ void	cd_errmsg(char *msg, int err)
 	}
 }
 
-// creates environment variable if non existant
+// creates environment variable if non existent
 char	**create_envar(char *cwd, const char *var, char **env, int size)
 {
 	char	*new_var;

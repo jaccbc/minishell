@@ -70,8 +70,6 @@ static void	write_heredoc(t_token *lst, t_command **cmd, char **env)
 	}
 }
 
-// Unified function to open a file
-// handle error reporting with strerror(errno)
 static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 {
 	if (cmd->rdio == NULL)
@@ -90,7 +88,6 @@ static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 	return (true);
 }
 
-// Verify all redirection files for access errors
 bool	check_files(t_token *token, t_command **cmd, char **env)
 {
 	write_heredoc(token, cmd, env);

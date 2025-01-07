@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-// retorna o token numero i da lst
+// returns token number i of the lst
 // DOWN 0 == last_token | UP 0 == first_token
 t_token	*lstiter_token(t_token *lst, int type, size_t i)
 {
@@ -33,7 +33,7 @@ t_token	*lstiter_token(t_token *lst, int type, size_t i)
 	return (lst);
 }
 
-// adiciona um token na lista
+// adds a token to the lst
 void	lstadd_token(t_token **lst, t_token *new)
 {
 	t_token	*current;

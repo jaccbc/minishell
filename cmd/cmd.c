@@ -73,7 +73,6 @@ static bool	handle_redirection(t_redirect *rdio, t_token *token)
 	return (true);
 }
 
-// Process token data
 static void	process_token_data(t_token *token, t_command *cmd, t_data *shell)
 {
 	while (token && token->type != PIPE)

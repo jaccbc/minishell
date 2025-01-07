@@ -12,7 +12,6 @@
 
 #include "../minishell.h"
 
-// Get the PATH variable from the environment
 static void	free_splits(char **path_split)
 {
 	int	i;
@@ -39,7 +38,6 @@ char	*getenv_path(char **env, const char *var)
 	return (NULL);
 }
 
-// Concatenate strings and free the first
 static char	*getfull_path(char *path, char *file)
 {
 	char	*full_path;
@@ -60,7 +58,6 @@ static bool	is_dot(char *str)
 	return (false);
 }
 
-// Fill command path by searching PATH environment variable
 void	fill_command_path(t_command *cmd, t_data *shell)
 {
 	char	**path_split;

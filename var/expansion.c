@@ -24,8 +24,8 @@ static size_t	get_varlen(const char *s)
 	return (len);
 }
 
-// Procura em env a variável e retorna o valor
-// a funcao "ft_strchr(env[i], '=') + 1" retorna tudo que está apos = na **env
+// searches for the variable in env and returns its value
+// "ft_strchr(env[i], '=') + 1" returns everything after = in **env
 static char	*get_value(char **env, const char *s)
 {
 	int		i;
@@ -52,7 +52,7 @@ static char	*get_value(char **env, const char *s)
 	return (ft_strchr(env[i], '=') + 1);
 }
 
-//mede o length das strings e alloca memoria para a nova string expandida
+//measures the length of the strings and allocates memory for the expanded str
 static void	*create_buffer(char *str, char **env, char *var, char **expand)
 {
 	size_t	len;
@@ -65,10 +65,10 @@ static void	*create_buffer(char *str, char **env, char *var, char **expand)
 	return (ft_calloc(len, sizeof(char)));
 }
 
-//funcao interna responsável pela var expansion
-//1º while loop copia tudo ate encontrar o $ da variavel
-//2º while loop copia a expansao se existir
-//3º while loop copia o resto da string
+//variable expansion
+//1st while loop copies everything until it finds the $
+//2nd while loop copies the expansion if it exists
+//3rd while loop copies the rest of the string
 void	expander(char **s, char **env, char *var)
 {
 	char	*str;
@@ -97,7 +97,7 @@ void	expander(char **s, char **env, char *var)
 	*s = new;
 }
 
-//função responsável por apagar os dollars não expansiveis (fora de quotes)
+//function that deletes the $s not expandibles(outside of quotes)
 void	del_dollar(t_token *lst)
 {
 	char	*q;
