@@ -122,7 +122,7 @@ void		add_command_back(t_command **cmd, t_command *new);
 char		*getenv_path(char **env, const char *var);
 char		*expand_path(t_data *shell, char *str);
 bool		is_builtin(t_command *cmd);
-bool		handle_pipes_and_redirections(t_command *cmd);
+bool		handle_pipes_and_redirections(t_command *cmds, t_command *cmd);
 bool		restore_red(t_command *cmd);
 void		close_unused_pipes(t_command *cmd);
 bool		piping(t_data *shell);

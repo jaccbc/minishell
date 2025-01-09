@@ -12,8 +12,21 @@
 
 #include "../minishell.h"
 
+void	close_pipe_fds(t_command *cmds, t_command *skip_cmd)
+{
+	while (cmds)
+	{
+		if (cmds != skip_cmd && cmds->pipe_fd)
+		{
+			close(cmds->pipe_fd[0]);
+			close(cmds->pipe_fd[1]);
+		}
+		cmds = cmds->next;
+	}
+}
+
 // Handles pipes and redirections for the child process
-bool	handle_pipes_and_redirections(t_command *cmd)
+bool	handle_pipes_and_redirections(t_command *cmds, t_command *cmd)
 {
 	if (cmd->rdio && cmd->rdio->infile && cmd->rdio->fd_in != -1)
 	{
@@ -33,6 +46,8 @@ bool	handle_pipes_and_redirections(t_command *cmd)
 	}
 	else if (cmd->has_pipe_output)
 		dup2(cmd->pipe_fd[1], STDOUT_FILENO);
+	if (cmds->has_pipe_output)
+		close_pipe_fds(cmds, cmd);
 	if (cmd->has_pipe_output)
 		close(cmd->pipe_fd[0]);
 	if (cmd->prev && cmd->prev->has_pipe_output)
@@ -53,15 +68,6 @@ bool	restore_red(t_command *cmd)
 		cmd->rdio->stdout_backup = -1;
 	}
 	return (true);
-}
-
-// Closes unused pipe file descriptors in the parent process
-void	close_unused_pipes(t_command *cmd)
-{
-	if (cmd->has_pipe_output)
-		close(cmd->pipe_fd[1]);
-	if (cmd->prev && cmd->prev->has_pipe_output)
-		close(cmd->prev->pipe_fd[0]);
 }
 
 // Creates pipes for commands with pipe output

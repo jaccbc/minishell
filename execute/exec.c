@@ -73,7 +73,7 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 			ret = EXIT_SUCCESS;
 		return (lstdel_command(shell->command), free_env(shell->env), ret);
 	}
-	handle_pipes_and_redirections(cmd);
+	handle_pipes_and_redirections(shell->command, cmd);
 	ret = execute_builtin(shell, cmd);
 	if (ret != CMD_NOT_FOUND)
 		return (lstdel_command(shell->command), free_env(shell->env), ret);
@@ -101,7 +101,10 @@ static int	loop_children(t_data *shell)
 			exit(execute_cmd(shell, cmd));
 		else
 		{
-			close_unused_pipes(cmd);
+			if (cmd->has_pipe_output)
+				close(cmd->pipe_fd[1]);
+			if (cmd->prev && cmd->prev->has_pipe_output)
+				close(cmd->prev->pipe_fd[0]);
 			shell->pid = pid;
 		}
 		cmd = cmd->next;
@@ -120,7 +123,7 @@ int	execute(t_data *shell)
 		return (EXIT_FAILURE);
 	if (!shell->command->has_pipe_output)
 	{
-		handle_pipes_and_redirections(cmd);
+		handle_pipes_and_redirections(shell->command, cmd);
 		ret = execute_builtin(shell, cmd);
 		restore_red(cmd);
 	}
