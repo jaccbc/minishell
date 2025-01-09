@@ -26,7 +26,7 @@ void	close_pipe_fds(t_command *cmds, t_command *skip_cmd)
 }
 
 // Handles pipes and redirections for the child process
-bool	handle_pipes_and_redirections(t_command *cmds, t_command *cmd)
+bool	handle_pipes_and_redirections(t_command *cmd)
 {
 	if (cmd->rdio && cmd->rdio->infile && cmd->rdio->fd_in != -1)
 	{
@@ -35,8 +35,6 @@ bool	handle_pipes_and_redirections(t_command *cmds, t_command *cmd)
 			return (false);
 		dup2(cmd->rdio->fd_in, STDIN_FILENO);
 	}
-	else if (cmd->prev && cmd->prev->has_pipe_output)
-		dup2(cmd->prev->pipe_fd[0], STDIN_FILENO);
 	if (cmd->rdio && cmd->rdio->outfile && cmd->rdio->fd_out != -1)
 	{
 		cmd->rdio->stdout_backup = dup(STDOUT_FILENO);
@@ -44,14 +42,6 @@ bool	handle_pipes_and_redirections(t_command *cmds, t_command *cmd)
 			return (false);
 		dup2(cmd->rdio->fd_out, STDOUT_FILENO);
 	}
-	else if (cmd->has_pipe_output)
-		dup2(cmd->pipe_fd[1], STDOUT_FILENO);
-	if (cmds->has_pipe_output)
-		close_pipe_fds(cmds, cmd);
-	if (cmd->has_pipe_output)
-		close(cmd->pipe_fd[0]);
-	if (cmd->prev && cmd->prev->has_pipe_output)
-		close(cmd->prev->pipe_fd[1]);
 	return (true);
 }
 
@@ -70,25 +60,6 @@ bool	restore_red(t_command *cmd)
 	return (true);
 }
 
-// Creates pipes for commands with pipe output
-bool	piping(t_data *shell)
-{
-	t_command	*cmd;
-
-	cmd = shell->command;
-	while (cmd)
-	{
-		if (cmd->has_pipe_output)
-		{
-			cmd->pipe_fd = malloc(sizeof(int) * 2);
-			if (!cmd->pipe_fd || pipe(cmd->pipe_fd) == -1)
-				return (false);
-		}
-		cmd = cmd->next;
-	}
-	return (true);
-}
-
 // Opens the last redirection infile for each command
 bool	open_last_red(t_data *shell)
 {
@@ -102,4 +73,26 @@ bool	open_last_red(t_data *shell)
 		cmd = cmd->next;
 	}
 	return (true);
+}
+
+// Executes a built-in command if found
+int	execute_builtin(t_data *shell, t_command *cmd)
+{
+	if (!cmd->command)
+		return (CMD_NOT_FOUND);
+	if (ft_strncmp(cmd->command, "echo", 5) == 0)
+		return (ft_echo(cmd));
+	if (ft_strncmp(cmd->command, "exit", 5) == 0)
+		return (ft_exit(shell, cmd));
+	if (ft_strncmp(cmd->command, "env", 4) == 0)
+		return (ft_env(shell, cmd));
+	if (ft_strncmp(cmd->command, "pwd", 4) == 0)
+		return (ft_pwd(shell));
+	if (ft_strncmp(cmd->command, "unset", 6) == 0)
+		return (ft_unset(shell, cmd));
+	if (ft_strncmp(cmd->command, "export", 7) == 0)
+		return (ft_export(shell, cmd));
+	if (ft_strncmp(cmd->command, "cd", 3) == 0)
+		return (ft_cd(shell, cmd));
+	return (CMD_NOT_FOUND);
 }

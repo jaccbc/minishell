@@ -89,7 +89,6 @@ void	lstdel_command(t_command *lst)
 			free(lst->args);
 		}
 		free(lst->path);
-		free(lst->pipe_fd);
 		del_redirect(lst->rdio);
 		del = lst;
 		lst = lst->next;
