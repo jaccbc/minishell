@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:00:19 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/04 13:17:31 by vamachad         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:23:37 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*mini_errmsg(char *command, char *detail, char *error_message,
 	return (msg);
 }
 
-static void	write_heredoc(t_token *lst, t_command **cmd, char **env)
+static void	write_heredoc(t_token *lst, t_command **cmd, t_data *shell)
 {
 	while (lst && lst->type != PIPE)
 	{
@@ -64,7 +64,7 @@ static void	write_heredoc(t_token *lst, t_command **cmd, char **env)
 		{
 			if ((*cmd)->rdio == NULL)
 				(*cmd)->rdio = create_redirect();
-			parse_heredoc((*cmd)->rdio, lst->next, env);
+			parse_heredoc((*cmd)->rdio, lst->next, shell);
 		}
 		lst = lst->next;
 	}
@@ -82,33 +82,34 @@ static bool	open_file(t_command *cmd, t_token *token, int flags, int mode)
 		if (cmd->error == NULL)
 			cmd->error = mini_errmsg(token->next->str, NULL, strerror(errno),
 					true);
-		g_last_exit_code = 1;
 		return (false);
 	}
 	return (true);
 }
 
-bool	check_files(t_token *token, t_command **cmd, char **env)
+bool	check_files(t_token *token, t_command **cmd, t_data *shell)
 {
-	write_heredoc(token, cmd, env);
+	write_heredoc(token, cmd, shell);
 	while (token && token->type != PIPE)
 	{
 		if (token->type == RED_IN && access(token->next->str, R_OK) != 0)
 		{
 			(*cmd)->error = mini_errmsg(token->next->str, NULL, strerror(errno),
 					true);
-			g_last_exit_code = 1;
+			shell->status = 1;
 			return (false);
 		}
-		else if (token->type == APPEND)
+		else if (token->type == APPEND
+			&& !open_file(*cmd, token, O_WRONLY | O_CREAT | O_APPEND, 0644))
 		{
-			if (!open_file(*cmd, token, O_WRONLY | O_CREAT | O_APPEND, 0644))
-				return (false);
+			shell->status = 1;
+			return (false);
 		}
-		else if (token->type == RED_OUT)
+		else if (token->type == RED_OUT
+			&& !open_file(*cmd, token, O_WRONLY | O_CREAT | O_TRUNC, 0644))
 		{
-			if (!open_file(*cmd, token, O_WRONLY | O_CREAT | O_TRUNC, 0644))
-				return (false);
+			shell->status = 1;
+			return (false);
 		}
 		token = token->next;
 	}

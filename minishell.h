@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/11 22:26:14 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:48:51 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@
 
 # define PROMPT "\033[1;34mMINISHELL$ \033[0m"
 
-extern int				g_last_exit_code;
-
 # define CMD_NOT_FOUND 127
 # define CMD_NOT_EXECUTABLE 126
+
+extern int	g_signal;
 
 typedef enum token_utils
 {
@@ -95,6 +95,7 @@ typedef struct s_data
 	t_token				*lst;
 	t_command			*command;
 	char				**env;
+	int					status;
 	pid_t				pid;
 	char				*working_dir;
 	char				*old_working_dir;
@@ -136,16 +137,16 @@ bool		is_type(int type, const char *s);
 bool		syntax_error(t_token *lst);
 bool		del_quote(t_token *lst);
 void		del_dollar(t_token *lst);
-void		expander(char **s, char **env, char *var);
+void		expander(char **s, t_data *shell, char *var);
 bool		check_syntax(t_data *shell);
-bool		check_files(t_token *lst, t_command **cmd, char **env);
+bool		check_files(t_token *lst, t_command **cmd, t_data *shell);
 // cmd
 t_redirect	*create_redirect(void);
 bool		final_parse(t_data *shell);
 void		fill_command_path(t_command *cmd, t_data *shell);
 bool		fill_args(t_command **cmd, t_token *token);
 bool		fill_command(t_command **cmd, t_token *token, t_data *shell);
-bool		parse_heredoc(t_redirect *rdio, t_token *lst, char **env);
+bool		parse_heredoc(t_redirect *rdio, t_token *lst, t_data *shell);
 // signal
 bool		sighandler(void);
 void		sighandler_noninteractive(void);

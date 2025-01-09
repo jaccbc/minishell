@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 01:34:20 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/04 13:06:57 by vamachad         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:15:48 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static void	var_expander(t_data *shell)
 						break ;
 			if (is_type(VAR, &t->str[i++]))
 			{
-				expander(&t->str, shell->env, &t->str[i]);
+				expander(&t->str, shell, &t->str[i]);
 				continue ;
 			}
 		}
@@ -75,7 +75,7 @@ bool	check_syntax(t_data *shell)
 		return (false);
 	if (!syntax_error(shell->lst))
 	{
-		g_last_exit_code = 2;
+		shell->status = 2;
 		return (false);
 	}
 	check_heredoc_expansion(shell->lst);

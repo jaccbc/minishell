@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/11 05:05:31 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/09 11:45:11 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ bool	final_parse(t_data *shell)
 			cmd = cmd->next;
 			token = token->next;
 		}
-		if (check_files(token, &cmd, shell->env))
+		if (check_files(token, &cmd, shell))
 			process_token_data(token, cmd, shell);
 		while (token && token->type != PIPE)
 			token = token->next;

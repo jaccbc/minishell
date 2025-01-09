@@ -6,19 +6,17 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:26:37 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/11 23:00:10 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/09 11:38:35 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int			g_last_exit_code;
-
 static bool	init_env(t_data *shell, char **env)
 {
 	int	i;
 
-	g_last_exit_code = 0;
+	shell->status = 0;
 	i = 0;
 	while (env[i])
 		++i;
@@ -58,7 +56,7 @@ static bool	init_prompt(t_data *shell, char *user_input)
 		lstdel_command(shell->command);
 		return (false);
 	}
-	g_last_exit_code = execute(shell);
+	shell->status = execute(shell);
 	return (lstdel_command(shell->command), true);
 }
 

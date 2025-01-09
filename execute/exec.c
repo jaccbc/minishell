@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:48:09 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/11 05:13:18 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:25:02 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 		if (cmd->error)
 		{
 			ft_putendl_fd(cmd->error, STDERR_FILENO);
-			ret = g_last_exit_code;
+			ret = shell->status;
 		}
 		else if (!cmd->command)
 			ret = EXIT_FAILURE;

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 02:27:42 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/19 21:09:29 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/09 11:59:49 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,16 +66,16 @@ static bool	is_directory(char *str, t_command **command, t_data *shell)
 	if (isdir_name(xstr) && S_ISDIR(data.st_mode) && !(*command)->error)
 	{
 		(*command)->error = mini_errmsg(xstr, NULL, "Is a directory", true);
-		g_last_exit_code = CMD_NOT_EXECUTABLE;
+		shell->status = CMD_NOT_EXECUTABLE;
 		return (free(xstr), true);
 	}
 	if (isdir_name(xstr) && access(xstr, X_OK) != 0 && !(*command)->error)
 	{
 		(*command)->error = mini_errmsg(xstr, NULL, strerror(errno), true);
 		if (access(xstr, F_OK) == -1)
-			g_last_exit_code = CMD_NOT_FOUND;
+			shell->status = CMD_NOT_FOUND;
 		else
-			g_last_exit_code = CMD_NOT_EXECUTABLE;
+			shell->status = CMD_NOT_EXECUTABLE;
 		return (free(xstr), true);
 	}
 	return (free(xstr), false);
@@ -101,7 +101,7 @@ static bool	command_path(t_command **command, t_token *token, t_data *shell)
 	{
 		(*command)->error = mini_errmsg((*command)->command, NULL,
 				"command not found", true);
-		g_last_exit_code = CMD_NOT_FOUND;
+		shell->status = CMD_NOT_FOUND;
 		return (false);
 	}
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 17:42:30 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/07 16:22:31 by vamachad         ###   ########.fr       */
+/*   Updated: 2025/01/09 11:53:05 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ static void	err_msg(char *msg, char *detail)
 	ft_putstr_fd(" `", STDERR_FILENO);
 	ft_putstr_fd(detail, STDERR_FILENO);
 	ft_putstr_fd("'\n", STDERR_FILENO);
-	g_last_exit_code = 2;
 }
 
 // verifies if there are consecutive separators

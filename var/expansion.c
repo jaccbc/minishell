@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/08 13:13:06 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:09:54 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ static size_t	get_varlen(const char *s)
 
 // searches for the variable in env and returns its value
 // "ft_strchr(env[i], '=') + 1" returns everything after = in **env
-static char	*get_value(char **env, const char *s)
+static char	*get_value(t_data *shell, const char *s)
 {
 	int		i;
 	char	*var;
 
 	if (s[0] == '?')
-		return (ft_itoa(g_last_exit_code));
+		return (ft_itoa(shell->status));
 	var = ft_calloc(get_varlen(s) + 2, sizeof(char));
 	if (!var)
 		return (NULL);
@@ -44,21 +44,21 @@ static char	*get_value(char **env, const char *s)
 	}
 	var[i] = '=';
 	i = 0;
-	while (env[i] && ft_strncmp(var, env[i], ft_strlen(var)))
+	while (shell->env[i] && ft_strncmp(var, shell->env[i], ft_strlen(var)))
 		++i;
 	free(var);
-	if (env[i] == NULL)
+	if (shell->env[i] == NULL)
 		return (NULL);
-	return (ft_strchr(env[i], '=') + 1);
+	return (ft_strchr(shell->env[i], '=') + 1);
 }
 
 //measures the length of the strings and allocates memory for the expanded str
-static void	*create_buffer(char *str, char **env, char *var, char **expand)
+static void	*create_buffer(char *str, t_data *shell, char *var, char **expand)
 {
 	size_t	len;
 
 	len = 1;
-	*expand = get_value(env, var);
+	*expand = get_value(shell, var);
 	if (*expand)
 		len += ft_strlen(*expand);
 	len += ft_strlen(str) - get_varlen(var);
@@ -69,7 +69,7 @@ static void	*create_buffer(char *str, char **env, char *var, char **expand)
 //1st while loop copies everything until it finds the $
 //2nd while loop copies the expansion if it exists
 //3rd while loop copies the rest of the string
-void	expander(char **s, char **env, char *var)
+void	expander(char **s, t_data *shell, char *var)
 {
 	char	*str;
 	char	*expand;
@@ -79,7 +79,7 @@ void	expander(char **s, char **env, char *var)
 
 	str = *s;
 	expand = NULL;
-	new = create_buffer(str, env, var, &expand);
+	new = create_buffer(str, shell, var, &expand);
 	if (new == NULL)
 		return ;
 	i = -1;
