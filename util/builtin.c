@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 03:17:40 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/11 04:51:54 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/10 18:30:37 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,4 +88,18 @@ bool	update_env(char *path, const char *var, t_data *shell)
 	free(shell->env[i]);
 	shell->env[i] = new_var;
 	return (true);
+}
+
+void	export_declare(t_data *shell)
+{
+	int	i;
+
+	if (shell == NULL)
+		return ;
+	i = -1;
+	while (shell->env[++i])
+	{
+		ft_putstr_fd("declare -x ", STDOUT_FILENO);
+		ft_putendl_fd(shell->env[i], STDOUT_FILENO);
+	}
 }

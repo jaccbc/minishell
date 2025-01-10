@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:05:20 by vamachad          #+#    #+#             */
-/*   Updated: 2024/12/04 13:05:29 by vamachad         ###   ########.fr       */
+/*   Updated: 2025/01/10 18:29:04 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,29 +87,28 @@ int	add_var(t_data *shell, char *var_n_value)
 
 int	ft_export(t_data *shell, t_command *cmd)
 {
-	char	**args;
 	int		i;
-	int		index;
 	int		status;
 
-	i = 0;
+	i = -1;
 	status = EXIT_SUCCESS;
-	args = cmd->args;
-	while (args[++i])
+	while (cmd->args[++i])
 	{
-		if (!key_is_valid(args[i]))
+		if (!key_is_valid(cmd->args[i]))
 			status = EXIT_FAILURE;
-		else if (ft_strchr(args[i], '=') != NULL)
+		else if (ft_strchr(cmd->args[i], '=') != NULL)
 		{
-			index = get_var_index(shell, args[i]);
-			if (index != -1)
+			if (get_var_index(shell, cmd->args[i]) != -1)
 			{
-				if (replace_var_value(shell, args[i], index) == EXIT_FAILURE)
+				if (replace_var_value(shell, cmd->args[i],
+						get_var_index(shell, cmd->args[i])) == EXIT_FAILURE)
 					status = EXIT_FAILURE;
 			}
-			else if (add_var(shell, args[i]) == EXIT_FAILURE)
+			else if (add_var(shell, cmd->args[i]) == EXIT_FAILURE)
 				status = EXIT_FAILURE;
 		}
 	}
+	if (i == 1)
+		return (export_declare(shell), EXIT_SUCCESS);
 	return (status);
 }

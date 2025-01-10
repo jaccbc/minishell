@@ -6,7 +6,7 @@
 /*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/09 12:48:51 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/10 18:21:05 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ int			ft_unset(t_data *shell, t_command *cmd);
 int			ft_export(t_data *shell, t_command *cmd);
 int			ft_cd(t_data *shell, t_command *cmd);
 // utils
+void		export_declare(t_data *shell);
 void		cd_errmsg(char *msg, int err);
 bool		update_env(char *path, const char *var, t_data *shell);
 bool		ft_strcmp(char *s1, char *s2);
