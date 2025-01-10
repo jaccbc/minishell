@@ -12,21 +12,8 @@
 
 #include "../minishell.h"
 
-void	close_pipe_fds(t_command *cmds, t_command *skip_cmd)
-{
-	while (cmds)
-	{
-		if (cmds != skip_cmd && cmds->pipe_fd)
-		{
-			close(cmds->pipe_fd[0]);
-			close(cmds->pipe_fd[1]);
-		}
-		cmds = cmds->next;
-	}
-}
-
 // Handles pipes and redirections for the child process
-bool	handle_pipes_and_redirections(t_command *cmd)
+bool	handle_redirections(t_command *cmd)
 {
 	if (cmd->rdio && cmd->rdio->infile && cmd->rdio->fd_in != -1)
 	{

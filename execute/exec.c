@@ -51,7 +51,7 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 			ret = EXIT_SUCCESS;
 		return (lstdel_command(shell->command), free_env(shell->env), ret);
 	}
-	handle_pipes_and_redirections(cmd);
+	handle_redirections(cmd);
 	ret = execute_builtin(shell, cmd);
 	if (ret != CMD_NOT_FOUND)
 		return (lstdel_command(shell->command), free_env(shell->env), ret);
@@ -116,7 +116,7 @@ int	execute(t_data *shell)
 		return (EXIT_FAILURE);
 	if (!shell->command->has_pipe_output)
 	{
-		handle_pipes_and_redirections(cmd);
+		handle_redirections(cmd);
 		ret = execute_builtin(shell, cmd);
 		restore_red(cmd);
 	}

@@ -122,7 +122,7 @@ void		add_command_back(t_command **cmd, t_command *new);
 char		*getenv_path(char **env, const char *var);
 char		*expand_path(t_data *shell, char *str);
 bool		is_builtin(t_command *cmd);
-bool		handle_pipes_and_redirections(t_command *cmd);
+bool		handle_redirections(t_command *cmd);
 bool		restore_red(t_command *cmd);
 void		close_unused_pipes(t_command *cmd);
 bool		piping(t_data *shell);
@@ -154,6 +154,7 @@ void		sighandler_noninteractive(void);
 int			execute(t_data *shell);
 void		free_env(char **env);
 int			execute_builtin(t_data *shell, t_command *cmd);
+void		close_pipe_fds(t_command *cmd);
 // debug
 void		print_list(t_token *lst);
 char		*token_name(int type);
