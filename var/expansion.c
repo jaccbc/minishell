@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 03:02:37 by vamachad          #+#    #+#             */
-/*   Updated: 2025/01/09 12:09:54 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/11 13:01:32 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void	del_dollar(t_token *lst)
 						break ;
 			if (lst->str[i++] == '$')
 			{
-				if (lst->str[i] != '\0')
+				if (lst->str[i] != '\0' && lst->str[i] != '$')
 				{
 					q = &lst->str[i - 1];
 					while (*q)
