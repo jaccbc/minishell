@@ -6,7 +6,7 @@
 #    By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2025/01/08 17:50:53 by joandre-         ###   ########.fr        #
+#    Updated: 2025/01/11 13:18:49 by joandre-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ UTL = util/builtin.c util/command.c util/execute.c util/general.c util/token.c
 EXC = execute/exec.c
 SRC = $(UTL) $(BLT) $(LEX) $(DBG) $(VAR) $(CMD) $(SIG) $(EXC)
 OBJ = $(SRC:.c=.o)
-
+VFLAG = -s --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes --suppressions=valgrind_readline.supp
 
 all: $(NAME)
 
@@ -35,7 +35,7 @@ $(LIBFT):
 	make clean -s -C libft
 
 run: $(NAME)
-	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=valgrind_readline.supp ./$(NAME)
+	valgrind $(VFLAG) ./$(NAME)
 
 clean:
 	rm -rf $(OBJ)
