@@ -66,6 +66,10 @@ static void	del_redirect(t_redirect *rdio)
 			close(rdio->fd_in);
 		if (rdio->fd_out != -1)
 			close(rdio->fd_out);
+		if (rdio->stdin_backup != -1)
+			close(rdio->stdin_backup);
+		if (rdio->stdout_backup != -1)
+			close(rdio->stdout_backup);
 		free(rdio);
 	}
 }
