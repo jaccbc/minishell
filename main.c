@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:26:37 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/09 11:38:35 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:04:57 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static bool	init_env(t_data *shell, char **env)
 	}
 	shell->env[i] = NULL;
 	shell->home_dir = getenv_path(env, "HOME");
+	shell->pwd_backup = getcwd(NULL, 0);
 	return (true);
 }
 
@@ -54,10 +55,15 @@ static bool	init_prompt(t_data *shell, char *user_input)
 	{
 		lstdel_token(shell->lst);
 		lstdel_command(shell->command);
+		shell->lst = NULL;
+		shell->command = NULL;
 		return (false);
 	}
 	shell->status = execute(shell);
-	return (lstdel_command(shell->command), true);
+	lstdel_command(shell->command);
+	shell->lst = NULL;
+	shell->command = NULL;
+	return (true);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -72,6 +78,8 @@ int	main(int argc, char **argv, char **env)
 	{
 		sighandler();
 		shell.user_input = readline(PROMPT);
+		if (g_signal == SIGINT)
+			shell.status = 130;
 		sighandler_noninteractive();
 		if (shell.user_input == NULL)
 		{
@@ -80,11 +88,9 @@ int	main(int argc, char **argv, char **env)
 			exit(EXIT_SUCCESS);
 		}
 		init_prompt(&shell, shell.user_input);
-		shell.lst = NULL;
-		shell.command = NULL;
 	}
 	if (argc == 3 && ft_strncmp(argv[1], "-c", ft_strlen(argv[1])) == 0)
 		if (init_prompt(&shell, argv[2]))
 			return (0);
-	return (1);
+	return (free(shell.pwd_backup), 1);
 }

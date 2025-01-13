@@ -6,7 +6,7 @@
 #    By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/05 18:56:33 by joandre-          #+#    #+#              #
-#    Updated: 2025/01/11 13:18:49 by joandre-         ###   ########.fr        #
+#    Updated: 2025/01/13 20:10:27 by vamachad         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ BLT = builtin/cd.c builtin/echo.c builtin/env.c builtin/exit.c builtin/export.c 
 VAR = var/expansion.c
 CMD = cmd/check_files.c cmd/cmd.c cmd/fill_command.c cmd/parse_heredoc.c cmd/path.c
 SIG = signal/sighandler.c
-UTL = util/builtin.c util/command.c util/execute.c util/general.c util/token.c
+UTL = util/builtin.c util/command.c util/execute.c util/general.c util/token.c util/termios.c util/parse.c util/update.c
 EXC = execute/exec.c
 SRC = $(UTL) $(BLT) $(LEX) $(DBG) $(VAR) $(CMD) $(SIG) $(EXC)
 OBJ = $(SRC:.c=.o)

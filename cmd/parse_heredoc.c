@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_heredoc.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 19:46:24 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/09 14:42:18 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:34:21 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,15 @@ static bool	get_user_input(t_token *lst, t_redirect *rdio, t_data *shell)
 	char		*line;
 	char		*str;
 
-	str = NULL;
+	g_signal = 0;
+	reset_terminal_mode();
 	while (1)
 	{
 		ft_putstr_fd("> ", STDOUT_FILENO);
 		line = get_next_line(STDIN_FILENO);
 		if (g_signal == SIGINT)
 		{
+			shell->status = 130;
 			g_signal = 0;
 			return (free(line), false);
 		}
@@ -66,7 +68,7 @@ static bool	get_user_input(t_token *lst, t_redirect *rdio, t_data *shell)
 		str = var_lookup(lst, line, shell);
 		if (*str && str[0] != '\n' && ft_strlen(str) - 1 == ft_strlen(lst->str)
 			&& ft_strncmp(str, lst->str, ft_strlen(str) - 1) == 0)
-			break ;
+			return (free(str), true);
 		ft_putstr_fd(str, rdio->fd_in);
 		free(str);
 	}

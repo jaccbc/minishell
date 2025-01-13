@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:48:09 by vamachad          #+#    #+#             */
-/*   Updated: 2025/01/10 17:24:42 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:25:50 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 	int	ret;
 
 	ret = CMD_NOT_FOUND;
-	if (cmd->error != NULL || !cmd->command
-		|| (cmd->command && !cmd->command[0]))
+	if (cmd->error || !cmd->command || (cmd->command && !cmd->command[0]))
 	{
 		if (cmd->error)
 		{
@@ -49,16 +48,15 @@ static int	execute_cmd(t_data *shell, t_command *cmd)
 			ret = EXIT_FAILURE;
 		else if (cmd -> command && !cmd->command[0])
 			ret = EXIT_SUCCESS;
-		return (lstdel_command(shell->command), free_env(shell->env), ret);
+		return (cleanup_shell(shell), ret);
 	}
 	handle_redirections(cmd);
 	ret = execute_builtin(shell, cmd);
 	if (ret != CMD_NOT_FOUND)
-		return (lstdel_command(shell->command), free_env(shell->env), ret);
+		return (cleanup_shell(shell), ret);
 	signal(SIGQUIT, SIG_DFL);
 	execve(cmd->path, cmd->args, shell->env);
-	return (perror("minishell: execve"), lstdel_command(shell->command),
-		free_env(shell->env), CMD_NOT_FOUND);
+	return (perror("minishell: execve"), cleanup_shell(shell), CMD_NOT_FOUND);
 }
 
 static void	handle_child_process(t_command *cmd, t_data *shell)
@@ -77,6 +75,7 @@ static void	handle_child_process(t_command *cmd, t_data *shell)
 		close(cmd->prev->pipe_fd[1]);
 	if (cmd->pipe_fd[0] != -1)
 		close(cmd->pipe_fd[0]);
+	sighandler_noninteractive();
 	exit(execute_cmd(shell, cmd));
 }
 
@@ -96,6 +95,7 @@ static int	loop_children(t_data *shell)
 		if (pid == 0)
 			handle_child_process(cmd, shell);
 		shell->pid = pid;
+		signal(SIGINT, SIG_IGN);
 		if (cmd->prev && cmd->prev->pipe_fd[0] != -1)
 			close(cmd->prev->pipe_fd[0]);
 		if (cmd->prev && cmd->prev->pipe_fd[1] != -1)

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 20:05:55 by vamachad          #+#    #+#             */
-/*   Updated: 2025/01/09 11:45:11 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:00:52 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 // Create and initialize an empty command node
-static t_command	*create_command(void)
+t_command	*create_command(void)
 {
 	t_command	*new;
 
@@ -114,15 +114,15 @@ bool	final_parse(t_data *shell)
 	{
 		if (token->type == PIPE)
 		{
-			cmd->has_pipe_output = true;
-			add_command_back(&shell->command, create_command());
-			if (cmd->next == NULL)
+			if (!init_parse(shell, cmd))
 				return (false);
 			cmd = cmd->next;
 			token = token->next;
 		}
 		if (check_files(token, &cmd, shell))
 			process_token_data(token, cmd, shell);
+		else if (shell->status == 130)
+			return (false);
 		while (token && token->type != PIPE)
 			token = token->next;
 	}

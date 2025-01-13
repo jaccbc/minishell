@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 16:27:12 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/10 18:21:05 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:25:15 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
+# include <termios.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
@@ -100,6 +101,7 @@ typedef struct s_data
 	char				*working_dir;
 	char				*old_working_dir;
 	char				*home_dir;
+	char				*pwd_backup;
 }						t_data;
 
 // builtin
@@ -111,6 +113,10 @@ int			ft_unset(t_data *shell, t_command *cmd);
 int			ft_export(t_data *shell, t_command *cmd);
 int			ft_cd(t_data *shell, t_command *cmd);
 // utils
+void		update_pwd_backup(t_data *shell);
+void		cleanup_shell(t_data *shell);
+bool		init_parse(t_data *shell, t_command *cmd);
+void		reset_terminal_mode(void);
 void		export_declare(t_data *shell);
 void		cd_errmsg(char *msg, int err);
 bool		update_env(char *path, const char *var, t_data *shell);
@@ -142,6 +148,7 @@ void		expander(char **s, t_data *shell, char *var);
 bool		check_syntax(t_data *shell);
 bool		check_files(t_token *lst, t_command **cmd, t_data *shell);
 // cmd
+t_command	*create_command(void);
 t_redirect	*create_redirect(void);
 bool		final_parse(t_data *shell);
 void		fill_command_path(t_command *cmd, t_data *shell);

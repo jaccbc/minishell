@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamachad <vamachad@student.42lisboa.com>   +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:06:03 by vamachad          #+#    #+#             */
-/*   Updated: 2025/01/10 17:49:36 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:38:17 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@ int	ft_pwd(t_data *shell)
 	if (!shell->env)
 		return (EXIT_FAILURE);
 	cwd = getcwd(NULL, 0);
+	if (cwd == NULL)
+	{
+		cwd = ft_strdup(shell->pwd_backup);
+		if (cwd == NULL)
+			return (perror("minishell"), EXIT_FAILURE);
+	}
 	if (cwd)
 	{
 		ft_putendl_fd(cwd, STDOUT_FILENO);

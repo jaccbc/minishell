@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 03:17:40 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/10 18:30:37 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:12:18 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ bool	update_env(char *path, const char *var, t_data *shell)
 		return (perror("minishell"), false);
 	free(shell->env[i]);
 	shell->env[i] = new_var;
+	update_pwd_backup(shell);
 	return (true);
 }
 

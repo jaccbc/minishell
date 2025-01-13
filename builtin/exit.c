@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/09 11:23:26 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:03:00 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ void	exit_cleanup(t_data *shell)
 {
 	int		i;
 
+	free(shell->pwd_backup);
 	if (shell->env)
 	{
 		i = 0;

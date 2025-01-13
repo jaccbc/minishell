@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/08 01:57:01 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/12 11:35:23 by vamachad         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:23:15 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,11 @@ char	*expand_path(t_data *shell, char *str)
 
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
-		return (perror("minishell"), NULL);
+	{
+		pwd = ft_strdup(shell->pwd_backup);
+		if (pwd == NULL)
+			return (perror("minishell"), NULL);
+	}
 	if (ft_strncmp(str, "./", 2) == 0)
 		path = ft_strjoin(pwd, str + 1);
 	else if ((ft_strncmp(str, "~/", 2) == 0 || ft_strncmp(str, "~", 2) == 0)

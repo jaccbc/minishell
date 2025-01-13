@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 21:36:54 by joandre-          #+#    #+#             */
-/*   Updated: 2024/12/11 04:53:11 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:13:30 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,9 @@ int	switch_dir(char *path, t_data *shell, int code)
 		return (cd_errmsg("OLDPWD not set", 0), EXIT_FAILURE);
 	old = getcwd(NULL, 0);
 	if (old == NULL)
-		return (free(path), EXIT_FAILURE);
+		old = ft_strdup(shell->pwd_backup);
+	if (old == NULL)
+		return (free(path), perror("minishell"), EXIT_FAILURE);
 	if (code == 0 && !path)
 		path = ft_strdup(getenv_path(shell->env, "HOME"));
 	else if (code == 1 && !path)

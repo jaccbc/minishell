@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sighandler.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joandre- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 19:04:31 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/10 17:12:49 by joandre-         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:11:15 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	signl_prompt(int signum)
 	g_signal = signum;
 	if (signum == SIGINT)
 	{
-		ft_putchar_fd('\n', STDIN_FILENO);
+		ft_putchar_fd('\n', STDOUT_FILENO);
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
@@ -49,7 +49,7 @@ static void	signal_nonint(int signal)
 	if (signal == SIGINT)
 	{
 		g_signal = signal;
-		ft_putchar_fd('\n', STDOUT_FILENO);
+		ft_putchar_fd('\n', STDIN_FILENO);
 	}
 }
 

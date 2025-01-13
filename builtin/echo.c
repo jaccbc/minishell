@@ -6,11 +6,25 @@
 /*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 19:51:51 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/06 13:38:56 by vamachad         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:01:56 by vamachad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+static bool	is_valid_n_flag(char *arg)
+{
+	int	j;
+
+	j = 1;
+	if (arg[0] != '-' || arg[1] != 'n')
+		return (false);
+	while (arg[j] == 'n')
+		j++;
+	if (arg[j] != '\0')
+		return (false);
+	return (true);
+}
 
 static bool	verify_command(t_command *cmd, bool *nl)
 {
@@ -18,18 +32,26 @@ static bool	verify_command(t_command *cmd, bool *nl)
 
 	if (!cmd || !cmd->command || !cmd->args)
 		return (false);
-	if (ft_strncmp(cmd->command, "echo", ft_strlen(cmd->command)))
+	if (ft_strncmp(cmd->command, "echo", ft_strlen(cmd->command)) != 0)
 		return (false);
-	if (cmd->args[0] && cmd->args[1])
+	*nl = true;
+	i = 1;
+	while (cmd->args[i] && is_valid_n_flag(cmd->args[i]) == true)
 	{
-		i = 0;
-		if (cmd->args[1][0] == '-' && cmd->args[1][1] == 'n')
-			while (cmd->args[1][++i] == 'n')
-				*nl = false;
-		if (cmd->args[1][i] != '\0')
-			*nl = true;
+		*nl = false;
+		i++;
 	}
 	return (true);
+}
+
+static int	skip_n_flags(t_command *cmd)
+{
+	int	i;
+
+	i = 1;
+	while (cmd->args[i] && is_valid_n_flag(cmd->args[i]) == true)
+		i++;
+	return (i);
 }
 
 int	ft_echo(t_command *cmd)
@@ -37,19 +59,17 @@ int	ft_echo(t_command *cmd)
 	bool	nl;
 	int		i;
 
-	nl = true;
 	if (verify_command(cmd, &nl) == false)
 		return (EXIT_FAILURE);
-	i = 1;
-	if (nl == false)
-		++i;
+	i = skip_n_flags(cmd);
 	while (cmd->args[i])
 	{
 		ft_putstr_fd(cmd->args[i], STDOUT_FILENO);
-		if (cmd->args[++i])
+		i++;
+		if (cmd->args[i])
 			ft_putstr_fd(" ", STDOUT_FILENO);
 	}
-	if (nl)
+	if (nl == true)
 		ft_putstr_fd("\n", STDOUT_FILENO);
 	return (EXIT_SUCCESS);
 }
