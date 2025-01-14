@@ -6,7 +6,7 @@
 /*   By: vamachad <vamachad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 22:26:37 by joandre-          #+#    #+#             */
-/*   Updated: 2025/01/13 20:04:57 by vamachad         ###   ########.fr       */
+/*   Updated: 2025/01/14 00:37:53 by joandre-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ static bool	init_prompt(t_data *shell, char *user_input)
 		shell->command = NULL;
 		return (false);
 	}
+	g_signal = 0;
 	shell->status = execute(shell);
 	lstdel_command(shell->command);
 	shell->lst = NULL;
